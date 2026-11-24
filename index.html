@@ -171,10 +171,10 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 </div>
 <div id="settings">
   <h2>الإعدادات</h2>
-  <div class="srow"><span>مفتاح API</span><span class="val" id="keyState">—</span></div>
-  <div class="srow"><span>النموذج</span><span class="val" id="modelState">—</span></div>
-  <div class="srow"><span>عدد المحادثات</span><span class="val" id="convCount">—</span></div>
-  <div class="srow"><span>حقائق محفوظة في الذاكرة</span><span class="val" id="factCount">—</span></div>
+  <div class="srow"><span>مفتاح API</span><span class="val" id="keyState">-</span></div>
+  <div class="srow"><span>النموذج</span><span class="val" id="modelState">-</span></div>
+  <div class="srow"><span>عدد المحادثات</span><span class="val" id="convCount">-</span></div>
+  <div class="srow"><span>حقائق محفوظة في الذاكرة</span><span class="val" id="factCount">-</span></div>
   <button class="bigbtn" id="changeKeyBtn" style="background:var(--card2);color:var(--text)">تغيير مفتاح API</button>
   <button class="bigbtn" id="wipeBtn" style="background:transparent;color:var(--danger);border:1px solid var(--danger)">مسح كل البيانات من الجهاز</button>
   <button class="linkbtn" id="closeSettings" style="display:block;margin:12px auto 0">إغلاق</button>
@@ -204,6 +204,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
       <button class="iconbtn" id="showKey" aria-label="إظهار">👁</button>
     </div>
     <button class="bigbtn" id="saveKeyBtn">حفظ والبدء</button>
+    <div class="small" id="keyError" style="color:var(--danger);display:none"></div>
     <div class="small">لو حابب تتأكد إن المفتاح شغال، هنعمل طلب تجريبي واحد بعد الحفظ.</div>
   </div>
 </div>
@@ -344,9 +345,15 @@ async function geminiCall(model,parts,jsonMode){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const body={contents:parts,safetySettings:SAFETY,
     generationConfig:{temperature:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
-  const r=await fetch(url,{method:"POST",
-    headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
-    body:JSON.stringify(body)});
+  let r;
+  try{
+    r=await fetch(url,{method:"POST",
+      headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
+      body:JSON.stringify(body)});
+  }catch(fe){
+    const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";
+    throw e;
+  }
   if(!r.ok){
     const e=new Error("HTTP "+r.status);e.status=r.status;
     try{e.detail=(await r.json()).error?.message||""}catch(_){}
@@ -490,11 +497,11 @@ async function send(){
     maybeSummarize(conv,all);
   }catch(e){
     setTyping(false);
-    let msg="حصل خطأ في الاتصال. اتأكد من النت وجرّب تاني.";
+    let msg="حصل خطأ في الاتصال. اتأكد من النت وجرّب تاني."+(e.status?(" (كود "+e.status+")"):(e.detail?(". "+e.detail.slice(0,80)):""));
     if(e.status===400&&/api.?key/i.test(e.detail||"")||e.status===401||e.status===403)
       msg="مفتاح الـ API مش شغال أو اترفض. افتح الإعدادات وغيّره.";
     else if(e.status===429)
-      msg="وصلت لحد الاستخدام المجاني (في الدقيقة أو اليوم). استنى شوية وجرّب تاني.";
+      msg="وصلت لحد الاستخدام المجاني (في الدقيقة أو اليوم). استنى شوية وجرّب تاني."+(e.detail?(". "+e.detail.slice(0,80)):"");
     else if(e.status===404)
       msg="النموذج مش متاح على المفتاح ده حاليًا. جرّب بعد شوية.";
     const am={id:uid(),convId:conv.id,role:"model",text:msg,err:true,ts:Date.now()};
@@ -531,10 +538,11 @@ $("saveKeyBtn").onclick=async()=>{
   const k=$("keyInput").value.trim();
   if(k.length<8){toast("الصق المفتاح الأول في المربع");return}
   $("saveKeyBtn").disabled=true;$("saveKeyBtn").textContent="بنجرب المفتاح…";
+  const ke=$("keyError");ke.style.display="none";ke.textContent="";
   try{
     state.key=k;
-    await geminiCall(MODEL_MAIN,[{role:"user",parts:[{text:"قول: تمام"}]}]);
-    await kvSet("apiKey",k);state.model=MODEL_MAIN;
+    await gemini([{role:"user",parts:[{text:"قول: تمام"}]}]);
+    await kvSet("apiKey",k);
     $("onboard").classList.add("hidden");refreshSettings();
     toast("تمام، المفتاح شغال ✦");$("input").focus();
   }catch(e){
@@ -543,9 +551,20 @@ $("saveKeyBtn").onclick=async()=>{
       await kvSet("apiKey",k);$("onboard").classList.add("hidden");refreshSettings();
       toast("المفتاح اتسجل، بس واصل لحد الاستخدام دلوقتي. جرّب بعد شوية.");
     }else if(e.status===400||e.status===401||e.status===403){
-      toast("المفتاح مترفض. اتأكد إنك نسخته صح من AI Studio.");
+      ke.textContent="المفتاح مترفض من جوجل. اتأكد إنك نسخته كامل من AI Studio. (كود "+e.status+(e.detail?": "+e.detail.slice(0,120):"")+")";
+      ke.style.display="block";
     }else{
-      toast("مش قادر أوصل لجوجل. اتأكد من النت وجرّب تاني.");
+      let d=e.status?("كود "+e.status+(e.detail?": "+e.detail.slice(0,120):"")):("تفاصيل: "+(e.detail||e.message||"unknown"));
+      let hint="";
+      if(e.net){
+        try{await fetch("https://www.gstatic.com/generate_204",{mode:"no-cors",cache:"no-store"});
+          hint="النت عندك شغال، بس سيرفر Gemini نفسه مش بيرد. ممكن يكون محجوب من الشبكة اللي انت عليها. جرّب شبكة نت تانية (واي فاي/بيانات).";
+        }catch(_){hint="النت نفسه مش شغال دلوقتي.";}
+      }else if(e.status===404){
+        hint="النموذج مش متاح للمفتاح ده حاليًا. جرّب تاني بعد شوية.";
+      }
+      ke.textContent="مش قادر أوصل لجوجل. "+hint+" ("+d+")";
+      ke.style.display="block";
     }
   }
   $("saveKeyBtn").disabled=false;$("saveKeyBtn").textContent="حفظ والبدء";

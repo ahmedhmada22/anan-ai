@@ -200,7 +200,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
     </ol>
     <p>الطبقة المجانية في Gemini مش فترة تجريبية، بتفضل مجانية بحدود استخدام يومية كافية جدًا للاستخدام الشخصي.</p>
     <div class="keyrow">
-      <input id="keyInput" type="password" placeholder="الصق المفتاح هنا (يبدأ بـ AIza)" autocomplete="off">
+      <input id="keyInput" type="password" placeholder="الصق المفتاح هنا" autocomplete="off">
       <button class="iconbtn" id="showKey" aria-label="إظهار">👁</button>
     </div>
     <button class="bigbtn" id="saveKeyBtn">حفظ والبدء</button>
@@ -529,7 +529,7 @@ $("wipeBtn").onclick=async()=>{
 $("showKey").onclick=()=>{const i=$("keyInput");i.type=i.type==="password"?"text":"password"};
 $("saveKeyBtn").onclick=async()=>{
   const k=$("keyInput").value.trim();
-  if(!k.startsWith("AIza")||k.length<20){toast("المفتاح ده مش شكله صح. المفروض يبدأ بـ AIza");return}
+  if(k.length<8){toast("الصق المفتاح الأول في المربع");return}
   $("saveKeyBtn").disabled=true;$("saveKeyBtn").textContent="بنجرب المفتاح…";
   try{
     state.key=k;

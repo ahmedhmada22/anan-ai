@@ -345,6 +345,12 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   <button class="msbtn danger" id="msDel">حذف الرسالة</button>
   <button class="msbtn" id="msCancel" style="color:var(--muted);text-align:center">إلغاء</button>
 </div>
+<div class="overlay hidden" id="infoModal">
+  <div class="box" style="padding:20px;max-height:70vh;overflow-y:auto">
+    <div id="imText" style="font-size:15px;line-height:1.9;white-space:pre-wrap;text-align:start"></div>
+    <button class="bigbtn" id="imOk" style="margin-top:14px">تمام</button>
+  </div>
+</div>
 <div class="overlay hidden" id="confirmModal">
   <div class="box" style="text-align:center;padding:24px 20px">
     <div id="cmText" style="font-size:16.5px;line-height:1.9;margin-bottom:18px"></div>
@@ -423,6 +429,10 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
     <div class="sect">الذاكرة والتعليمات</div>
     <div class="pgroup">
       <button class="prow linkrow" id="openMem"><span>عارف عنك إيه (الذاكرة)</span><span class="pval"><span id="factCount">-</span> حقيقة ‹</span></button>
+      <div class="prow"><span>الاستذكار قبل الرد 🧠</span><button class="tgl" id="tglRecall"></button></div>
+      <div class="small" style="padding:0 14px 12px">قبل ما يرد، عنان بياخد ثانيتين يسترجع اللي اتقال في المحادثة ويربطه بسؤالك، فالرد ميطلعش سريع وأعمى. بيستهلك طلب إضافي بس على نموذج خفيف.</div>
+      <div class="prow"><span>ملخص تلقائي كل</span><select class="fld" id="sumEverySel" style="width:auto;padding:8px 10px"><option value="8">٨ رسايل</option><option value="12">١٢ رسالة</option><option value="16">١٦ رسالة</option><option value="24">٢٤ رسالة</option></select></div>
+      <div class="small" style="padding:0 14px 12px">كل العدد ده عنان بيعمل ملخص شامل لأحداث المحادثة وبيحفظه معاها، عشان المحادثات الطويلة ماتضيعش. تقدر تشوف الملخص من منيو ⋮ جنب أي محادثة.</div>
       <div class="prow" style="flex-direction:column;align-items:stretch;gap:8px">
         <span>تعليمات دائمة</span>
         <textarea class="fld" id="instrBox" rows="3" placeholder="قواعد ثابتة تحب عنان يلتزم بيها في كل رد…"></textarea>
@@ -677,10 +687,13 @@ function appendMsg(m,force){
   box.insertAdjacentHTML("beforeend",bubbleHTML(m));
   scrollDown(!!force);
 }
-function setTyping(on){
+function setTyping(on,txt){
   const box=$("msgs");const old=$("typingRow");if(old)old.remove();
-  if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">عنان بيكتب…</div>`);scrollDown()}
+  if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">${esc(txt||"عنان بيكتب…")}</div>`);scrollDown()}
 }
+function showInfo(txt){$("imText").textContent=txt;$("infoModal").classList.remove("hidden")}
+$("imOk").onclick=()=>$("infoModal").classList.add("hidden");
+$("infoModal").addEventListener("click",e=>{if(e.target.id==="infoModal")$("infoModal").classList.add("hidden")});
 function memNote(txt){
   const box=$("msgs");box.insertAdjacentHTML("beforeend",`<div class="memnote">${esc(txt)}</div>`);
   setTimeout(()=>{const n=[...box.querySelectorAll(".memnote")].pop();if(n)n.remove()},4000);
@@ -691,6 +704,7 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 - انت مش موافق تلقائي. لو رأيه أو فكرته فيها مشكلة، قول ده بوضوح واشرح ليه. ناقش أفكاره واختبرها واكشف نقاط ضعفها، حتى لو التقييم سلبي.
 - لو اكتشفت إنك غلطان أو ظهرت معلومة جديدة، اعترف وصحح من غير لف ودوران.
 - ممنوع تخترع معلومات. لو مش متأكد، قول إنك مش متأكد وفرّق بين الحقيقة المؤكدة والرأي والاحتمال والاستنتاج.
+- سياق المحادثة: كل اللي اتقال قبل كده في المحادثة (الرسايل الأخيرة + الملخص التراكمي + نقاط الاسترجاع لو موجودة) جزء من كلامك انت كمان. ردودك لازم تربط بالأحداث دي طبيعي. لو سألك عن حاجة اتقالت أو اتفقتم عليها قبل كده، جاوب من السياق بثقة وتفصيل، وممنوع تقول "مش فاكر" طالما المعلومة قدامك.
 - الردود المفصلة والمنظمة مطلوبة لما الموضوع يستاهل، بس من غير مقدمات طويلة أو تكرار.
 - عندك شخصية ثابتة عبر كل المحادثات: طبيعي وعفوي، بتحب النقاش الجاد، وتقدر تغير النبرة حسب الموضوع من جد لهزار.
 - بتناقش أي موضوع بصراحة وتحليل: سياسة، تاريخ، دين، اقتصاد، علاقات، مواضيع شخصية وحساسة ومواضيع بالغين. مترفضش موضوع لمجرد إنه حساس، وتعامل معاه حسب سياقه.
@@ -699,6 +713,7 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 const SELFHARM_RE=/(انتحار|انتحر|اقتل نفسي|أقتل نفسي|اموت نفسي|أموت نفسي|عايز اموت|عايش عبث|مش عايز اعيش|مش عايز أعيش|نهايه حياتي|نهاية حياتي|اعدي حياتي|ajeeb|ايذاء النفس|إيذاء النفس|باذي نفسي|بأذي نفسي)/;
 /* ================= Gemini API ================= */
 let REQ_TIMEOUT=60000;
+let RECALL_MIN_MS=1800;
 function withTimeout(sig,ms){
   const c=new AbortController();let timedOut=false;
   const t=setTimeout(()=>{timedOut=true;c.abort()},ms);
@@ -828,8 +843,31 @@ async function geminiStream(parts,sig,onChunk){
   }
 }
 /* ================= context assembly ================= */
-const KEEP_TAIL=24, SUMMARIZE_AT=48, SUMMARIZE_CHUNK=24;
-async function buildChatParts(conv,ms,userText){
+const KEEP_TAIL=40;
+async function recallPass(conv,ms,userText,sig){
+  const rel=pickFacts(userText,8);
+  const tailTxt=ms.slice(-24).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,220)).join("\n");
+  const prompt=`انت وحدة استرجاع ذاكرة داخلية. تحت ملخص المحادثة (لو موجود)، حقائق محفوظة مرتبطة، وآخر الرسايل. استخرج في نقط قصيرة (٦ كحد أقصى) كل حاجة مرتبطة بسؤال المستخدم الأخير: أحداث، أرقام، أسماء، قرارات، وعود، تفاصيل اتقالت قبل كده. لو مفيش حاجة مرتبطة اكتب "مفيش". متجاوبش على السؤال نفسه.
+سؤال المستخدم الأخير: ${userText}
+ملخص المحادثة: ${conv.summary||"لا يوجد"}
+حقائق محفوظة مرتبطة: ${rel.map(f=>f.text).join(" | ")||"لا يوجد"}
+آخر الرسايل:
+${tailTxt}`;
+  const parts=[{role:"user",parts:[{text:prompt}]}];
+  try{
+    let r;
+    try{r=await geminiCall("gemini-3.5-flash-lite",parts,false,sig);bumpUsage("gemini-3.5-flash-lite",false)}
+    catch(e){
+      if(e.aborted)throw e;
+      if(e.status===404||e.status===429||e.status===503)r=await gemini(parts,false,sig);
+      else throw e;
+    }
+    const t=(r.text||"").trim();
+    if(!t||t.startsWith("مفيش"))return "";
+    return t.slice(0,900);
+  }catch(e){if(e&&e.aborted)throw e;return ""}
+}
+async function buildChatParts(conv,ms,userText,recall){
   const sys=personaBlock(conv);
   const relevant=pickFacts(userText+" "+(ms.length>1?ms[ms.length-2]?.text||"":""),12);
   let sysFull=sys;
@@ -839,6 +877,9 @@ async function buildChatParts(conv,ms,userText){
   }
   if(conv.summary){
     sysFull+="\n\nملخص تراكمي لبداية المحادثة دي:\n"+conv.summary;
+  }
+  if(recall){
+    sysFull+="\n\nاسترجاع داخلي قبل الرد (نقاط استرجعتها من المحادثة والذاكرة — استخدمها عشان تربط ردك بالسياق):\n"+recall;
   }
   if(SELFHARM_RE.test(normAr(userText))){
     sysFull+="\n\nتنبيه: رسالة المستخدم الأخيرة فيها إشارة محتملة لأفكار انتحارية أو إيذاء نفس. طبّق قاعدة الاستثناء الوحيد فورًا.";
@@ -898,11 +939,12 @@ async function extractMemory(conv,exchange){
 /* ================= rolling summary ================= */
 async function maybeSummarize(conv,ms){
   const done=conv.summarizedCount||0;
-  if(ms.length-done<SUMMARIZE_AT)return;
-  const chunk=ms.slice(done,done+SUMMARIZE_CHUNK);
+  const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
+  if(ms.length-done<every)return;
+  const chunk=ms.slice(done,done+every);
   if(!chunk.length)return;
   try{
-    const prompt=`لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز يحافظ على: الموضوعات، القرارات، الآراء المهمة، وأي معلومات هتتحتاج لو المحادثة اتكملت. الملخص السابق (لو موجود) ادمجه في الجديد.
+    const prompt=`لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز. دقة التفاصيل أهم من الاختصار: احتفظ بالأرقام والأسماء والتواريخ والقرارات والوعود والتفضيلات حرفيًا زي ما اتقالت. نظم الملخص سطر لكل موضوع بالشكل: الموضوع — أهم اللي اتقال واتفق عليه. الملخص السابق (لو موجود) ادمجه في الجديد من غير ما تضيّع منه أي تفصيلة لسه مهمة.
 الملخص السابق: ${conv.summary||"لا يوجد"}
 الجزء الجديد:
 ${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+m.text).join("\n")}`;
@@ -1054,7 +1096,7 @@ $("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abo
 /* ================= preferences & appearance ================= */
 const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
   persona:{style:"sahib",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
-  nsfw:false,lockPin:null,lockBio:false,lockCred:null};
+  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12};
 let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
 async function savePrefs(){await kvSet("prefs",prefs)}
 const THEMES={
@@ -1208,6 +1250,7 @@ function openConvMenu(btn,c){
   const items=[
     {t:c.pinned?"📌 إلغاء التثبيت":"📌 تثبيت",fn:async()=>{c.pinned=!c.pinned;await putItem("convs",c);renderConvList()}},
     {t:"✏️ إعادة تسمية",fn:()=>renameConv(c)},
+    {t:"📝 ملخص المحادثة",fn:()=>showInfo(c.summary?("ملخص أحداث المحادثة لحد دلوقتي:\n\n"+c.summary):"لسه مفيش ملخص للمحادثة دي. بيتعمل تلقائيًا كل "+(prefs.sumEvery||12)+" رسالة، وتقدر تغيّر العدد من الإعدادات.")},
     {t:"🗑 حذف المحادثة",danger:true,fn:async()=>{
       if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
       await delItem("convs",c.id);
@@ -1279,7 +1322,18 @@ async function runReply(conv,histMsgs,userText){
   const finalRow=()=>{const row=document.querySelector(`.msg[data-id="${am.id}"]`);if(row)row.outerHTML=bubbleHTML(am);else appendMsg(am)};
   const cleanupPartial=()=>{const row=document.querySelector(`.msg[data-id="${am.id}"]`);if(row)row.remove();delete state.msgIndex[am.id]};
   try{
-    const parts=await buildChatParts(conv,histMsgs,userText);
+    let recallText="";
+    if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)){
+      setTyping(true,"🧠 بيسترجع اللي فات…");
+      const t0=Date.now();
+      try{recallText=await recallPass(conv,histMsgs,userText,abortCtl.signal)}
+      catch(re){if(re&&re.aborted)throw re}
+      const dt=Date.now()-t0;
+      if(dt<RECALL_MIN_MS)await new Promise(r=>setTimeout(r,RECALL_MIN_MS-dt));
+      if(abortCtl.signal.aborted){const ae=new Error("aborted");ae.aborted=true;throw ae}
+      setTyping(true);
+    }
+    const parts=await buildChatParts(conv,histMsgs,userText,recallText);
     let finish=null;
     try{
       finish=await geminiStream(parts,abortCtl.signal,chunk=>{
@@ -1687,6 +1741,10 @@ function fillSettings(){
   buildSw("swBubble",BUBBLES,prefs.bubble,v=>{prefs.bubble=v;savePrefs();applyAppearance()});
   const tg=$("tglSugg");tg.classList.toggle("on",!!prefs.suggestions);
   tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
+  const trc=$("tglRecall");trc.classList.toggle("on",prefs.recall!==false);
+  trc.onclick=()=>{prefs.recall=!(prefs.recall!==false);trc.classList.toggle("on",prefs.recall);savePrefs()};
+  const se=$("sumEverySel");se.value=String(prefs.sumEvery||12);
+  se.onchange=()=>{prefs.sumEvery=parseInt(se.value,10)||12;savePrefs();toast("الملخص هيتعمل كل "+prefs.sumEvery+" رسالة ✦")};
   const tl=$("tglLock");tl.classList.toggle("on",!!prefs.lockPin);
   tl.onclick=async()=>{
     if(prefs.lockPin){

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232839">
+<title>Anan AI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#232839; --bg2:#2b3148; --card:#313952; --card2:#39415c;
+  --text:#e9ebf4; --muted:#9aa1b8; --accent:#c9a86a; --accent2:#7fd1c0;
+  --danger:#e07856; --bubble-me:#46528c; --bubble-ai:#2d3349;
+  --border:#3d4560; --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif;
+  font-size:17px;line-height:1.7;overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+#app{display:flex;flex-direction:column;height:100%}
+/* ===== header ===== */
+header{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--bg2);border-bottom:1px solid var(--border);flex:none;
+}
+.logo{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.logo svg{flex:none}
+.wordmark{font-size:19px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+.wordmark .ai{color:var(--accent);font-weight:600;margin-inline-start:4px;font-size:16px}
+.iconbtn{
+  width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:var(--card);border:1px solid var(--border);flex:none;
+}
+.iconbtn:active{background:var(--card2)}
+/* ===== drawer ===== */
+#drawer{
+  position:fixed;inset-block:0;inset-inline-start:0;width:300px;max-width:85vw;z-index:40;
+  background:var(--bg2);border-inline-end:1px solid var(--border);
+  transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;
+}
+#drawer.open,#drawer[class*="open"]{transform:translateX(0)}
+html[dir="rtl"] #drawer.open{transform:translateX(0)}
+#scrim{position:fixed;inset:0;background:rgba(10,12,20,.55);z-index:30;display:none}
+#scrim.open{display:block}
+#drawer .dhead{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
+#drawer .dhead b{font-size:16px}
+#convList{flex:1;overflow-y:auto;padding:8px}
+.convitem{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:start;
+  padding:11px 12px;border-radius:12px;margin-bottom:4px;background:transparent;
+}
+.convitem.active{background:var(--card)}
+.convitem .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15.5px}
+.convitem .d{color:var(--muted);font-size:12px;flex:none}
+.convdel{color:var(--muted);flex:none;width:30px;height:30px;border-radius:8px;font-size:16px}
+.convdel:active{color:var(--danger)}
+/* ===== chat ===== */
+#msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;scroll-behavior:smooth}
+.dayempty{color:var(--muted);text-align:center;margin-top:22vh;font-size:15px;padding:0 30px}
+.msg{display:flex;margin-bottom:10px}
+.msg.me{justify-content:flex-start}
+.msg.ai{justify-content:flex-end}
+.bubble{
+  max-width:86%;padding:10px 14px;border-radius:var(--radius);
+  white-space:pre-wrap;word-break:break-word;font-size:16.5px;
+}
+.msg.me .bubble{background:var(--bubble-me);border-start-start-radius:4px}
+.msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:4px}
+.msg.ai .bubble.err{border-color:var(--danger);color:#f0b09b}
+.typing{color:var(--muted);font-size:14px;padding:4px 8px}
+.memnote{color:var(--muted);font-size:12px;text-align:center;margin:2px 0 8px}
+/* ===== composer ===== */
+#composer{
+  flex:none;display:flex;gap:8px;align-items:flex-end;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:var(--bg2);border-top:1px solid var(--border);
+}
+#input{
+  flex:1;resize:none;border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--card);color:var(--text);padding:11px 14px;font:inherit;font-size:16.5px;
+  max-height:150px;line-height:1.55;outline:none;
+}
+#input:focus{border-color:var(--accent)}
+#sendBtn{
+  width:48px;height:48px;border-radius:14px;background:var(--accent);color:#1c2030;
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+#sendBtn:disabled{opacity:.45}
+#sendBtn svg{transform:scaleX(-1)}
+/* ===== onboarding / modal ===== */
+.overlay{
+  position:fixed;inset:0;z-index:50;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:26px;overflow-y:auto;text-align:center;
+}
+.overlay.hidden{display:none}
+.overlay .box{max-width:430px;width:100%}
+.overlay h1{font-size:21px;margin:14px 0 6px}
+.overlay p{color:var(--muted);font-size:15px;margin-bottom:12px;text-align:start}
+.overlay ol{color:var(--muted);font-size:15px;text-align:start;padding-inline-start:22px;margin-bottom:14px}
+.overlay ol li{margin-bottom:6px}
+.overlay a{color:var(--accent2)}
+.keyrow{display:flex;gap:8px;width:100%;margin-top:6px}
+.keyrow input{
+  flex:1;border:1px solid var(--border);border-radius:12px;background:var(--card);
+  color:var(--text);padding:12px;font-size:15px;outline:none;direction:ltr;text-align:left;
+}
+.bigbtn{
+  background:var(--accent);color:#1c2030;font-weight:700;font-size:16px;
+  padding:12px 22px;border-radius:12px;width:100%;margin-top:12px;
+}
+.bigbtn:disabled{opacity:.45}
+.linkbtn{color:var(--accent2);font-size:14px;margin-top:10px;text-decoration:underline}
+.small{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+/* settings sheet */
+#settings{
+  position:fixed;inset-inline:0;bottom:0;z-index:60;background:var(--bg2);
+  border-top:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;
+  transform:translateY(105%);transition:transform .22s ease;max-height:80vh;overflow-y:auto;
+}
+#settings.open{transform:translateY(0)}
+#settings h2{font-size:17px;margin-bottom:12px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:15px}
+.srow .val{color:var(--muted);font-size:13.5px;direction:ltr}
+#toast{
+  position:fixed;bottom:90px;inset-inline:20px;background:var(--card2);color:var(--text);
+  padding:11px 16px;border-radius:12px;text-align:center;font-size:14.5px;z-index:70;
+  display:none;border:1px solid var(--border);
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="iconbtn" id="menuBtn" aria-label="المحادثات">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+    </button>
+    <div class="logo">
+      <svg width="158" height="38" viewBox="0 0 158 38" fill="none">
+        <path d="M13 4 L15.6 10.4 L22 13 L15.6 15.6 L13 22 L10.4 15.6 L4 13 L10.4 10.4 Z" fill="#c9a86a"/>
+        <circle cx="13" cy="13" r="1.8" fill="#7fd1c0"/>
+        <text x="30" y="24" direction="ltr" font-family="'Noto Serif',Georgia,serif" font-size="21" letter-spacing="2" fill="#e9ebf4">Anan</text>
+        <text x="61" y="10.5" text-anchor="middle" font-family="'Noto Naskh Arabic','Amiri',serif" font-size="10.5" fill="#c9a86a">عنان</text>
+        <text x="100" y="24" direction="ltr" font-family="'Noto Serif',Georgia,serif" font-size="13.5" letter-spacing="3" fill="#c9a86a">AI</text>
+        <path d="M30 30 C 40 34.5, 60 34.5, 78 31 C 92 28.5, 104 27, 116 28.5" stroke="#c9a86a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <button class="iconbtn" id="settingsBtn" aria-label="الإعدادات">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55h.01a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+    </button>
+    <button class="iconbtn" id="newBtn" aria-label="محادثة جديدة">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </header>
+  <div id="msgs"></div>
+  <div id="composer">
+    <textarea id="input" rows="1" placeholder="اكتب رسالتك…"></textarea>
+    <button id="sendBtn" aria-label="إرسال">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1c2030" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+    </button>
+  </div>
+</div>
+<div id="scrim"></div>
+<div id="drawer">
+  <div class="dhead"><b>المحادثات</b><button class="linkbtn" id="closeDrawer">إغلاق</button></div>
+  <div id="convList"></div>
+</div>
+<div id="settings">
+  <h2>الإعدادات</h2>
+  <div class="srow"><span>مفتاح API</span><span class="val" id="keyState">—</span></div>
+  <div class="srow"><span>النموذج</span><span class="val" id="modelState">—</span></div>
+  <div class="srow"><span>عدد المحادثات</span><span class="val" id="convCount">—</span></div>
+  <div class="srow"><span>حقائق محفوظة في الذاكرة</span><span class="val" id="factCount">—</span></div>
+  <button class="bigbtn" id="changeKeyBtn" style="background:var(--card2);color:var(--text)">تغيير مفتاح API</button>
+  <button class="bigbtn" id="wipeBtn" style="background:transparent;color:var(--danger);border:1px solid var(--danger)">مسح كل البيانات من الجهاز</button>
+  <button class="linkbtn" id="closeSettings" style="display:block;margin:12px auto 0">إغلاق</button>
+</div>
+<div id="toast"></div>
+<div class="overlay hidden" id="onboard">
+  <div class="box">
+    <svg width="237" height="57" viewBox="0 0 158 38" fill="none">
+        <path d="M13 4 L15.6 10.4 L22 13 L15.6 15.6 L13 22 L10.4 15.6 L4 13 L10.4 10.4 Z" fill="#c9a86a"/>
+        <circle cx="13" cy="13" r="1.8" fill="#7fd1c0"/>
+        <text x="30" y="24" direction="ltr" font-family="'Noto Serif',Georgia,serif" font-size="21" letter-spacing="2" fill="#e9ebf4">Anan</text>
+        <text x="61" y="10.5" text-anchor="middle" font-family="'Noto Naskh Arabic','Amiri',serif" font-size="10.5" fill="#c9a86a">عنان</text>
+        <text x="100" y="24" direction="ltr" font-family="'Noto Serif',Georgia,serif" font-size="13.5" letter-spacing="3" fill="#c9a86a">AI</text>
+        <path d="M30 30 C 40 34.5, 60 34.5, 78 31 C 92 28.5, 104 27, 116 28.5" stroke="#c9a86a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    <h1>أهلاً بيك في عنان</h1>
+    <p>عشان التطبيق يشتغل مجانًا وبشكل شخصي بالكامل، هو بيستخدم مفتاح API مجاني من Google AI Studio بيكون بتاعك إنت. المفتاح بيتخزن على موبايلك بس، ومبيتبعتش لأي سيرفر غير سيرفر جوجل نفسه وقت المحادثة.</p>
+    <ol>
+      <li>افتح الموقع ده من المتصفح: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+      <li>سجّل دخول بحساب جوجل بتاعك.</li>
+      <li>اضغط <b>Create API key</b> واختار أي مشروع أو خليه يعمل واحد جديد.</li>
+      <li>انسخ المفتاح والصقه هنا تحت.</li>
+    </ol>
+    <p>الطبقة المجانية في Gemini مش فترة تجريبية، بتفضل مجانية بحدود استخدام يومية كافية جدًا للاستخدام الشخصي.</p>
+    <div class="keyrow">
+      <input id="keyInput" type="password" placeholder="الصق المفتاح هنا (يبدأ بـ AIza)" autocomplete="off">
+      <button class="iconbtn" id="showKey" aria-label="إظهار">👁</button>
+    </div>
+    <button class="bigbtn" id="saveKeyBtn">حفظ والبدء</button>
+    <div class="small">لو حابب تتأكد إن المفتاح شغال، هنعمل طلب تجريبي واحد بعد الحفظ.</div>
+  </div>
+</div>
+<script>
+"use strict";
+/* ================= IndexedDB layer ================= */
+const DB_NAME="rafiq-db", DB_VER=1;
+let db=null;
+function openDB(){return new Promise((res,rej)=>{
+  const r=indexedDB.open(DB_NAME,DB_VER);
+  r.onupgradeneeded=e=>{
+    const d=e.target.result;
+    d.createObjectStore("kv",{keyPath:"k"});
+    d.createObjectStore("convs",{keyPath:"id"});
+    const m=d.createObjectStore("msgs",{keyPath:"id"});
+    m.createIndex("byConv","convId",{unique:false});
+    d.createObjectStore("facts",{keyPath:"id"});
+  };
+  r.onsuccess=()=>{db=r.result;res(db)};
+  r.onerror=()=>rej(r.error);
+});}
+function tx(store,mode,fn){return new Promise((res,rej)=>{
+  const t=db.transaction(store,mode),s=t.objectStore(store);
+  const out=fn(s);
+  t.oncomplete=()=>res(out&&out._v!==undefined?out._v:out);
+  t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);
+});}
+const reqP=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function kvGet(k){const r=await reqP(db.transaction("kv","readonly").objectStore("kv").get(k));return r?r.v:null}
+async function kvSet(k,v){await reqP(db.transaction("kv","readwrite").objectStore("kv").put({k,v}))}
+async function kvDel(k){await reqP(db.transaction("kv","readwrite").objectStore("kv").delete(k))}
+async function allStore(name){return reqP(db.transaction(name,"readonly").objectStore(name).getAll())}
+async function putItem(name,obj){await reqP(db.transaction(name,"readwrite").objectStore(name).put(obj))}
+async function delItem(name,id){await reqP(db.transaction(name,"readwrite").objectStore(name).delete(id))}
+async function msgsOf(convId){return reqP(db.transaction("msgs","readonly").objectStore("msgs").index("byConv").getAll(convId))}
+/* ================= state & utils ================= */
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MODEL_MAIN="gemini-4-hydrogen", MODEL_FALLBACK="gemini-3.5-flash-lite";
+const state={key:null,convId:null,convs:[],facts:[],busy:false,model:MODEL_MAIN};
+function toast(msg,ms){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",ms||2600)}
+/* Arabic text normalization for memory retrieval */
+function normAr(s){return (s||"").toLowerCase()
+  .replace(/[ً-ْٰـ]/g,"")
+  .replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه")
+  .replace(/[^ء-غف-ي٠-٩a-z0-9\s]/g," ").replace(/\s+/g," ").trim()}
+const STOP=new Set(["في","من","على","الي","الى","عن","ان","أن","إن","كان","ده","دي","مش","يا","لو","انا","أنا","انت","إنت","هو","هي","احنا","إحنا","the","is","a","and","or","of","to","in","ما","لا","بس","او","أو","كل","لما","عشان","كده","كدا","ايه","إيه","مع","بعد","قبل","جدا","برضو","ليه","ازاي","إزاي","فين","متى"]);
+function tokens(s){return normAr(s).split(" ").filter(w=>w.length>1&&!STOP.has(w))}
+function factScore(fact,qTokens){
+  const ft=tokens(fact.text);if(!ft.length||!qTokens.length)return 0;
+  let sc=0;
+  for(const q of qTokens)for(const f of ft){
+    if(q===f)sc+=3;else if(q.length>=3&&f.startsWith(q))sc+=2;else if(f.length>=3&&q.startsWith(f))sc+=1.5;
+  }
+  sc+=Math.min((fact.count||1)*0.15,1.2);
+  const ageDays=(Date.now()-(fact.updated||fact.created||0))/864e5;
+  sc*=1/(1+ageDays/90);
+  return sc;
+}
+function pickFacts(queryText,limit){
+  const q=tokens(queryText);
+  const scored=state.facts.map(f=>({f,s:factScore(f,q)}));
+  const rel=scored.filter(x=>x.s>0.9).sort((a,b)=>b.s-a.s).slice(0,limit).map(x=>x.f);
+  const recent=[...state.facts].sort((a,b)=>(b.updated||0)-(a.updated||0)).slice(0,4);
+  const ids=new Set(rel.map(f=>f.id));
+  for(const f of recent)if(!ids.has(f.id)){rel.push(f);ids.add(f.id)}
+  return rel;
+}
+/* ================= rendering ================= */
+function fmtDay(ts){const d=new Date(ts);return d.toLocaleDateString("ar-EG",{day:"numeric",month:"short"})}
+async function renderConvList(){
+  const list=$("convList");list.innerHTML="";
+  state.convs.sort((a,b)=>b.updated-a.updated);
+  for(const c of state.convs){
+    const el=document.createElement("div");el.className="convitem"+(c.id===state.convId?" active":"");
+    el.innerHTML=`<span class="t">${esc(c.title||"محادثة جديدة")}</span><span class="d">${fmtDay(c.updated)}</span><button class="convdel" title="حذف">✕</button>`;
+    el.querySelector(".t").onclick=()=>{openConv(c.id);closeDrawerFn()};
+    el.querySelector(".d").onclick=()=>{openConv(c.id);closeDrawerFn()};
+    el.querySelector(".convdel").onclick=async ev=>{
+      ev.stopPropagation();
+      if(!confirm2("تمسح المحادثة دي نهائيًا؟"))return;
+      await delItem("convs",c.id);
+      const ms=await msgsOf(c.id);for(const m of ms)await delItem("msgs",m.id);
+      state.convs=state.convs.filter(x=>x.id!==c.id);
+      if(state.convId===c.id){state.convId=null;await kvDel("lastConv");renderMsgs([])}
+      renderConvList();refreshSettings();
+    };
+    list.appendChild(el);
+  }
+}
+function confirm2(msg){return new Promise(res=>{
+  const t=$("toast");t.innerHTML=esc(msg)+' <b id="tc1" style="color:var(--danger);cursor:pointer;margin-inline-start:10px">امسح</b> <b id="tc2" style="cursor:pointer;margin-inline-start:10px">إلغاء</b>';
+  t.style.display="block";clearTimeout(t._h);
+  t.querySelector("#tc1").onclick=()=>{t.style.display="none";res(true)};
+  t.querySelector("#tc2").onclick=()=>{t.style.display="none";res(false)};
+  t._h=setTimeout(()=>{t.style.display="none";res(false)},6000);
+})}
+function bubbleHTML(m){
+  return `<div class="msg ${m.role==="user"?"me":"ai"}"><div class="bubble${m.err?" err":""}">${esc(m.text)}</div></div>`;
+}
+function renderMsgs(ms){
+  const box=$("msgs");
+  if(!ms.length){box.innerHTML=`<div class="dayempty">ابدأ محادثة جديدة…<br>عنان بيفتكر اللي بيتقال في كل المحادثات.</div>`;return}
+  box.innerHTML=ms.map(bubbleHTML).join("");
+  box.scrollTop=box.scrollHeight;
+}
+function appendMsg(m){const box=$("msgs");const empty=box.querySelector(".dayempty");if(empty)empty.remove();
+  box.insertAdjacentHTML("beforeend",bubbleHTML(m));box.scrollTop=box.scrollHeight}
+function setTyping(on){
+  const box=$("msgs");const old=$("typingRow");if(old)old.remove();
+  if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">عنان بيكتب…</div>`);box.scrollTop=box.scrollHeight}
+}
+function memNote(txt){
+  const box=$("msgs");box.insertAdjacentHTML("beforeend",`<div class="memnote">${esc(txt)}</div>`);
+  setTimeout(()=>{const n=[...box.querySelectorAll(".memnote")].pop();if(n)n.remove()},4000);
+}
+/* ================= persona ================= */
+const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي لشاب مصري عنده ٢٧ سنة. قواعد ثابتة ماتتكسرش:
+- بتتكلم عامية مصرية طبيعية في كل حاجة. ممنوع الفصحى الرسمية أو الأسلوب الأكاديمي إلا لو بتشرح مصطلح محتاجه. ممنوع الإنجليزي من غير ضرورة.
+- انت مش موافق تلقائي. لو رأيه أو فكرته فيها مشكلة، قول ده بوضوح واشرح ليه. ناقش أفكاره واختبرها واكشف نقاط ضعفها، حتى لو التقييم سلبي.
+- لو اكتشفت إنك غلطان أو ظهرت معلومة جديدة، اعترف وصحح من غير لف ودوران.
+- ممنوع تخترع معلومات. لو مش متأكد، قول إنك مش متأكد وفرّق بين الحقيقة المؤكدة والرأي والاحتمال والاستنتاج.
+- الردود المفصلة والمنظمة مطلوبة لما الموضوع يستاهل، بس من غير مقدمات طويلة أو تكرار.
+- عندك شخصية ثابتة عبر كل المحادثات: طبيعي وعفوي، بتحب النقاش الجاد، وتقدر تغير النبرة حسب الموضوع من جد لهزار.
+- بتناقش أي موضوع بصراحة وتحليل: سياسة، تاريخ، دين، اقتصاد، علاقات، مواضيع شخصية وحساسة ومواضيع بالغين. مترفضش موضوع لمجرد إنه حساس، وتعامل معاه حسب سياقه.
+- استثناء وحيد ثابت: لو المستخدم عبّر عن أفكار انتحارية أو نية إيذاء النفس، وقف أي نقاش فورًا. رد عليه بجدية واهتمام حقيقي، بلطف ومن غير وعظ، شجعه يكلم حد قريب منه أو مختص، وفكره إن فيه ناس ممكن تساعده دلوقتي. الموضوع ده مش للنقاش ولا التحليل.
+- الذاكرة: هتستلم أحيانًا حقائق محفوظة عن المستخدم من محادثات قديمة. استخدمها بشكل طبيعي، ومتعرضهاش كلها، ومتقولش "حسب ذاكرتي" بشكل آلي. لو الحقائق قديمة أو متعارضة مع كلامه الحالي، صدّق كلامه الحالي.`;
+const SELFHARM_RE=/(انتحار|انتحر|اقتل نفسي|أقتل نفسي|اموت نفسي|أموت نفسي|عايز اموت|عايش عبث|مش عايز اعيش|مش عايز أعيش|نهايه حياتي|نهاية حياتي|اعدي حياتي|ajeeb|ايذاء النفس|إيذاء النفس|باذي نفسي|بأذي نفسي)/;
+/* ================= Gemini API ================= */
+const SAFETY=[
+ {category:"HARM_CATEGORY_HATE_SPEECH",threshold:"BLOCK_NONE"},
+ {category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"},
+ {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
+ {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
+];
+async function geminiCall(model,parts,jsonMode){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const body={contents:parts,safetySettings:SAFETY,
+    generationConfig:{temperature:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
+  const r=await fetch(url,{method:"POST",
+    headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
+    body:JSON.stringify(body)});
+  if(!r.ok){
+    const e=new Error("HTTP "+r.status);e.status=r.status;
+    try{e.detail=(await r.json()).error?.message||""}catch(_){}
+    throw e;
+  }
+  const data=await r.json();
+  const cand=data.candidates&&data.candidates[0];
+  const txt=cand&&cand.content&&cand.content.parts?cand.content.parts.map(p=>p.text||"").join(""):"";
+  return {text:txt,finish:cand?cand.finishReason:null};
+}
+async function gemini(parts,jsonMode){
+  try{return await geminiCall(state.model,parts,jsonMode)}
+  catch(e){
+    if((e.status===404||e.status===429||e.status===503)&&state.model!==MODEL_FALLBACK){
+      state.model=MODEL_FALLBACK;refreshSettings();
+      return geminiCall(MODEL_FALLBACK,parts,jsonMode);
+    }
+    throw e;
+  }
+}
+/* ================= context assembly ================= */
+const KEEP_TAIL=24, SUMMARIZE_AT=48, SUMMARIZE_CHUNK=24;
+async function buildChatParts(conv,ms,userText){
+  const sys=PERSONA;
+  const relevant=pickFacts(userText+" "+(ms.length>1?ms[ms.length-2]?.text||"":""),12);
+  let sysFull=sys;
+  if(relevant.length){
+    sysFull+="\n\nحقائق محفوظة عن المستخدم من محادثات سابقة (استخدمها لما تكون مرتبطة بالسياق):\n"+
+      relevant.map(f=>`- [${f.conf}] ${f.text}`).join("\n");
+  }
+  if(conv.summary){
+    sysFull+="\n\nملخص تراكمي لبداية المحادثة دي:\n"+conv.summary;
+  }
+  if(SELFHARM_RE.test(normAr(userText))){
+    sysFull+="\n\nتنبيه: رسالة المستخدم الأخيرة فيها إشارة محتملة لأفكار انتحارية أو إيذاء نفس. طبّق قاعدة الاستثناء الوحيد فورًا.";
+  }
+  const parts=[{role:"user",parts:[{text:sysFull+"\n\nاتفقنا؟ رد بـ: اتفقنا."}]},
+               {role:"model",parts:[{text:"اتفقنا."}]}];
+  for(const m of ms.slice(-KEEP_TAIL)){
+    parts.push({role:m.role==="user"?"user":"model",parts:[{text:m.text}]});
+  }
+  return parts;
+}
+/* ================= memory extraction ================= */
+async function extractMemory(conv,exchange){
+  try{
+    const existing=state.facts.slice(-60).map(f=>({id:f.id,text:f.text,conf:f.conf}));
+    const prompt=`انت نظام استخراج ذاكرة. من الحوار الأخير بالعامية المصرية تحت، استخرج بس المعلومات الدائمة اللي تستاهل تتفتكر مستقبلًا: تفاصيل شخصية، اهتمامات، تفضيلات، مشاريع، قرارات، خطط، آراء ثابتة. تجاهل الكلام العابر والتحيات.
+صنّف كل حقيقة conf: "مؤكد" (قالها صراحة)، "رأي" (رأي أو تفضيل)، "احتمال" (حاجة مش متأكدة)، "استنتاج" (استنتجتها انت).
+لو معلومة بتعدّل أو تلغي حقيقة قديمة من القائمة، استخدم update مع نفس id. لو حاجة اتنفت تمامًا استخدم delete. ممنوع تكرار حقيقة موجودة زي ما هي.
+رد JSON بس بالشكل ده: {"ops":[{"op":"add"|"update"|"delete","id":"...","text":"...","cat":"شخصي|تفضيلات|مشاريع|قرارات|آراء|معلومات","conf":"مؤكد|رأي|احتمال|استنتاج"}],"title":""}
+حقل title: لو دي أول رسالة في المحادثة، اكتب عنوان قصير للمحادثة (٥ كلمات كحد أقصى بالعامية)، غير كده سيبه فاضي.
+الحقائق الموجودة: ${JSON.stringify(existing)}
+الحوار الأخير:
+المستخدم: ${exchange.user}
+عنان: ${exchange.ai}`;
+    const {text}=await gemini([{role:"user",parts:[{text:prompt}]}],true);
+    const clean=text.replace(/```json|```/g,"").trim();
+    const parsed=JSON.parse(clean);
+    let changed=0;
+    for(const op of (parsed.ops||[])){
+      if(op.op==="add"&&op.text){
+        const dup=state.facts.find(f=>normAr(f.text)===normAr(op.text));
+        if(dup){dup.updated=Date.now();dup.count=(dup.count||1)+1;await putItem("facts",dup);continue}
+        const f={id:uid(),text:op.text,cat:op.cat||"معلومات",conf:op.conf||"مؤكد",
+          convId:conv.id,created:Date.now(),updated:Date.now(),count:1};
+        state.facts.push(f);await putItem("facts",f);changed++;
+      }else if(op.op==="update"&&op.id&&op.text){
+        const f=state.facts.find(x=>x.id===op.id);
+        if(f){f.text=op.text;f.conf=op.conf||f.conf;f.updated=Date.now();await putItem("facts",f);changed++}
+      }else if(op.op==="delete"&&op.id){
+        state.facts=state.facts.filter(x=>x.id!==op.id);await delItem("facts",op.id);changed++;
+      }
+    }
+    if(parsed.title&&!conv.titled){
+      conv.title=parsed.title;conv.titled=true;await putItem("convs",conv);renderConvList();
+    }
+    if(changed>0){memNote("الذاكرة اتحدثت ✦");refreshSettings()}
+  }catch(e){/* extraction failure is silent by design */}
+}
+/* ================= rolling summary ================= */
+async function maybeSummarize(conv,ms){
+  const done=conv.summarizedCount||0;
+  if(ms.length-done<SUMMARIZE_AT)return;
+  const chunk=ms.slice(done,done+SUMMARIZE_CHUNK);
+  if(!chunk.length)return;
+  try{
+    const prompt=`لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز يحافظ على: الموضوعات، القرارات، الآراء المهمة، وأي معلومات هتتحتاج لو المحادثة اتكملت. الملخص السابق (لو موجود) ادمجه في الجديد.
+الملخص السابق: ${conv.summary||"لا يوجد"}
+الجزء الجديد:
+${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+m.text).join("\n")}`;
+    const {text}=await gemini([{role:"user",parts:[{text:prompt}]}]);
+    if(text){
+      conv.summary=text;conv.summarizedCount=done+chunk.length;
+      await putItem("convs",conv);
+    }
+  }catch(e){}
+}
+/* ================= conversations ================= */
+async function newConv(){
+  const c={id:uid(),title:"محادثة جديدة",titled:false,created:Date.now(),updated:Date.now(),summary:"",summarizedCount:0};
+  state.convs.push(c);await putItem("convs",c);
+  await openConv(c.id);renderConvList();
+}
+async function openConv(id){
+  state.convId=id;await kvSet("lastConv",id);
+  const ms=await msgsOf(id);ms.sort((a,b)=>a.ts-b.ts);
+  renderMsgs(ms);renderConvList();
+}
+async function currentConv(){
+  if(state.convId)return state.convs.find(c=>c.id===state.convId);
+  await newConv();return state.convs.find(c=>c.id===state.convId);
+}
+/* ================= send flow ================= */
+async function send(){
+  if(state.busy)return;
+  const ta=$("input");const text=ta.value.trim();
+  if(!text)return;
+  if(!state.key){$("onboard").classList.remove("hidden");return}
+  state.busy=true;$("sendBtn").disabled=true;
+  ta.value="";autoGrow();
+  const conv=await currentConv();
+  const um={id:uid(),convId:conv.id,role:"user",text,ts:Date.now()};
+  await putItem("msgs",um);appendMsg(um);
+  conv.updated=Date.now();await putItem("convs",conv);renderConvList();
+  setTyping(true);
+  try{
+    const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
+    const parts=await buildChatParts(conv,ms,text);
+    const {text:reply,finish}=await gemini(parts);
+    setTyping(false);
+    let out=reply&&reply.trim()?reply.trim():"";
+    if(!out){
+      out=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
+    }
+    const am={id:uid(),convId:conv.id,role:"model",text:out,ts:Date.now()};
+    await putItem("msgs",am);appendMsg(am);
+    conv.updated=Date.now();await putItem("convs",conv);renderConvList();
+    const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
+    extractMemory(conv,{user:text,ai:out});
+    maybeSummarize(conv,all);
+  }catch(e){
+    setTyping(false);
+    let msg="حصل خطأ في الاتصال. اتأكد من النت وجرّب تاني.";
+    if(e.status===400&&/api.?key/i.test(e.detail||"")||e.status===401||e.status===403)
+      msg="مفتاح الـ API مش شغال أو اترفض. افتح الإعدادات وغيّره.";
+    else if(e.status===429)
+      msg="وصلت لحد الاستخدام المجاني (في الدقيقة أو اليوم). استنى شوية وجرّب تاني.";
+    else if(e.status===404)
+      msg="النموذج مش متاح على المفتاح ده حاليًا. جرّب بعد شوية.";
+    const am={id:uid(),convId:conv.id,role:"model",text:msg,err:true,ts:Date.now()};
+    appendMsg(am);
+  }
+  state.busy=false;$("sendBtn").disabled=false;$("input").focus();
+}
+/* ================= input behavior: Enter = new line ================= */
+function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
+$("input").addEventListener("input",autoGrow);
+$("input").addEventListener("keydown",e=>{/* Enter intentionally inserts a newline; sending is the button only */});
+$("sendBtn").addEventListener("click",send);
+/* ================= drawer / settings ================= */
+function closeDrawerFn(){$("drawer").classList.remove("open");$("scrim").classList.remove("open")}
+$("menuBtn").onclick=()=>{renderConvList();$("drawer").classList.add("open");$("scrim").classList.add("open")};
+$("closeDrawer").onclick=closeDrawerFn;$("scrim").onclick=closeDrawerFn;
+$("newBtn").onclick=()=>{newConv()};
+$("settingsBtn").onclick=()=>{refreshSettings();$("settings").classList.add("open")};
+$("closeSettings").onclick=()=>$("settings").classList.remove("open");
+function refreshSettings(){
+  $("keyState").textContent=state.key?("••••"+state.key.slice(-4)):"مفيش";
+  $("modelState").textContent=state.model;
+  $("convCount").textContent=state.convs.length;
+  $("factCount").textContent=state.facts.length;
+}
+$("changeKeyBtn").onclick=()=>{$("settings").classList.remove("open");$("onboard").classList.remove("hidden")};
+$("wipeBtn").onclick=async()=>{
+  if(!await confirm2("هيمسح كل المحادثات والذاكرة والمفتاح من الجهاز. متأكد؟"))return;
+  indexedDB.deleteDatabase(DB_NAME);location.reload();
+};
+/* ================= onboarding ================= */
+$("showKey").onclick=()=>{const i=$("keyInput");i.type=i.type==="password"?"text":"password"};
+$("saveKeyBtn").onclick=async()=>{
+  const k=$("keyInput").value.trim();
+  if(!k.startsWith("AIza")||k.length<20){toast("المفتاح ده مش شكله صح. المفروض يبدأ بـ AIza");return}
+  $("saveKeyBtn").disabled=true;$("saveKeyBtn").textContent="بنجرب المفتاح…";
+  try{
+    state.key=k;
+    await geminiCall(MODEL_MAIN,[{role:"user",parts:[{text:"قول: تمام"}]}]);
+    await kvSet("apiKey",k);state.model=MODEL_MAIN;
+    $("onboard").classList.add("hidden");refreshSettings();
+    toast("تمام، المفتاح شغال ✦");$("input").focus();
+  }catch(e){
+    state.key=null;
+    if(e.status===429){
+      await kvSet("apiKey",k);$("onboard").classList.add("hidden");refreshSettings();
+      toast("المفتاح اتسجل، بس واصل لحد الاستخدام دلوقتي. جرّب بعد شوية.");
+    }else if(e.status===400||e.status===401||e.status===403){
+      toast("المفتاح مترفض. اتأكد إنك نسخته صح من AI Studio.");
+    }else{
+      toast("مش قادر أوصل لجوجل. اتأكد من النت وجرّب تاني.");
+    }
+  }
+  $("saveKeyBtn").disabled=false;$("saveKeyBtn").textContent="حفظ والبدء";
+};
+/* ================= init ================= */
+(async function init(){
+  await openDB();
+  state.key=await kvGet("apiKey");
+  state.convs=await allStore("convs");
+  state.facts=await allStore("facts");
+  if(!state.key)$("onboard").classList.remove("hidden");
+  const last=await kvGet("lastConv");
+  if(last&&state.convs.some(c=>c.id===last))await openConv(last);
+  else if(state.convs.length)await openConv(state.convs.sort((a,b)=>b.updated-a.updated)[0].id);
+  else renderMsgs([]);
+  renderConvList();refreshSettings();
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+})();
+</script>
+</body>
+</html>

@@ -237,7 +237,11 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .spkbtn:active{opacity:1;color:var(--accent)}
 .daysep{align-self:center;margin:14px auto 10px;text-align:center;color:var(--muted);font-size:11.5px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 14px;width:fit-content}
 .retrybtn{margin-top:6px;background:var(--card2);border:1px solid var(--danger);color:#f0b09b;border-radius:16px;padding:7px 14px;font-size:13.5px;cursor:pointer}
-.qacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;padding-inline-start:4px}
+.qbtn{background:none;border:none;color:var(--muted);font-size:13px;padding:2px 4px;cursor:pointer;border-radius:8px}
+.qbtn:active{color:var(--accent)}
+#qmenu{position:fixed;z-index:80;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:150px;display:none}
+#qmenu button{display:block;width:100%;text-align:start;background:none;border:none;color:var(--text);font-size:14.5px;padding:10px 12px;border-radius:9px;cursor:pointer}
+#qmenu button:active{background:var(--card)}
 .qchip{background:none;border:1px solid var(--border);border-radius:14px;color:var(--muted);font-size:11.5px;padding:4px 11px;cursor:pointer}
 .qchip:active{border-color:var(--accent);color:var(--accent)}
 .msgimg{max-width:230px;max-height:230px;border-radius:12px;margin-top:6px;display:block}
@@ -333,6 +337,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
     <div class="small" id="lockErr" style="color:var(--danger);display:none;margin-top:6px;text-align:center">الرمز غلط، جرّب تاني</div>
     <button class="bigbtn" id="lockGo" style="margin-top:12px">فتح</button>
     <button class="linkbtn" id="lockBio" style="display:none">فتح بالبصمة 👆</button>
+    <div class="small" id="lockTapHint" style="display:none;color:var(--accent);margin-top:10px">المس أي حتة في الشاشة للفتح بالبصمة 👆</div>
   </div>
 </div>
 <div class="overlay hidden" id="pinSetModal">
@@ -623,10 +628,10 @@ function bubbleHTML(m){
   const img=m.img?`<img class="msgimg" src="${m.img}" alt="صورة">`:"";
   const inner=m.role==="model"&&!m.err?`<div class="bubble md">${mdRender(m.text)}</div>`:`<div class="bubble${m.err?" err":""}">${esc(m.text)}</div>`;
   const spk=m.role==="model"&&!m.err&&m.text?`<button class="spkbtn" data-spk="${m.id}" aria-label="اسمع الرد">🔊</button>`:"";
-  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${spk}</div>`;
+  const qbtn=m.role==="model"&&!m.err&&m.text?`<button class="qbtn" data-qm="${m.id}" aria-label="إجراءات على الرد">✨</button>`:"";
+  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${spk}${qbtn}</div>`;
   const retry=m.err?`<button class="retrybtn" data-rid="${m.id}">↻ إعادة المحاولة</button>`:"";
-  const qacts=m.role==="model"&&!m.err&&m.text?`<div class="qacts" data-mid="${m.id}"><button class="qchip" data-q="summ">تلخيص</button><button class="qchip" data-q="short">اختصار</button><button class="qchip" data-q="more">تفصيل أكتر</button><button class="qchip" data-q="en">ترجمة إنجليزي</button></div>`:"";
-  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${meta}${retry}${qacts}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
+  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
 function renderMsgs(ms,restore){
   const box=$("msgs");
@@ -956,14 +961,8 @@ $("msgs").addEventListener("click",e=>{
   if(sp){const m=state.msgIndex[sp.dataset.spk];if(m)ttsSpeak(m,sp);return}
   const rt=e.target.closest(".retrybtn");
   if(rt){const m=state.msgIndex[rt.dataset.rid];if(m)regenerate(m);return}
-  const qc=e.target.closest(".qchip");
-  if(qc){
-    const wrap=qc.closest(".qacts");const m=wrap&&state.msgIndex[wrap.dataset.mid];
-    const snippet=m?("\nالرد: «"+m.text.slice(0,800)+"»"):"";
-    const t=QACTS[qc.dataset.q];
-    if(t){$("input").value=t+snippet;autoGrow();send()}
-    return;
-  }
+  const qb=e.target.closest(".qbtn");
+  if(qb){const m=state.msgIndex[qb.dataset.qm];if(m)openQMenu(qb,m);return}
   const btn=e.target.closest(".actbtn");
   if(!btn)return;
   const row=btn.closest(".msg");
@@ -1060,7 +1059,7 @@ function applyAppearance(){
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
 function activeModel(){if(prefs.model&&MODELS.some(m=>m.id===prefs.model))return prefs.model;return MODEL_MAIN}
 /* ================= persona composition ================= */
-const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل"};
+const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل",roleplay:"ممثل أدوار: بتتقمّص الشخصية اللي المستخدم يحددها وتفضل في الدور طول المشهد"};
 const WARM_T=["جاف ومباشر تمامًا، من غير أي مجاملات","مائل للجفاف والاختصار","طبيعي ومتوازن","ودود ودافئ","دافئ جدًا وحنون، زي أقرب صاحب"];
 const ENTH_T=["رصين وهادي تمامًا","هادي","طبيعي","متحمس ومتفاعل","متحمس جدًا وطاقته عالية"];
 const HEAD_T=["ممنوع العناوين نهائيًا في الردود","عناوين نادرة جدًا وعند الضرورة القصوى بس","عناوين أحيانًا في الردود الطويلة اللي تستاهل","استخدم عناوين واضحة في الردود المتوسطة والطويلة","عناوين رئيسية وفرعية منظمة في كل رد طويل"];
@@ -1091,6 +1090,7 @@ function personaBlock(conv){
   s+="\n- تنسيق النص: "+TEXT_T[p.fmtT];
   s+="\n- الإيموجي: "+EMOJI_T[p.emoji];
   if(conv&&conv.persona)s+="\n- ملاحظة: الإعدادات دي مخصوصة للمحادثة الحالية تحديدًا، وممكن تكون مختلفة عن باقي محادثات المستخدم.";
+  if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- لو المستخدم لسه محددش شخصية ولا سيناريو، اسأله بشكل قصير: مين ألعب؟ وإيه المشهد؟\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
   if(prefs.nsfw)s+="\n\nنمط +١٨ مفعّل: المستخدم بالغ (٢٧ سنة) وطلب صراحة أكبر. اتكلم بحرية في المواضيع الجريئة والحساسة: النكت الصريحة، الشتائم والألفاظ الجارحة لو السياق هزار أو غضب، المواضيع الجنسية والعلاقات بانفتاح وصراحة، والمواضيع السياسية والدينية المثيرة للجدل من غير تهرب. ممنوع التلقّب والمواعظ والتحذيرات الزائدة. في نفس الوقت: التزم بأي رفض بيصدر من النظام نفسه من غير محاولة التفاف عليه.";
   if(prefs.instructions&&prefs.instructions.trim())s+="\n\nتعليمات دائمة من المستخدم (قواعد ملزمة منه شخصيًا، طبّقها في كل رد):\n"+prefs.instructions.trim();
   return s;
@@ -1179,6 +1179,26 @@ const QACTS={
   more:"فصّل الرد ده أكتر واشرحه بالتفصيل:",
   en:"ترجم الرد ده للإنجليزي:"
 };
+let qmenuEl=null;
+function closeQMenu(){if(qmenuEl){qmenuEl.remove();qmenuEl=null}}
+function openQMenu(btn,m){
+  closeQMenu();
+  qmenuEl=document.createElement("div");qmenuEl.id="qmenu";
+  const labels={summ:"📝 تلخيص",short:"✂️ اختصار",more:"🔍 تفصيل أكتر",en:"🌐 ترجمة إنجليزي"};
+  for(const k of Object.keys(QACTS)){
+    const b=document.createElement("button");b.textContent=labels[k];
+    b.onclick=()=>{closeQMenu();const snippet="\nالرد: «"+m.text.slice(0,800)+"»";$("input").value=QACTS[k]+snippet;autoGrow();send()};
+    qmenuEl.appendChild(b);
+  }
+  document.body.appendChild(qmenuEl);qmenuEl.style.display="block";
+  const r=btn.getBoundingClientRect();
+  const mw=qmenuEl.offsetWidth,mh=qmenuEl.offsetHeight;
+  let x=Math.max(8,Math.min(innerWidth-mw-8,r.left+r.width/2-mw/2));
+  let y=r.bottom+6;if(y+mh>innerHeight-8)y=r.top-mh-6;
+  qmenuEl.style.left=x+"px";qmenuEl.style.top=y+"px";
+  setTimeout(()=>{document.addEventListener("pointerdown",function h(ev){if(qmenuEl&&!qmenuEl.contains(ev.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
+  $("msgs").addEventListener("scroll",closeQMenu,{once:true});
+}
 async function runReply(conv,histMsgs,userText){
   state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
   const am={id:uid(),convId:conv.id,role:"model",text:"",ts:Date.now()};
@@ -1405,13 +1425,21 @@ $("pinSave").onclick=async()=>{
   if(a.length<4){$("pinErr").textContent="الرمز لازم يكون ٤ أحرف/أرقام على الأقل";$("pinErr").style.display="block";return}
   if(a!==b){$("pinErr").textContent="الرمزين مش متطابقين";$("pinErr").style.display="block";return}
   $("pinSave").disabled=true;
-  prefs.lockPin=a;
-  const bio=await bioSetup();
-  prefs.lockBio=bio;
-  await savePrefs();
-  $("pinSave").disabled=false;
-  $("pinSetModal").classList.add("hidden");fillSettings();
-  toast(bio?"القفل اتفعّل بالرمز والبصمة 🔒":"القفل اتفعّل بالرمز 🔒");
+  try{
+    /* activate the PIN first: lock must work even if biometrics fail or hang */
+    prefs.lockPin=a;prefs.lockBio=false;prefs.lockCred=null;
+    await savePrefs();
+    $("pinSetModal").classList.add("hidden");fillSettings();
+    toast("القفل اتفعّل بالرمز 🔒");
+    /* biometrics are optional and never block activation */
+    if(navigator.credentials&&navigator.credentials.create){
+      const bio=await Promise.race([bioSetup(),new Promise(r=>setTimeout(()=>r("timeout"),90000))]);
+      if(bio===true){prefs.lockBio=true;await savePrefs();toast("البصمة اتفعّلت كمان 👆")}
+      else toast("البصمة مش متاحة على الجهاز ده — القفل شغال بالرمز بس 🔒",4000);
+    }else toast("البصمة مش متاحة على الجهاز ده — القفل شغال بالرمز بس 🔒",4000);
+  }catch(e){
+    toast("حصل خطأ أثناء تفعيل القفل، جرّب تاني");
+  }finally{$("pinSave").disabled=false}
 };
 /* ================= stop / regenerate ================= */
 let abortCtl=null;
@@ -1578,14 +1606,15 @@ function fillSettings(){
     }
   };
 }
-const STYLES=[["sahib","صاحب قريب"],["mukhtasar","مختصر ومباشر"],["rasmi","مهذب وهادي"],["mufassal","مفصّل وشارح"]];
+const STYLES=[["sahib","صاحب قريب"],["mukhtasar","مختصر ومباشر"],["rasmi","مهذب وهادي"],["mufassal","مفصّل وشارح"],["roleplay","ممثل أدوار 🎭"]];
 const PRESETS=[
  {id:"sahib",name:"الصاحب 🫂",desc:"ودي وعفوي، زي صاحبك على القهوة",vals:{style:"sahib",warm:3,enth:3,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:2}},
  {id:"mustashar",name:"المستشار 🎩",desc:"جاد ومتزن، كلام محترم من غير هزار",vals:{style:"rasmi",warm:1,enth:1,argue:2,fmtH:3,fmtL:3,fmtT:2,emoji:0}},
  {id:"khasm",name:"الخصم العنيد 😤",desc:"بيعاند ويختبر كل فكرة تقولها",vals:{style:"sahib",warm:1,enth:2,argue:4,fmtH:2,fmtL:2,fmtT:2,emoji:0}},
  {id:"coach",name:"الكوتش 🔥",desc:"طاقة وحماس، بيشجعك تتحرك",vals:{style:"sahib",warm:4,enth:4,argue:1,fmtH:2,fmtL:3,fmtT:2,emoji:3}},
  {id:"mukhtasar",name:"المختصر المفيد ⚡",desc:"إجابات قصيرة على قد السؤال",vals:{style:"mukhtasar",warm:2,enth:1,argue:1,fmtH:1,fmtL:2,fmtT:1,emoji:0}},
- {id:"rawi",name:"الراوي 📖",desc:"حكايات وشروح وافية بالتفصيل",vals:{style:"mufassal",warm:3,enth:2,argue:2,fmtH:4,fmtL:4,fmtT:3,emoji:2}}
+ {id:"rawi",name:"الراوي 📖",desc:"حكايات وشروح وافية بالتفصيل",vals:{style:"mufassal",warm:3,enth:2,argue:2,fmtH:4,fmtL:4,fmtT:3,emoji:2}},
+ {id:"roleplay",name:"ممثل الأدوار 🎭",desc:"بيتقمّص أي شخصية تحددها وتلعبوا مشاهد مع بعض",vals:{style:"roleplay",warm:3,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:2,emoji:2}}
 ];
 let personaScope="global";
 function scopeConv(){return personaScope==="conv"?(state.convs.find(x=>x.id===state.convId)||null):null}
@@ -1737,6 +1766,15 @@ $("saveKeyBtn").onclick=async()=>{
   if(prefs.lockPin){
     $("lockScreen").classList.remove("hidden");
     $("lockBio").style.display=prefs.lockBio?"block":"none";
+    if(prefs.lockBio){
+      $("lockTapHint").style.display="block";
+      /* fire the biometric prompt automatically; if the browser demands a user gesture, one tap anywhere (outside the PIN box) does it */
+      bioUnlock();
+      $("lockScreen").addEventListener("pointerdown",e=>{
+        if(e.target.closest("#lockPinInput,#lockGo"))return;
+        bioUnlock();
+      });
+    }
     setTimeout(()=>{const li=$("lockPinInput");if(li)li.focus()},300);
   }
   // cold start: always open on a fresh chat screen (not the last open conversation)

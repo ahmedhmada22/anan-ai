@@ -52,14 +52,17 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 #drawer .dhead b{font-size:16px}
 #convList{flex:1;overflow-y:auto;padding:8px}
 .convitem{
-  display:flex;align-items:center;gap:8px;width:100%;text-align:start;
-  padding:11px 12px;border-radius:12px;margin-bottom:4px;background:transparent;
+  display:flex;align-items:center;gap:6px;width:100%;text-align:start;
+  padding:10px 12px;border-radius:14px;margin:1px 4px;background:transparent;
 }
 .convitem.active{background:var(--card)}
-.convitem .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15.5px}
-.convitem .d{color:var(--muted);font-size:12px;flex:none}
-.convdel{color:var(--muted);flex:none;width:30px;height:30px;border-radius:8px;font-size:16px}
-.convdel:active{color:var(--danger)}
+.convitem:active{background:var(--card2)}
+.convitem .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;font-weight:600}
+.pinmark{font-size:10px;opacity:.55;margin-inline-end:4px}
+.cmeta{color:var(--muted);font-size:11px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cvmenu{flex:none;width:32px;height:32px;border-radius:50%;color:var(--muted);font-size:17px;background:none;border:none;display:flex;align-items:center;justify-content:center}
+.cvmenu:active{background:var(--card2);color:var(--text)}
+#qmenu button.danger{color:var(--danger)}
 /* ===== chat ===== */
 #msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;scroll-behavior:smooth}
 .dayempty{color:var(--muted);text-align:center;margin-top:22vh;font-size:15px;padding:0 30px}
@@ -99,20 +102,32 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .memnote{color:var(--muted);font-size:12px;text-align:center;margin:2px 0 8px}
 /* ===== composer ===== */
 #composer{
-  flex:none;display:flex;gap:8px;align-items:flex-end;
-  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-  background:var(--bg2);border-top:1px solid var(--border);
+  flex:none;display:flex;
+  padding:8px 12px calc(10px + env(safe-area-inset-bottom));
+  background:var(--bg);
+}
+#compill{
+  flex:1;display:flex;gap:2px;align-items:flex-end;
+  background:var(--card);border:1px solid var(--border);border-radius:28px;
+  padding:5px 8px;
 }
 #input{
-  flex:1;resize:none;border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--card);color:var(--text);padding:11px 14px;font:inherit;font-size:var(--msgfont,16.5px);
+  flex:1;resize:none;border:none;background:transparent;color:var(--text);
+  padding:9px 6px;font:inherit;font-size:var(--msgfont,16.5px);
   max-height:150px;line-height:1.55;outline:none;
 }
-#input:focus{border-color:var(--accent)}
-#sendBtn{
-  width:48px;height:48px;border-radius:14px;background:var(--accent);color:#1c2030;
-  display:flex;align-items:center;justify-content:center;flex:none;
+#input::placeholder{color:var(--muted)}
+.cbtn{
+  flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  background:none;border:none;border-radius:50%;color:var(--muted);margin-bottom:2px;
 }
+.cbtn:active{color:var(--text)}
+#sendBtn{
+  width:36px;height:36px;border-radius:50%;background:transparent;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;flex:none;margin-bottom:2px;
+  transition:color .15s,background .15s;
+}
+#sendBtn.ready{color:var(--accent)}
 #sendBtn:disabled{opacity:.45}
 #sendBtn svg{transform:scaleX(-1)}
 /* ===== onboarding / modal ===== */
@@ -199,9 +214,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .dsearch{padding:10px 12px 4px}
 .dsearch input{width:100%;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:9px 12px;font:inherit;font-size:14.5px;outline:none}
 .dsearch input:focus{border-color:var(--accent)}
-.convpin{flex:none;width:30px;height:30px;border-radius:8px;font-size:13px;opacity:.35;filter:grayscale(1)}
-.convpin.on{opacity:1;filter:none}
-.cmid{flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer}
+.cmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;cursor:pointer}
 .snip{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .searchempty{color:var(--muted);text-align:center;padding:20px;font-size:14px}
 #sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 22px 10px}
@@ -248,11 +261,11 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 #imgBar{display:none;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border-top:1px solid var(--border)}
 #imgBar img{height:52px;width:52px;object-fit:cover;border-radius:10px;border:1px solid var(--border)}
 #imgBar button{background:var(--card2);border:none;color:var(--text);border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer}
-.cbtn{flex:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:17px}
+
 #micBtn.rec{color:var(--danger);animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.4}}
 .convsep{color:var(--muted);font-size:11.5px;padding:10px 14px 4px;border-top:1px solid var(--border);margin-top:6px}
-.convitem .ctime{color:var(--muted);font-size:11px;flex:none}
+
 .presetgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .presetcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 12px;text-align:start;cursor:pointer;color:var(--text)}
 .presetcard b{display:block;font-size:14.5px;margin-bottom:3px}
@@ -292,12 +305,18 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
   <div id="composer">
-    <button class="iconbtn cbtn" id="attachBtn" aria-label="إرفاق صورة">📎</button>
-    <textarea id="input" rows="1" placeholder="اكتب رسالتك…"></textarea>
-    <button class="iconbtn cbtn" id="micBtn" aria-label="إدخال صوتي" style="display:none">🎙</button>
-    <button id="sendBtn" aria-label="إرسال">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1c2030" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
-    </button>
+    <div id="compill">
+      <button class="cbtn" id="attachBtn" aria-label="إرفاق صورة">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l8.57-8.57A4 4 0 1118 8.84l-8.59 8.57a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <textarea id="input" rows="1" placeholder="اكتب رسالتك…"></textarea>
+      <button class="cbtn" id="micBtn" aria-label="إدخال صوتي" style="display:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><path d="M12 19v3"/></svg>
+      </button>
+      <button id="sendBtn" aria-label="إرسال">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 <button id="jumpBtn"></button>
@@ -522,14 +541,14 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const MODEL_MAIN="gemini-4-hydrogen", MODEL_FALLBACK="gemini-3.5-flash-lite";
 const MODELS=[
- {id:"gemini-4-hydrogen",name:"Gemini 4 Hydrogen",desc:"الأقوى والأذكى — الافتراضي"},
- {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",desc:"متوازن: سرعة كويسة وذكاء كويس"},
- {id:"gemini-3.6-flash",name:"Gemini 3.6 Flash",desc:"أسرع، للردود اليومية"},
- {id:"gemini-3.5-flash-lite",name:"Gemini 3.5 Flash-Lite",desc:"الأخف والأسرع — الاحتياطي"},
- {id:"gemini-3.1-flash-lite",name:"Gemini 3.1 Flash-Lite",desc:"خفيف من الجيل الأقدم"},
- {id:"gemma-4-31b-it",name:"Gemma 4 31B",desc:"مفتوح المصدر من جوجل — ذكي وبيدعم الصور"},
- {id:"gemma-4-26b-a4b-it",name:"Gemma 4 26B A4B",desc:"مفتوح المصدر وسريع — معمول للردود الطويلة"},
- {id:"gemma-3-27b-it",name:"Gemma 3 27B",desc:"Gemma الجيل اللي قبله — مجاني برضه"}
+ {id:"gemini-4-hydrogen",name:"Gemini 4 Hydrogen",desc:"الأقوى والأذكى — الافتراضي",rpm:20,rpd:250},
+ {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",desc:"متوازن: سرعة كويسة وذكاء كويس",rpm:15,rpd:500},
+ {id:"gemini-3.6-flash",name:"Gemini 3.6 Flash",desc:"أسرع، للردود اليومية",rpm:15,rpd:500},
+ {id:"gemini-3.5-flash-lite",name:"Gemini 3.5 Flash-Lite",desc:"الأخف والأسرع — الاحتياطي",rpm:30,rpd:1000},
+ {id:"gemini-3.1-flash-lite",name:"Gemini 3.1 Flash-Lite",desc:"خفيف من الجيل الأقدم",rpm:30,rpd:1000},
+ {id:"gemma-4-31b-it",name:"Gemma 4 31B",desc:"مفتوح المصدر من جوجل — ذكي وبيدعم الصور",rpm:30,rpd:500},
+ {id:"gemma-4-26b-a4b-it",name:"Gemma 4 26B A4B",desc:"مفتوح المصدر وسريع — معمول للردود الطويلة",rpm:30,rpd:500},
+ {id:"gemma-3-27b-it",name:"Gemma 3 27B",desc:"Gemma الجيل اللي قبله — مجاني برضه",rpm:30,rpd:500}
 ];
 const state={key:null,convId:null,convs:[],facts:[],busy:false,model:MODEL_MAIN};
 function toast(msg,ms){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",ms||2600)}
@@ -585,26 +604,15 @@ async function renderConvList(){
       const grp=c.pinned?"pin":"rest";
       if(grp!==sepState){list.insertAdjacentHTML("beforeend",`<div class="convsep">${grp==="pin"?"مثبتة 📌":"كل المحادثات"}</div>`);sepState=grp}
     }
-    el.innerHTML=`<button class="convpin${c.pinned?" on":""}" title="تثبيت">📌</button><div class="cmid"><span class="t">${esc(c.title||"محادثة جديدة")}</span>${snippets[c.id]?`<span class="snip">${esc(snippets[c.id])}</span>`:""}</div><span class="ctime">${fmtDay(c.lastTs||c.updated)} ${fmtTime(c.lastTs||c.updated)}</span><button class="convdel" title="حذف">✕</button>`;
+    el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${esc(c.title||"محادثة جديدة")}</span><span class="cmeta">${snippets[c.id]?esc(snippets[c.id])+" · ":""}${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
     el.querySelector(".cmid").onclick=()=>{openConv(c.id);closeDrawerFn()};
-    el.querySelector(".ctime").onclick=()=>{openConv(c.id);closeDrawerFn()};
+    el.querySelector(".cvmenu").onclick=ev=>{ev.stopPropagation();openConvMenu(ev.currentTarget,c)};
     el.querySelector(".cmid").addEventListener("dblclick",()=>renameConv(c));
     let cLp=null;
     el.addEventListener("touchstart",()=>{cLp=setTimeout(()=>renameConv(c),550)},{passive:true});
     el.addEventListener("touchend",()=>clearTimeout(cLp));
     el.addEventListener("touchmove",()=>clearTimeout(cLp));
-    el.querySelector(".convpin").onclick=async ev=>{
-      ev.stopPropagation();c.pinned=!c.pinned;await putItem("convs",c);renderConvList();
-    };
-    el.querySelector(".convdel").onclick=async ev=>{
-      ev.stopPropagation();
-      if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
-      await delItem("convs",c.id);
-      const ms=await msgsOf(c.id);for(const m of ms)await delItem("msgs",m.id);
-      state.convs=state.convs.filter(x=>x.id!==c.id);
-      if(state.convId===c.id){state.convId=null;await kvDel("lastConv");renderMsgs([])}
-      renderConvList();refreshSettings();
-    };
+
     list.appendChild(el);
   }
 }
@@ -723,14 +731,15 @@ async function geminiCall(model,parts,jsonMode,sig){
   const txt=cand&&cand.content&&cand.content.parts?cand.content.parts.map(p=>p.text||"").join(""):"";
   return {text:txt,finish:cand?cand.finishReason:null,model:model};
 }
+function hasImgParts(parts){return (parts||[]).some(c=>(c.parts||[]).some(p=>p.inline_data))}
 async function gemini(parts,jsonMode,sig){
-  try{const r=await geminiCall(state.model,parts,jsonMode,sig);bumpUsage(r.model);return r}
+  try{const r=await geminiCall(state.model,parts,jsonMode,sig);bumpUsage(r.model,hasImgParts(parts));return r}
   catch(e){
     if(e.aborted)throw e;
     if(e.status===404||e.status===429||e.status===503){
       const other=state.model===MODEL_MAIN?MODEL_FALLBACK:MODEL_MAIN;
       state.model=other;refreshSettings();
-      const r=await geminiCall(other,parts,jsonMode,sig);bumpUsage(r.model);return r;
+      const r=await geminiCall(other,parts,jsonMode,sig);bumpUsage(r.model,hasImgParts(parts));return r;
     }
     throw e;
   }
@@ -793,7 +802,7 @@ async function geminiStreamCall(model,parts,sig,onChunk){
   }
   wt.cancel();
   if(got===0&&finish===null){const e=new Error("nostream");e.nostream=true;throw e}
-  bumpUsage(model);
+  bumpUsage(model,hasImgParts(parts));
   return finish;
 }
 async function geminiStream(parts,sig,onChunk){
@@ -1008,7 +1017,7 @@ async function send(){
   }
   if(!state.key){$("onboard").classList.remove("hidden");return}
   const conv=await currentConv();
-  ta.value="";autoGrow();
+  ta.value="";autoGrow();syncSendBtn();
   if(conv.draft){conv.draft="";putItem("convs",conv)}
   const um={id:uid(),convId:conv.id,role:"user",text,ts:Date.now()};
   if(pendingImg){um.img=pendingImg.dataUrl;um.imgMime=pendingImg.mime;clearPendingImg()}
@@ -1025,8 +1034,9 @@ async function send(){
 }
 /* ================= input behavior: Enter = new line ================= */
 function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
+function syncSendBtn(){$("sendBtn").classList.toggle("ready",!!$("input").value.trim()&&!state.busy)}
 $("input").addEventListener("input",()=>{
-  autoGrow();
+  autoGrow();syncSendBtn();
   clearTimeout($("input")._d);$("input")._d=setTimeout(savePlace,600);
 });
 $("input").addEventListener("keydown",e=>{/* Enter intentionally inserts a newline; sending is the button only */});
@@ -1059,7 +1069,7 @@ function applyAppearance(){
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
 function activeModel(){if(prefs.model&&MODELS.some(m=>m.id===prefs.model))return prefs.model;return MODEL_MAIN}
 /* ================= persona composition ================= */
-const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل",roleplay:"ممثل أدوار: بتتقمّص الشخصية اللي المستخدم يحددها وتفضل في الدور طول المشهد"};
+const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل",roleplay:"ممثل أدوار: بتتقمّص الشخصية اللي المستخدم يحددها وتفضل في الدور طول المشهد",adaptive:"متكيف: بتقرأ جو المحادثة وبتتأقلم معاه لوحدك — جاد لما الموضوع جاد، ولعوب وهزار لما الكلام هزار"};
 const WARM_T=["جاف ومباشر تمامًا، من غير أي مجاملات","مائل للجفاف والاختصار","طبيعي ومتوازن","ودود ودافئ","دافئ جدًا وحنون، زي أقرب صاحب"];
 const ENTH_T=["رصين وهادي تمامًا","هادي","طبيعي","متحمس ومتفاعل","متحمس جدًا وطاقته عالية"];
 const HEAD_T=["ممنوع العناوين نهائيًا في الردود","عناوين نادرة جدًا وعند الضرورة القصوى بس","عناوين أحيانًا في الردود الطويلة اللي تستاهل","استخدم عناوين واضحة في الردود المتوسطة والطويلة","عناوين رئيسية وفرعية منظمة في كل رد طويل"];
@@ -1090,6 +1100,7 @@ function personaBlock(conv){
   s+="\n- تنسيق النص: "+TEXT_T[p.fmtT];
   s+="\n- الإيموجي: "+EMOJI_T[p.emoji];
   if(conv&&conv.persona)s+="\n- ملاحظة: الإعدادات دي مخصوصة للمحادثة الحالية تحديدًا، وممكن تكون مختلفة عن باقي محادثات المستخدم.";
+  if(p.style==="adaptive")s+="\n\nالوضع المتكيف مفعّل 🔄:\n- اقرأ سياق المحادثة وموضوعها في كل رسالة، واضبط أسلوبك تلقائيًا من غير ما المستخدم يطلب.\n- الموضوع جاد أو حزين أو مهم؟ كون هادي ومركز ومتعاطف، من غير هزار ولا إيموجي زيادة.\n- الكلام هزار وونس؟ كون خفيف وعفوي وبهزر معاه طبيعي.\n- الموضوع تقني أو دراسة؟ كون منظم وواضح بالتفصيل اللي يستاهله.\n- طوّل وقصّر ردك حسب حجم السؤال وجو الكلام: رسالة قصيرة بتستاهل رد قصير.\n- التحول بين الأجواء يكون طبيعي وسلس، ومتعلّقش بالمستخدم إنك بتغير الوضع.";
   if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- لو المستخدم لسه محددش شخصية ولا سيناريو، اسأله بشكل قصير: مين ألعب؟ وإيه المشهد؟\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
   if(prefs.nsfw)s+="\n\nنمط +١٨ مفعّل: المستخدم بالغ (٢٧ سنة) وطلب صراحة أكبر. اتكلم بحرية في المواضيع الجريئة والحساسة: النكت الصريحة، الشتائم والألفاظ الجارحة لو السياق هزار أو غضب، المواضيع الجنسية والعلاقات بانفتاح وصراحة، والمواضيع السياسية والدينية المثيرة للجدل من غير تهرب. ممنوع التلقّب والمواعظ والتحذيرات الزائدة. في نفس الوقت: التزم بأي رفض بيصدر من النظام نفسه من غير محاولة التفاف عليه.";
   if(prefs.instructions&&prefs.instructions.trim())s+="\n\nتعليمات دائمة من المستخدم (قواعد ملزمة منه شخصيًا، طبّقها في كل رد):\n"+prefs.instructions.trim();
@@ -1181,6 +1192,36 @@ const QACTS={
 };
 let qmenuEl=null;
 function closeQMenu(){if(qmenuEl){qmenuEl.remove();qmenuEl=null}}
+function openConvMenu(btn,c){
+  closeQMenu();
+  qmenuEl=document.createElement("div");qmenuEl.id="qmenu";
+  const items=[
+    {t:c.pinned?"📌 إلغاء التثبيت":"📌 تثبيت",fn:async()=>{c.pinned=!c.pinned;await putItem("convs",c);renderConvList()}},
+    {t:"✏️ إعادة تسمية",fn:()=>renameConv(c)},
+    {t:"🗑 حذف المحادثة",danger:true,fn:async()=>{
+      if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
+      await delItem("convs",c.id);
+      const ms=await msgsOf(c.id);for(const m of ms)await delItem("msgs",m.id);
+      state.convs=state.convs.filter(x=>x.id!==c.id);
+      if(state.convId===c.id){state.convId=null;await kvDel("lastConv");renderMsgs([])}
+      renderConvList();refreshSettings();
+    }}
+  ];
+  for(const it of items){
+    const b=document.createElement("button");b.textContent=it.t;
+    if(it.danger)b.classList.add("danger");
+    b.onclick=()=>{closeQMenu();it.fn()};
+    qmenuEl.appendChild(b);
+  }
+  document.body.appendChild(qmenuEl);qmenuEl.style.display="block";
+  const r=btn.getBoundingClientRect();
+  const mw=qmenuEl.offsetWidth,mh=qmenuEl.offsetHeight;
+  let x=Math.max(8,Math.min(innerWidth-mw-8,r.left+r.width/2-mw/2));
+  let y=r.bottom+6;if(y+mh>innerHeight-8)y=r.top-mh-6;
+  qmenuEl.style.left=x+"px";qmenuEl.style.top=y+"px";
+  setTimeout(()=>{document.addEventListener("pointerdown",function h(ev){if(qmenuEl&&!qmenuEl.contains(ev.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
+  $("convList").addEventListener("scroll",closeQMenu,{once:true});
+}
 function openQMenu(btn,m){
   closeQMenu();
   qmenuEl=document.createElement("div");qmenuEl.id="qmenu";
@@ -1200,6 +1241,19 @@ function openQMenu(btn,m){
   $("msgs").addEventListener("scroll",closeQMenu,{once:true});
 }
 async function runReply(conv,histMsgs,userText){
+  /* local quota estimate: stop early with a clear message instead of hitting a 429 */
+  const lim=modelLimits(state.model);const us=await usageState(state.model);
+  const mname=(MODELS.find(x=>x.id===state.model)||{}).name||state.model;
+  if(us.dayUsed>=lim.rpd||us.minUsed>=lim.rpm){
+    const txt=us.dayUsed>=lim.rpd
+      ?`وصلت للحد اليومي التقديري لنموذج ${mname} (~${lim.rpd} طلب في اليوم). جرّب نموذج تاني من الإعدادات، أو استنى لما العدّاد يصفر حوالي الساعة ١٠ الصبح. الرقم الرسمي لمشروعك في AI Studio.`
+      :`طلباتك على ${mname} وصلت للحد التقديري في الدقيقة (~${lim.rpm} طلب/دقيقة). استنى أقل من دقيقة وجرّب تاني، أو بدّل لنموذج تاني من الإعدادات.`;
+    const em={id:uid(),convId:conv.id,role:"model",text:txt,err:true,ts:Date.now()};
+    await putItem("msgs",em);
+    conv.updated=Date.now();conv.lastTs=Date.now();conv.preview="⚠️ "+txt.slice(0,60);await putItem("convs",conv);
+    appendMsg(em);
+    renderConvList();return;
+  }
   state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
   const am={id:uid(),convId:conv.id,role:"model",text:"",ts:Date.now()};
   let bubbleEl=null,lastPaint=0,paintTimer=null,started=false;
@@ -1446,8 +1500,8 @@ let abortCtl=null;
 const SEND_SVG=$("sendBtn").innerHTML;
 function showStop(on){
   const b=$("sendBtn");
-  if(on){b.innerHTML='<span style="font-size:18px;font-weight:700;line-height:1">■</span>';b.disabled=false;b.classList.add("stopping")}
-  else{b.innerHTML=SEND_SVG;b.disabled=false;b.classList.remove("stopping")}
+  if(on){b.innerHTML='<span style="font-size:16px;font-weight:700;line-height:1">■</span>';b.disabled=false;b.classList.add("stopping");b.classList.remove("ready")}
+  else{b.innerHTML=SEND_SVG;b.disabled=false;b.classList.remove("stopping");syncSendBtn()}
 }
 async function regenerate(am){
   if(state.busy)return;
@@ -1464,18 +1518,35 @@ async function regenerate(am){
 $("msRegen").onclick=()=>{const m=sheetMsg;closeSheet();if(m&&m.role==="model")regenerate(m)};
 /* ================= usage counting ================= */
 function localDay(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-async function bumpUsage(model){
+async function bumpUsage(model,img){
   try{const u=(await kvGet("usage"))||{};const day=localDay();
-  u[day]=u[day]||{};u[day][model]=(u[day][model]||0)+1;await kvSet("usage",u)}catch(e){}
+  u[day]=u[day]||{};u[day][model]=(u[day][model]||0)+1;
+  if(img)u[day][model+":img"]=(u[day][model+":img"]||0)+1;
+  u.__min=u.__min||{};const mn=Math.floor(Date.now()/60000);
+  const b=u.__min[model];
+  if(b&&b.m===mn)b.n++;else u.__min[model]={m:mn,n:1};
+  await kvSet("usage",u)}catch(e){}
 }
+async function usageState(model){
+  const u=(await kvGet("usage"))||{};const today=u[localDay()]||{};
+  const minB=(u.__min||{})[model];const minNow=Math.floor(Date.now()/60000);
+  return {dayUsed:today[model]||0,imgUsed:today[model+":img"]||0,minUsed:(minB&&minB.m===minNow)?minB.n:0};
+}
+function modelLimits(id){const m=MODELS.find(x=>x.id===id)||MODELS[0];return {rpm:m.rpm||15,rpd:m.rpd||500}}
 async function renderUsage(){
   const u=(await kvGet("usage"))||{};const day=localDay();const today=u[day]||{};
-  const names={};for(const m of MODELS)names[m.id]=m.name;
   let rows="";
-  for(const m of MODELS)if(today[m.id]||m.id===state.model)rows+=`<div class="prow"><span>${names[m.id]}</span><span class="pval">${today[m.id]||0} طلب النهارده</span></div>`;
-  const total=Object.values(today).reduce((a,b)=>a+b,0);
+  for(const m of MODELS){
+    const st=await usageState(m.id);
+    if(!st.dayUsed&&m.id!==state.model)continue;
+    const lim=modelLimits(m.id);
+    const dayLeft=Math.max(0,lim.rpd-st.dayUsed),minLeft=Math.max(0,lim.rpm-st.minUsed);
+    rows+=`<div class="prow"><span><b>${m.name}</b></span><span class="pval">المستهلك ${st.dayUsed} · الباقي ~${dayLeft}</span></div>
+    <div class="prow" style="font-size:12.5px;color:var(--muted);border-top:none;padding-top:0"><span>الحد اليومي ~${lim.rpd} · الدقيقة دي: ${st.minUsed} / ~${lim.rpm} (باقي ~${minLeft})${st.imgUsed?` · منهم ${st.imgUsed} بصور`:""} · تقديري</span></div>`;
+  }
+  const total=Object.entries(today).filter(([k])=>!k.includes(":")).reduce((a,[,v])=>a+v,0);
   $("usageBody").innerHTML=`
-    <div class="sect">طلبات API النهارده</div>
+    <div class="sect">المستهلك / الباقي النهارده (تقديري)</div>
     <div class="pgroup">${rows}
       <div class="prow"><span><b>الإجمالي</b></span><span class="pval"><b>${total}</b></span></div>
     </div>
@@ -1484,10 +1555,10 @@ async function renderUsage(){
     </div>
     <div class="sect">حدود الاستخدام المجاني</div>
     <div class="pgroup" style="padding:14px;font-size:14px;color:var(--muted);line-height:1.8">
-      فيه ٣ أنواع حدود: طلبات في الدقيقة، وتوكنز في الدقيقة، وطلبات في اليوم — أي حد فيهم يخلص بيوقف مؤقتًا.<br>
-      الحدود على المشروع مش على المفتاح، وجوجل مش بتنشر رقمًا ثابتًا لكل موديل: الأرقام الفعلية بتظهر في صفحة مشروعك في AI Studio وهي تقريبية ومتغيرة ومش مضمونة. لو النموذج الأساسي خلص حده، التطبيق بيحاول يحول على النموذج الاحتياطي، بس ده كمان مش مضمون.<br>
-      العدّ اليومي بيصفر الساعة ١٠ صباحًا بتوقيت القاهرة (منتصف الليل بتوقيت المحيط الهادي)، مش منتصف ليلك.<br>
-      الأرقام المباشرة لمشروعك: aistudio.google.com
+      الأرقام اللي فوق <b>تقديرية</b>: جوجل مش بتنشر رقمًا ثابتًا لكل موديل، فـ«الباقي» محسوب من حدود تقريبية مبنية على القيم المعروفة للطبقة المجانية. الرقم الرسمي المضبوط لمشروعك موجود في AI Studio: aistudio.google.com<br>
+      المستهلك هنا بيتحسب من الجهاز ده بالظبط، وبيشمل إعادة المحاولة وإعادة التوليد والذاكرة الخلفية، فهو أكبر من عدد رسايلك الظاهرة.<br>
+      فيه ٣ أنواع حدود: طلبات في الدقيقة، وتوكنز في الدقيقة، وطلبات في اليوم — أي حد فيهم يخلص بيوقف مؤقتًا. الحدود على المشروع مش على المفتاح. لو النموذج الأساسي خلص حده، التطبيق بيحاول يحول على نموذج تاني.<br>
+      العدّ اليومي بيصفر الساعة ١٠ صباحًا بتوقيت القاهرة (منتصف الليل بتوقيت المحيط الهادي)، مش منتصف ليلك.
     </div>`;
 }
 /* ================= suggestions ================= */
@@ -1566,7 +1637,7 @@ $("importFile").addEventListener("change",async e=>{
   location.reload();
 });
 /* ================= settings pages wiring ================= */
-function openPage(id){$(id).classList.add("open")}
+function openPage(id){closeQMenu();$(id).classList.add("open")}
 function buildSeg(id,opts,cur,cb){
   const el=$(id);el.innerHTML="";
   for(const [v,l] of opts){const b=document.createElement("button");b.textContent=l;b.dataset.v=v;
@@ -1606,7 +1677,7 @@ function fillSettings(){
     }
   };
 }
-const STYLES=[["sahib","صاحب قريب"],["mukhtasar","مختصر ومباشر"],["rasmi","مهذب وهادي"],["mufassal","مفصّل وشارح"],["roleplay","ممثل أدوار 🎭"]];
+const STYLES=[["sahib","صاحب قريب"],["mukhtasar","مختصر ومباشر"],["rasmi","مهذب وهادي"],["mufassal","مفصّل وشارح"],["roleplay","ممثل أدوار 🎭"],["adaptive","متكيف 🔄"]];
 const PRESETS=[
  {id:"sahib",name:"الصاحب 🫂",desc:"ودي وعفوي، زي صاحبك على القهوة",vals:{style:"sahib",warm:3,enth:3,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:2}},
  {id:"mustashar",name:"المستشار 🎩",desc:"جاد ومتزن، كلام محترم من غير هزار",vals:{style:"rasmi",warm:1,enth:1,argue:2,fmtH:3,fmtL:3,fmtT:2,emoji:0}},
@@ -1614,7 +1685,8 @@ const PRESETS=[
  {id:"coach",name:"الكوتش 🔥",desc:"طاقة وحماس، بيشجعك تتحرك",vals:{style:"sahib",warm:4,enth:4,argue:1,fmtH:2,fmtL:3,fmtT:2,emoji:3}},
  {id:"mukhtasar",name:"المختصر المفيد ⚡",desc:"إجابات قصيرة على قد السؤال",vals:{style:"mukhtasar",warm:2,enth:1,argue:1,fmtH:1,fmtL:2,fmtT:1,emoji:0}},
  {id:"rawi",name:"الراوي 📖",desc:"حكايات وشروح وافية بالتفصيل",vals:{style:"mufassal",warm:3,enth:2,argue:2,fmtH:4,fmtL:4,fmtT:3,emoji:2}},
- {id:"roleplay",name:"ممثل الأدوار 🎭",desc:"بيتقمّص أي شخصية تحددها وتلعبوا مشاهد مع بعض",vals:{style:"roleplay",warm:3,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:2,emoji:2}}
+ {id:"roleplay",name:"ممثل الأدوار 🎭",desc:"بيتقمّص أي شخصية تحددها وتلعبوا مشاهد مع بعض",vals:{style:"roleplay",warm:3,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:2,emoji:2}},
+ {id:"adaptive",name:"المتكيف 🔄",desc:"بيتأقلم مع جو المحادثة لوحده: جاد وقت الجد ولعوب وقت الهزار",vals:{style:"adaptive",warm:3,enth:3,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:2}}
 ];
 let personaScope="global";
 function scopeConv(){return personaScope==="conv"?(state.convs.find(x=>x.id===state.convId)||null):null}
@@ -1665,7 +1737,7 @@ function fillPersona(){
 /* ================= drawer / settings ================= */
 let convQuery="",rcvSeq=0;
 $("convSearch").addEventListener("input",e=>{convQuery=e.target.value.trim();clearTimeout(e.target._d);e.target._d=setTimeout(()=>renderConvList(),180)});
-function closeDrawerFn(){$("drawer").classList.remove("open");$("scrim").classList.remove("open")}
+function closeDrawerFn(){$("drawer").classList.remove("open");$("scrim").classList.remove("open");closeQMenu()}
 $("menuBtn").onclick=()=>{renderConvList();$("drawer").classList.add("open");$("scrim").classList.add("open")};
 $("closeDrawer").onclick=closeDrawerFn;$("scrim").onclick=()=>{closeDrawerFn();closeSheet()};
 $("newBtn").onclick=()=>{newConv()};

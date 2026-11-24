@@ -66,12 +66,34 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .msg.ai{justify-content:flex-end}
 .bubble{
   max-width:86%;padding:10px 14px;border-radius:var(--radius);
-  white-space:pre-wrap;word-break:break-word;font-size:16.5px;
+  white-space:pre-wrap;word-break:break-word;font-size:var(--msgfont,16.5px);
 }
 .msg.me .bubble{background:var(--bubble-me);border-start-start-radius:4px}
 .msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:4px}
 .msg.ai .bubble.err{border-color:var(--danger);color:#f0b09b}
 .typing{color:var(--muted);font-size:14px;padding:4px 8px}
+.msg{align-items:flex-start;gap:2px}
+.actbtn{
+  width:30px;height:30px;border-radius:9px;color:var(--muted);font-size:17px;
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:6px;opacity:.55;
+}
+.actbtn:active{background:var(--card);opacity:1}
+#msgSheet{
+  position:fixed;inset-inline:0;bottom:0;z-index:65;background:var(--bg2);
+  border-top:1px solid var(--border);border-radius:18px 18px 0 0;
+  padding:10px 14px calc(14px + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:transform .2s ease;
+}
+#msgSheet.open{transform:translateY(0)}
+#msgSheet .msbtn{display:block;width:100%;text-align:start;padding:13px 10px;font-size:16.5px;border-radius:10px}
+#msgSheet .msbtn:active{background:var(--card)}
+#msgSheet .msbtn.danger{color:var(--danger)}
+#editBar{
+  display:none;align-items:center;justify-content:space-between;
+  padding:7px 14px;background:var(--card);border-top:1px solid var(--border);
+  font-size:13.5px;color:var(--accent2);flex:none;
+}
+#editBar button{color:var(--muted);font-size:16px;padding:2px 8px}
 .memnote{color:var(--muted);font-size:12px;text-align:center;margin:2px 0 8px}
 /* ===== composer ===== */
 #composer{
@@ -81,7 +103,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 }
 #input{
   flex:1;resize:none;border:1px solid var(--border);border-radius:var(--radius);
-  background:var(--card);color:var(--text);padding:11px 14px;font:inherit;font-size:16.5px;
+  background:var(--card);color:var(--text);padding:11px 14px;font:inherit;font-size:var(--msgfont,16.5px);
   max-height:150px;line-height:1.55;outline:none;
 }
 #input:focus{border-color:var(--accent)}
@@ -131,6 +153,76 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   padding:11px 16px;border-radius:12px;text-align:center;font-size:14.5px;z-index:70;
   display:none;border:1px solid var(--border);
 }
+
+/* ===== v2: pages / appearance / markdown / extras ===== */
+:root{--msgfont:16.5px}
+.page{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .22s ease}
+.page.open{transform:translateX(0)}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
+.phead b{font-size:17px}
+.pgbody{flex:1;overflow-y:auto;padding-bottom:20px}
+.sect{margin:18px 16px 8px;color:var(--muted);font-size:13px}
+.pgroup{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin:0 12px 14px;overflow:hidden}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--border);font-size:15.5px;text-align:start;width:100%;color:var(--text)}
+.prow:last-child{border-bottom:none}
+.pval{color:var(--muted);font-size:13px;direction:ltr}
+.chev{color:var(--muted);font-size:18px}
+.linkrow{cursor:pointer}
+.fld{border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:10px 12px;font:inherit;font-size:15px;outline:none;width:100%;resize:vertical}
+.fld:focus{border-color:var(--accent)}
+.seg{display:flex;background:var(--card);border-radius:10px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{padding:6px 11px;border-radius:8px;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--accent);color:#1c2030;font-weight:700}
+.swatches{display:flex;gap:9px;flex-wrap:wrap}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid transparent;flex:none;padding:0}
+.sw.on{border-color:var(--text);box-shadow:0 0 0 2px var(--accent)}
+.tgl{width:46px;height:27px;border-radius:20px;background:var(--card2);position:relative;transition:background .2s;flex:none;padding:0}
+.tgl:after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:inset-inline-start .2s}
+.tgl.on{background:var(--accent)}
+.tgl.on:after{inset-inline-start:22px}
+.chipwrap{display:flex;flex-wrap:wrap;gap:8px;padding:6px}
+.pchip{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:14px;color:var(--text)}
+.pchip.on{background:var(--accent);color:#1c2030;font-weight:700;border-color:var(--accent)}
+.rngwrap{display:flex;align-items:center;gap:10px;flex:1;max-width:210px}
+.rngwrap input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.rnglbl{color:var(--muted);font-size:12px;min-width:54px;text-align:center;flex:none}
+.factcat{padding:12px 14px 4px;color:var(--accent);font-size:13px;font-weight:700}
+.factrow{display:flex;align-items:flex-start;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.factrow:last-child{border-bottom:none}
+.factrow .ft{flex:1;font-size:15px;line-height:1.6}
+.factrow .fm{color:var(--muted);font-size:12px;margin-top:2px}
+.factdel{color:var(--muted);width:32px;height:32px;flex:none;border-radius:8px;font-size:15px}
+.factdel:active{color:var(--danger)}
+.memempty{color:var(--muted);text-align:center;padding:26px 18px;font-size:14.5px}
+.dsearch{padding:10px 12px 4px}
+.dsearch input{width:100%;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:9px 12px;font:inherit;font-size:14.5px;outline:none}
+.dsearch input:focus{border-color:var(--accent)}
+.convpin{flex:none;width:30px;height:30px;border-radius:8px;font-size:13px;opacity:.35;filter:grayscale(1)}
+.convpin.on{opacity:1;filter:none}
+.cmid{flex:1;min-width:0;display:flex;flex-direction:column;cursor:pointer}
+.snip{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.searchempty{color:var(--muted);text-align:center;padding:20px;font-size:14px}
+#sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 22px 10px}
+.suggchip{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:13.5px;color:var(--text)}
+.suggchip:active{background:var(--card2);border-color:var(--accent)}
+#jumpBtn{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;z-index:25;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35);color:var(--text)}
+#sendBtn.stopping{background:var(--danger);color:#fff}
+.bubble.md{white-space:normal}
+.md h2,.md h3,.md h4,.md h5{margin:10px 0 4px;line-height:1.45;color:var(--accent)}
+.md h2{font-size:19px}.md h3{font-size:17.5px}.md h4{font-size:16px}.md h5{font-size:15px}
+.md h2:first-child,.md h3:first-child,.md h4:first-child,.md p:first-child{margin-top:0}
+.md p{margin:6px 0}
+.md ul,.md ol{margin:6px 0;padding-inline-start:22px}
+.md li{margin:3px 0}
+.md table{border-collapse:collapse;font-size:88%;margin:4px 0;min-width:100%}
+.md th,.md td{border:1px solid var(--border);padding:5px 9px;text-align:start}
+.md th{background:var(--card2);color:var(--accent);font-weight:700}
+.md .tblwrap{overflow-x:auto;margin:6px 0}
+.md hr{border:none;border-top:1px solid var(--border);margin:10px 0}
+.md code{background:rgba(0,0,0,.25);padding:1px 6px;border-radius:6px;font-size:86%;font-family:ui-monospace,monospace}
+.md pre{background:#1b1f2e;border:1px solid var(--border);border-radius:10px;padding:10px;overflow-x:auto;margin:8px 0;direction:ltr;text-align:left}
+.md pre code{background:none;padding:0}
+.md blockquote{border-inline-start:3px solid var(--accent);padding-inline-start:10px;color:var(--muted);margin:6px 0}
 </style>
 </head>
 <body>
@@ -157,6 +249,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
     </button>
   </header>
   <div id="msgs"></div>
+  <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="composer">
     <textarea id="input" rows="1" placeholder="اكتب رسالتك…"></textarea>
     <button id="sendBtn" aria-label="إرسال">
@@ -164,20 +257,101 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
     </button>
   </div>
 </div>
+<button id="jumpBtn"></button>
 <div id="scrim"></div>
 <div id="drawer">
   <div class="dhead"><b>المحادثات</b><button class="linkbtn" id="closeDrawer">إغلاق</button></div>
+  <div class="dsearch"><input id="convSearch" placeholder="ابحث في المحادثات…"></div>
   <div id="convList"></div>
 </div>
-<div id="settings">
-  <h2>الإعدادات</h2>
-  <div class="srow"><span>مفتاح API</span><span class="val" id="keyState">-</span></div>
-  <div class="srow"><span>النموذج</span><span class="val" id="modelState">-</span></div>
-  <div class="srow"><span>عدد المحادثات</span><span class="val" id="convCount">-</span></div>
-  <div class="srow"><span>حقائق محفوظة في الذاكرة</span><span class="val" id="factCount">-</span></div>
-  <button class="bigbtn" id="changeKeyBtn" style="background:var(--card2);color:var(--text)">تغيير مفتاح API</button>
-  <button class="bigbtn" id="wipeBtn" style="background:transparent;color:var(--danger);border:1px solid var(--danger)">مسح كل البيانات من الجهاز</button>
-  <button class="linkbtn" id="closeSettings" style="display:block;margin:12px auto 0">إغلاق</button>
+<div id="msgSheet">
+  <button class="msbtn" id="msCopy">نسخ النص</button>
+  <button class="msbtn" id="msEdit">تعديل الرسالة</button>
+  <button class="msbtn danger" id="msDel">حذف الرسالة</button>
+  <button class="msbtn" id="msRegen" style="color:var(--accent2)">إعادة توليد الرد</button>
+  <button class="msbtn" id="msCancel" style="color:var(--muted);text-align:center">إلغاء</button>
+</div>
+<div class="page" id="settingsPage">
+  <div class="phead"><button class="iconbtn" id="closeSettings" aria-label="رجوع">→</button><b>الإعدادات</b><span style="width:40px"></span></div>
+  <div class="pgbody">
+    <div class="sect">الحساب</div>
+    <div class="pgroup">
+      <div class="prow"><span>مفتاح API</span><span class="pval" id="keyState">-</span></div>
+      <div class="prow"><span>النموذج النشط</span><span class="pval" id="modelState">-</span></div>
+      <div class="prow"><span>عدد المحادثات</span><span class="pval" id="convCount">-</span></div>
+    </div>
+    <div class="pgroup" style="padding:14px">
+      <div style="font-size:14.5px;margin-bottom:8px">تغيير المفتاح</div>
+      <div class="keyrow" style="margin-top:0">
+        <input id="newKeyInput" type="password" placeholder="الصق مفتاح جديد" autocomplete="off">
+        <button class="iconbtn" id="showNewKey" aria-label="إظهار">👁</button>
+      </div>
+      <button class="bigbtn" id="saveNewKey">حفظ المفتاح الجديد</button>
+      <div class="small" id="newKeyError" style="color:var(--danger);display:none;text-align:start"></div>
+      <div class="small">تغيير المفتاح مش بيمسح المحادثات ولا الذاكرة. تنبيه: حدود الاستخدام المجاني على المشروع مش على المفتاح، فمفتاح جديد لنفس المشروع مش بيصفر العد.</div>
+    </div>
+    <div class="sect">المظهر</div>
+    <div class="pgroup">
+      <div class="prow"><span>المظهر</span><div class="seg" id="segTheme"></div></div>
+      <div class="prow"><span>لون التمييز</span><div class="swatches" id="swAccent"></div></div>
+      <div class="prow"><span>لون فقاعاتك</span><div class="swatches" id="swBubble"></div></div>
+      <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
+    </div>
+    <div class="sect">عنان</div>
+    <div class="pgroup">
+      <div class="prow" style="flex-direction:column;align-items:stretch;gap:8px"><span>الاسم المفضل</span><input class="fld" id="nameInput" placeholder="عنان يناديك بإيه؟"></div>
+      <button class="prow linkrow" id="openPersona"><span>الشخصية</span><span class="chev">‹</span></button>
+      <div class="prow"><span>مستوى الذكاء</span><div class="seg" id="segLevel"></div></div>
+      <div class="prow"><span>الاقتراحات في المحادثات الجديدة</span><button class="tgl" id="tglSugg"></button></div>
+    </div>
+    <div class="sect">الذاكرة والتعليمات</div>
+    <div class="pgroup">
+      <button class="prow linkrow" id="openMem"><span>الذاكرة</span><span class="pval"><span id="factCount">-</span> حقيقة ‹</span></button>
+      <div class="prow" style="flex-direction:column;align-items:stretch;gap:8px">
+        <span>تعليمات دائمة</span>
+        <textarea class="fld" id="instrBox" rows="3" placeholder="قواعد ثابتة تحب عنان يلتزم بيها في كل رد…"></textarea>
+        <button class="bigbtn" id="saveInstr" style="margin-top:2px">حفظ التعليمات</button>
+      </div>
+    </div>
+    <div class="sect">البيانات</div>
+    <div class="pgroup">
+      <button class="prow linkrow" id="openUsage"><span>الاستخدام</span><span class="chev">‹</span></button>
+      <button class="prow linkrow" id="exportBtn"><span>تنزيل نسخة احتياطية</span><span class="pval">JSON</span></button>
+      <button class="prow linkrow" id="importBtn"><span>استعادة نسخة احتياطية</span><span class="chev">‹</span></button>
+      <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      <button class="prow linkrow" id="wipeBtn"><span style="color:var(--danger)">مسح كل البيانات من الجهاز</span></button>
+    </div>
+    <div class="small" style="padding:0 16px">النسخة الاحتياطية بتشمل المحادثات والذاكرة والإعدادات، من غير مفتاح API.</div>
+    <div style="height:30px"></div>
+  </div>
+</div>
+<div class="page" id="personaPage">
+  <div class="phead"><button class="iconbtn" id="closePersona" aria-label="رجوع">→</button><b>الشخصية</b><span style="width:40px"></span></div>
+  <div class="pgbody">
+    <div class="sect">أسلوب الكلام</div>
+    <div class="pgroup"><div class="chipwrap" id="styleChips"></div></div>
+    <div class="sect">النبرة</div>
+    <div class="pgroup">
+      <div class="prow"><span>الدفء</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngWarm"><span class="rnglbl" id="lblWarm"></span></div></div>
+      <div class="prow"><span>الحماس</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngEnth"><span class="rnglbl" id="lblEnth"></span></div></div>
+      <div class="prow"><span>التنسيق (عناوين وقوائم)</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngFmt"><span class="rnglbl" id="lblFmt"></span></div></div>
+      <div class="prow"><span>الإيموجي</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngEmoji"><span class="rnglbl" id="lblEmoji"></span></div></div>
+    </div>
+    <div class="small" style="padding:0 16px">التعديلات بتتطبق على الردود الجديدة فورًا.</div>
+  </div>
+</div>
+<div class="page" id="memPage">
+  <div class="phead"><button class="iconbtn" id="closeMem" aria-label="رجوع">→</button><b>الذاكرة</b><span style="width:40px"></span></div>
+  <div class="pgbody">
+    <div class="sect">كل اللي عنان فاكره عنك</div>
+    <div class="pgroup" id="factList"></div>
+    <button class="bigbtn" id="wipeFacts" style="width:auto;margin:4px 16px;padding:10px 18px;background:transparent;color:var(--danger);border:1px solid var(--danger)">مسح كل الذاكرة</button>
+    <div class="small" style="padding:0 16px">مسح معلومة هنا بيمنع عنان يستخدمها في أي رد جاي.</div>
+  </div>
+</div>
+<div class="page" id="usagePage">
+  <div class="phead"><button class="iconbtn" id="closeUsage" aria-label="رجوع">→</button><b>الاستخدام</b><span style="width:40px"></span></div>
+  <div class="pgbody" id="usageBody"></div>
 </div>
 <div id="toast"></div>
 <div class="overlay hidden" id="onboard">
@@ -277,16 +451,37 @@ function pickFacts(queryText,limit){
 /* ================= rendering ================= */
 function fmtDay(ts){const d=new Date(ts);return d.toLocaleDateString("ar-EG",{day:"numeric",month:"short"})}
 async function renderConvList(){
+  const seq=++rcvSeq;
+  const sorted=[...state.convs].sort((a,b)=>((b.pinned?1:0)-(a.pinned?1:0))||(b.updated-a.updated));
+  let items=sorted;const snippets={};
+  if(convQuery){
+    const q=normAr(convQuery);items=[];
+    for(const c of sorted){
+      if(normAr(c.title||"").includes(q)){items.push(c);continue}
+      const ms=await msgsOf(c.id);
+      const hit=ms.find(m=>normAr(m.text).includes(q));
+      if(hit){items.push(c);const ix=normAr(hit.text).indexOf(q);snippets[c.id]="…"+hit.text.slice(Math.max(0,ix-15),ix+35)+"…"}
+    }
+  }
+  if(seq!==rcvSeq)return;
   const list=$("convList");list.innerHTML="";
-  state.convs.sort((a,b)=>b.updated-a.updated);
-  for(const c of state.convs){
+  if(convQuery&&!items.length){list.innerHTML='<div class="searchempty">مفيش نتائج مطابقة</div>';return}
+  for(const c of items){
     const el=document.createElement("div");el.className="convitem"+(c.id===state.convId?" active":"");
-    el.innerHTML=`<span class="t">${esc(c.title||"محادثة جديدة")}</span><span class="d">${fmtDay(c.updated)}</span><button class="convdel" title="حذف">✕</button>`;
-    el.querySelector(".t").onclick=()=>{openConv(c.id);closeDrawerFn()};
+    el.innerHTML=`<button class="convpin${c.pinned?" on":""}" title="تثبيت">📌</button><div class="cmid"><span class="t">${esc(c.title||"محادثة جديدة")}</span>${snippets[c.id]?`<span class="snip">${esc(snippets[c.id])}</span>`:""}</div><span class="d">${fmtDay(c.updated)}</span><button class="convdel" title="حذف">✕</button>`;
+    el.querySelector(".cmid").onclick=()=>{openConv(c.id);closeDrawerFn()};
     el.querySelector(".d").onclick=()=>{openConv(c.id);closeDrawerFn()};
+    el.querySelector(".cmid").addEventListener("dblclick",()=>renameConv(c));
+    let cLp=null;
+    el.addEventListener("touchstart",()=>{cLp=setTimeout(()=>renameConv(c),550)},{passive:true});
+    el.addEventListener("touchend",()=>clearTimeout(cLp));
+    el.addEventListener("touchmove",()=>clearTimeout(cLp));
+    el.querySelector(".convpin").onclick=async ev=>{
+      ev.stopPropagation();c.pinned=!c.pinned;await putItem("convs",c);renderConvList();
+    };
     el.querySelector(".convdel").onclick=async ev=>{
       ev.stopPropagation();
-      if(!confirm2("تمسح المحادثة دي نهائيًا؟"))return;
+      if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
       await delItem("convs",c.id);
       const ms=await msgsOf(c.id);for(const m of ms)await delItem("msgs",m.id);
       state.convs=state.convs.filter(x=>x.id!==c.id);
@@ -303,20 +498,23 @@ function confirm2(msg){return new Promise(res=>{
   t.querySelector("#tc2").onclick=()=>{t.style.display="none";res(false)};
   t._h=setTimeout(()=>{t.style.display="none";res(false)},6000);
 })}
+state.msgIndex={};
 function bubbleHTML(m){
-  return `<div class="msg ${m.role==="user"?"me":"ai"}"><div class="bubble${m.err?" err":""}">${esc(m.text)}</div></div>`;
+  state.msgIndex[m.id]=m;
+  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${mdRender(m.text)}</div>`:`<div class="bubble${m.err?" err":""}">${esc(m.text)}</div>`;
+  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}">${inner}<button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
 function renderMsgs(ms){
   const box=$("msgs");
-  if(!ms.length){box.innerHTML=`<div class="dayempty">ابدأ محادثة جديدة…<br>عنان بيفتكر اللي بيتقال في كل المحادثات.</div>`;return}
+  if(!ms.length){renderEmpty();return}
   box.innerHTML=ms.map(bubbleHTML).join("");
-  box.scrollTop=box.scrollHeight;
+  scrollDown(true);
 }
-function appendMsg(m){const box=$("msgs");const empty=box.querySelector(".dayempty");if(empty)empty.remove();
-  box.insertAdjacentHTML("beforeend",bubbleHTML(m));box.scrollTop=box.scrollHeight}
+function appendMsg(m){const box=$("msgs");box.querySelectorAll(".dayempty,#sugg").forEach(e=>e.remove());
+  box.insertAdjacentHTML("beforeend",bubbleHTML(m));scrollDown()}
 function setTyping(on){
   const box=$("msgs");const old=$("typingRow");if(old)old.remove();
-  if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">عنان بيكتب…</div>`);box.scrollTop=box.scrollHeight}
+  if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">عنان بيكتب…</div>`);scrollDown()}
 }
 function memNote(txt){
   const box=$("msgs");box.insertAdjacentHTML("beforeend",`<div class="memnote">${esc(txt)}</div>`);
@@ -341,16 +539,17 @@ const SAFETY=[
  {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
  {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
 ];
-async function geminiCall(model,parts,jsonMode){
+async function geminiCall(model,parts,jsonMode,sig){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const body={contents:parts,safetySettings:SAFETY,
     generationConfig:{temperature:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
   let r;
   try{
-    r=await fetch(url,{method:"POST",
+    r=await fetch(url,{method:"POST",signal:sig,
       headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
       body:JSON.stringify(body)});
   }catch(fe){
+    if(fe&&fe.name==="AbortError"){const e=new Error("aborted");e.aborted=true;throw e}
     const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";
     throw e;
   }
@@ -362,14 +561,16 @@ async function geminiCall(model,parts,jsonMode){
   const data=await r.json();
   const cand=data.candidates&&data.candidates[0];
   const txt=cand&&cand.content&&cand.content.parts?cand.content.parts.map(p=>p.text||"").join(""):"";
-  return {text:txt,finish:cand?cand.finishReason:null};
+  return {text:txt,finish:cand?cand.finishReason:null,model:model};
 }
-async function gemini(parts,jsonMode){
-  try{return await geminiCall(state.model,parts,jsonMode)}
+async function gemini(parts,jsonMode,sig){
+  try{const r=await geminiCall(state.model,parts,jsonMode,sig);bumpUsage(r.model);return r}
   catch(e){
-    if((e.status===404||e.status===429||e.status===503)&&state.model!==MODEL_FALLBACK){
-      state.model=MODEL_FALLBACK;refreshSettings();
-      return geminiCall(MODEL_FALLBACK,parts,jsonMode);
+    if(e.aborted)throw e;
+    if(e.status===404||e.status===429||e.status===503){
+      const other=state.model===MODEL_MAIN?MODEL_FALLBACK:MODEL_MAIN;
+      state.model=other;refreshSettings();
+      const r=await geminiCall(other,parts,jsonMode,sig);bumpUsage(r.model);return r;
     }
     throw e;
   }
@@ -377,7 +578,7 @@ async function gemini(parts,jsonMode){
 /* ================= context assembly ================= */
 const KEEP_TAIL=24, SUMMARIZE_AT=48, SUMMARIZE_CHUNK=24;
 async function buildChatParts(conv,ms,userText){
-  const sys=PERSONA;
+  const sys=personaBlock();
   const relevant=pickFacts(userText+" "+(ms.length>1?ms[ms.length-2]?.text||"":""),12);
   let sysFull=sys;
   if(relevant.length){
@@ -467,13 +668,75 @@ async function currentConv(){
   if(state.convId)return state.convs.find(c=>c.id===state.convId);
   await newConv();return state.convs.find(c=>c.id===state.convId);
 }
+/* ================= message actions: copy / edit / delete ================= */
+let sheetMsg=null, editing=null;
+function openSheet(m){sheetMsg=m;$("msRegen").style.display=m.role==="model"?"block":"none";$("toast").style.display="none";$("msgSheet").classList.add("open");$("scrim").classList.add("open")}
+function closeSheet(){sheetMsg=null;$("msgSheet").classList.remove("open");if(!$("drawer").classList.contains("open"))$("scrim").classList.remove("open")}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);toast("اتنسخت ✦")}
+  catch(e){
+    const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");toast("اتنسخت ✦")}catch(_){toast("مش قادر انسخ دلوقتي")}
+    ta.remove();
+  }
+}
+function startEdit(m){
+  editing=m;$("input").value=m.text;autoGrow();
+  $("editBar").style.display="flex";$("input").focus();closeSheet();
+}
+function cancelEditMode(){
+  editing=null;$("input").value="";autoGrow();$("editBar").style.display="none";
+}
+$("cancelEdit").onclick=cancelEditMode;
+async function deleteMsg(m){
+  closeSheet();
+  if(!await confirm2("تمسح الرسالة دي نهائيًا؟"))return;
+  await delItem("msgs",m.id);
+  delete state.msgIndex[m.id];
+  const el=document.querySelector(`.msg[data-id="${m.id}"]`);
+  if(el)el.remove();
+  toast("اتمسحت");
+}
+$("msCopy").onclick=()=>{if(sheetMsg)copyText(sheetMsg.text);closeSheet()};
+$("msEdit").onclick=()=>{if(sheetMsg)startEdit(sheetMsg)};
+$("msDel").onclick=()=>{if(sheetMsg)deleteMsg(sheetMsg)};
+$("msCancel").onclick=closeSheet;
+$("msgs").addEventListener("click",e=>{
+  const btn=e.target.closest(".actbtn");
+  if(!btn)return;
+  const row=btn.closest(".msg");
+  const m=row&&state.msgIndex[row.dataset.id];
+  if(m)openSheet(m);
+});
+let lpTimer=null;
+$("msgs").addEventListener("touchstart",e=>{
+  const bub=e.target.closest(".bubble");if(!bub)return;
+  const row=bub.closest(".msg");
+  lpTimer=setTimeout(()=>{const m=row&&state.msgIndex[row.dataset.id];if(m)openSheet(m)},500);
+},{passive:true});
+$("msgs").addEventListener("touchend",()=>clearTimeout(lpTimer));
+$("msgs").addEventListener("touchmove",()=>clearTimeout(lpTimer));
+
 /* ================= send flow ================= */
 async function send(){
   if(state.busy)return;
   const ta=$("input");const text=ta.value.trim();
   if(!text)return;
+  if(editing){
+    editing.text=text;
+    await putItem("msgs",editing);
+    const row=document.querySelector(`.msg[data-id="${editing.id}"] .bubble`);
+    if(row)row.textContent=text;
+    const cid=editing.convId;
+    cancelEditMode();
+    const conv=state.convs.find(c=>c.id===cid);
+    if(conv){conv.updated=Date.now();await putItem("convs",conv);renderConvList()}
+    toast("اتعدلت ✦");
+    return;
+  }
   if(!state.key){$("onboard").classList.remove("hidden");return}
-  state.busy=true;$("sendBtn").disabled=true;
+  state.busy=true;showStop(true);abortCtl=new AbortController();
   ta.value="";autoGrow();
   const conv=await currentConv();
   const um={id:uid(),convId:conv.id,role:"user",text,ts:Date.now()};
@@ -483,7 +746,7 @@ async function send(){
   try{
     const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
     const parts=await buildChatParts(conv,ms,text);
-    const {text:reply,finish}=await gemini(parts);
+    const {text:reply,finish}=await gemini(parts,false,abortCtl.signal);
     setTyping(false);
     let out=reply&&reply.trim()?reply.trim():"";
     if(!out){
@@ -493,10 +756,11 @@ async function send(){
     await putItem("msgs",am);appendMsg(am);
     conv.updated=Date.now();await putItem("convs",conv);renderConvList();
     const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
-    extractMemory(conv,{user:text,ai:out});
+    extractMemory(conv,{user:text,ai:out}).then(()=>{if(!conv.titled)titleConv(conv,text,out)});
     maybeSummarize(conv,all);
   }catch(e){
     setTyping(false);
+    if(e.aborted){toast("اتوقف الرد");state.busy=false;showStop(false);$("input").focus();return}
     let msg="حصل خطأ في الاتصال. اتأكد من النت وجرّب تاني."+(e.status?(" (كود "+e.status+")"):(e.detail?(". "+e.detail.slice(0,80)):""));
     if(e.status===400&&/api.?key/i.test(e.detail||"")||e.status===401||e.status===403)
       msg="مفتاح الـ API مش شغال أو اترفض. افتح الإعدادات وغيّره.";
@@ -507,27 +771,360 @@ async function send(){
     const am={id:uid(),convId:conv.id,role:"model",text:msg,err:true,ts:Date.now()};
     appendMsg(am);
   }
-  state.busy=false;$("sendBtn").disabled=false;$("input").focus();
+  state.busy=false;showStop(false);$("input").focus();
 }
 /* ================= input behavior: Enter = new line ================= */
 function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
 $("input").addEventListener("input",autoGrow);
 $("input").addEventListener("keydown",e=>{/* Enter intentionally inserts a newline; sending is the button only */});
-$("sendBtn").addEventListener("click",send);
+$("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abort()}else send()});
+/* ================= preferences & appearance ================= */
+const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
+  persona:{style:"sahib",warm:2,enth:2,fmt:2,emoji:1},instructions:""};
+let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
+async function savePrefs(){await kvSet("prefs",prefs)}
+const THEMES={
+  navy:{bg:"#232839",bg2:"#2b3148",card:"#313952",card2:"#39415c",text:"#e9ebf4",muted:"#9aa1b8",border:"#3d4560","bubble-ai":"#2d3349"},
+  grey:{bg:"#26272c",bg2:"#2e2f36",card:"#373943",card2:"#414453",text:"#eceef3",muted:"#a2a6b3",border:"#474a58","bubble-ai":"#343642"},
+  light:{bg:"#eef0f6",bg2:"#ffffff",card:"#e4e7f0",card2:"#d7dbe8",text:"#232839",muted:"#5d6376",border:"#ccd1e0","bubble-ai":"#ffffff"}
+};
+const ACCENTS={gold:"#c9a86a",teal:"#7fd1c0",sky:"#7ea8e0",rose:"#d9909e",lilac:"#a99ad9"};
+const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e",bronze:"#7a5f3a"};
+const FONTS={s:"15px",m:"16.5px",l:"18.5px"};
+function applyAppearance(){
+  const r=document.documentElement.style;
+  let t=prefs.theme;if(t==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"navy";
+  if(!THEMES[t])t="navy";
+  const th=THEMES[t];
+  for(const k of Object.keys(th))r.setProperty("--"+k,th[k]);
+  r.setProperty("--accent",ACCENTS[prefs.accent]||ACCENTS.gold);
+  r.setProperty("--bubble-me",BUBBLES[prefs.bubble]||BUBBLES.indigo);
+  r.setProperty("--msgfont",FONTS[prefs.font]||FONTS.m);
+  const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
+}
+try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
+function activeModel(){return prefs.level==="fast"?MODEL_FALLBACK:MODEL_MAIN}
+/* ================= persona composition ================= */
+const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل"};
+const WARM_T=["جاف ومباشر تمامًا، من غير أي مجاملات","مائل للجفاف والاختصار","طبيعي ومتوازن","ودود ودافئ","دافئ جدًا وحنون، زي أقرب صاحب"];
+const ENTH_T=["رصين وهادي تمامًا","هادي","طبيعي","متحمس ومتفاعل","متحمس جدًا وطاقته عالية"];
+const FMT_T=["ممنوع التنسيق نهائيًا: لا عناوين ولا قوائم ولا Markdown، فقرات نصية بسيطة متصلة","تنسيق بسيط جدًا: فقرات قصيرة، ونقاط عند الضرورة فقط","تنسيق معتدل: استخدم نقاط أو عناوين صغيرة لما الموضوع يستاهل","تنسيق منظم: استخدم عناوين وقوائم بوضوح في الردود الطويلة","تنسيق كامل: عناوين فرعية وقوائم مرقمة ونقط وجداول و**خط عريض** للمهم كلما أمكن"];
+const EMOJI_T=["ممنوع الإيموجي نهائيًا","إيموجي نادر جدًا عند الحاجة فقط","إيموجي خفيف أحيانًا","إيموجي باعتدال في الردود","إيموجي كتير ومعبّر"];
+const WARM_L=["جاف","مائل للجفاف","طبيعي","دافئ","دافئ جدًا"];
+const ENTH_L=["رصين","هادي","طبيعي","متحمس","متحمس جدًا"];
+const FMT_L=["بدون","بسيط","معتدل","منظم","كامل"];
+const EMOJI_L=["ممنوع","نادر","خفيف","معتدل","كتير"];
+function personaBlock(){
+  let s=PERSONA;
+  if(prefs.name)s+='\n- اسم المستخدم المفضل: "'+prefs.name+'". ناديه بيه وقتما يكون طبيعي.';
+  const p=prefs.persona;
+  s+="\n\nتفضيلات أسلوب المستخدم (التزم بيها في كل رد):";
+  s+="\n- أسلوب الكلام: "+(STYLE_T[p.style]||STYLE_T.sahib);
+  s+="\n- الدفء: "+WARM_T[p.warm];
+  s+="\n- الحماس: "+ENTH_T[p.enth];
+  s+="\n- التنسيق: "+FMT_T[p.fmt];
+  s+="\n- الإيموجي: "+EMOJI_T[p.emoji];
+  if(prefs.instructions&&prefs.instructions.trim())s+="\n\nتعليمات دائمة من المستخدم (قواعد ملزمة منه شخصيًا، طبّقها في كل رد):\n"+prefs.instructions.trim();
+  return s;
+}
+/* ================= markdown rendering ================= */
+function mdInline(s){
+  const codes=[];
+  s=s.replace(/`([^`]+)`/g,(m,c)=>{codes.push(c);return "\u0001"+(codes.length-1)+"\u0001"});
+  s=s.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+  s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>");
+  s=s.replace(/~~([^~]+)~~/g,"<del>$1</del>");
+  s=s.replace(/\u0001(\d+)\u0001/g,(m,i)=>"<code>"+codes[+i]+"</code>");
+  return s;
+}
+function mdRender(src){
+  let s=esc(src);
+  const pres=[];
+  s=s.replace(/```(?:\w*)\n?([\s\S]*?)```/g,(m,c)=>{pres.push(c.replace(/\n+$/,""));return "\u0002"+(pres.length-1)+"\u0002"});
+  const lines=s.split("\n");let out="",i=0;
+  while(i<lines.length){
+    const ln=lines[i];
+    if(/^\s*$/.test(ln)){i++;continue}
+    const preM=ln.match(/^\u0002(\d+)\u0002$/);
+    if(preM){out+="<pre><code>"+pres[+preM[1]]+"</code></pre>";i++;continue}
+    const h=ln.match(/^(#{1,4})\s+(.*)$/);
+    if(h){const lv=h[1].length+1;out+="<h"+lv+">"+mdInline(h[2])+"</h"+lv+">";i++;continue}
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(ln)){out+="<hr>";i++;continue}
+    if(/^\s*\|/.test(ln)&&i+1<lines.length&&/^\s*\|[\s:|-]+\|\s*$/.test(lines[i+1])){
+      const parseRow=l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>mdInline(c.trim()));
+      const th=parseRow(ln);i+=2;const rows=[];
+      while(i<lines.length&&/^\s*\|/.test(lines[i])){rows.push(parseRow(lines[i]));i++}
+      out+='<div class="tblwrap"><table><tr>'+th.map(c=>"<th>"+c+"</th>").join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(c=>"<td>"+c+"</td>").join("")+"</tr>").join("")+"</table></div>";
+      continue;
+    }
+    if(/^\s*[-*•]\s+/.test(ln)){
+      out+="<ul>";
+      while(i<lines.length&&/^\s*[-*•]\s+/.test(lines[i])){out+="<li>"+mdInline(lines[i].replace(/^\s*[-*•]\s+/,""))+"</li>";i++}
+      out+="</ul>";continue;
+    }
+    if(/^\s*\d+[.)]\s+/.test(ln)){
+      out+="<ol>";
+      while(i<lines.length&&/^\s*\d+[.)]\s+/.test(lines[i])){out+="<li>"+mdInline(lines[i].replace(/^\s*\d+[.)]\s+/,""))+"</li>";i++}
+      out+="</ol>";continue;
+    }
+    if(/^\s*&gt;\s?/.test(ln)){
+      let q="";
+      while(i<lines.length&&/^\s*&gt;\s?/.test(lines[i])){q+=lines[i].replace(/^\s*&gt;\s?/,"")+"\n";i++}
+      out+="<blockquote>"+mdInline(q.trim())+"</blockquote>";continue;
+    }
+    let para=ln;i++;
+    while(i<lines.length&&!/^\s*$/.test(lines[i])&&!/^(#{1,4}\s|\u0002|\s*[-*•]\s|\s*\d+[.)]\s|\s*\||\s*&gt;|\s*(-{3,}|\*{3,}))/.test(lines[i])){para+="\n"+lines[i];i++}
+    out+="<p>"+mdInline(para).replace(/\n/g,"<br>")+"</p>";
+  }
+  return out;
+}
+/* ================= auto title + rename ================= */
+async function titleConv(conv,userText,aiText){
+  try{
+    const {text}=await gemini([{role:"user",parts:[{text:"اكتب عنوانًا قصيرًا جدًا (٥ كلمات كحد أقصى، بالعامية المصرية) يلخص موضوع المحادثة دي. الرد يكون العنوان بس من غير تنصيص ولا مقدمات:\nالمستخدم: "+userText+"\nعنان: "+aiText}]}]);
+    const t=(text||"").trim().replace(/^["«»"']+|["«»"']+$/g,"").slice(0,60);
+    if(t&&!conv.titled){conv.title=t;conv.titled=true;await putItem("convs",conv);renderConvList()}
+  }catch(e){}
+}
+async function renameConv(c){
+  const t=prompt("اكتب اسم المحادثة:",c.title||"");
+  if(t&&t.trim()){c.title=t.trim().slice(0,60);c.titled=true;await putItem("convs",c);renderConvList();toast("اتسمّت ✦")}
+}
+/* ================= scroll behavior ================= */
+let nearBottom=true;
+function scrollDown(force){
+  const b=$("msgs");
+  if(force||nearBottom){b.scrollTop=b.scrollHeight;$("jumpBtn").style.display="none"}
+  else{$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ رسايل جديدة"}
+}
+$("msgs").addEventListener("scroll",()=>{
+  const b=$("msgs");nearBottom=b.scrollHeight-b.scrollTop-b.clientHeight<120;
+  if(nearBottom)$("jumpBtn").style.display="none";
+});
+$("jumpBtn").onclick=()=>{const b=$("msgs");b.style.scrollBehavior="auto";b.scrollTop=b.scrollHeight;b.style.scrollBehavior="";$("jumpBtn").style.display="none"};
+/* ================= stop / regenerate ================= */
+let abortCtl=null;
+const SEND_SVG=$("sendBtn").innerHTML;
+function showStop(on){
+  const b=$("sendBtn");
+  if(on){b.innerHTML='<span style="font-size:18px;font-weight:700;line-height:1">■</span>';b.disabled=false;b.classList.add("stopping")}
+  else{b.innerHTML=SEND_SVG;b.disabled=false;b.classList.remove("stopping")}
+}
+async function regenerate(am){
+  if(state.busy)return;
+  const conv=state.convs.find(c=>c.id===am.convId);if(!conv)return;
+  const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
+  const idx=ms.findIndex(x=>x.id===am.id);if(idx<0)return;
+  let ui=-1;for(let j=idx-1;j>=0;j--)if(ms[j].role==="user"){ui=j;break}
+  if(ui<0){toast("مفيش رسالة قبلها نعيد الرد عليها");return}
+  const um=ms[ui];
+  await delItem("msgs",am.id);delete state.msgIndex[am.id];
+  const el=document.querySelector(`.msg[data-id="${am.id}"]`);if(el)el.remove();
+  state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
+  try{
+    const upto=ms.slice(0,ui+1);
+    const parts=await buildChatParts(conv,upto,um.text);
+    const {text:reply,finish}=await gemini(parts,false,abortCtl.signal);
+    setTyping(false);
+    let out=reply&&reply.trim()?reply.trim():"";
+    if(!out)out=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
+    const nm={id:uid(),convId:conv.id,role:"model",text:out,ts:Date.now()};
+    await putItem("msgs",nm);
+    if(state.convId===conv.id)appendMsg(nm);
+    conv.updated=Date.now();await putItem("convs",conv);renderConvList();
+  }catch(e){
+    setTyping(false);
+    if(e.aborted){toast("اتوقف الرد")}
+    else{const nm={id:uid(),convId:conv.id,role:"model",text:"حصل خطأ في الاتصال. اتأكد من النت وجرّب تاني."+(e.status?(" (كود "+e.status+")"):""),err:true,ts:Date.now()};if(state.convId===conv.id)appendMsg(nm)}
+  }
+  state.busy=false;showStop(false);
+}
+$("msRegen").onclick=()=>{const m=sheetMsg;closeSheet();if(m&&m.role==="model")regenerate(m)};
+/* ================= usage counting ================= */
+function localDay(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+async function bumpUsage(model){
+  try{const u=(await kvGet("usage"))||{};const day=localDay();
+  u[day]=u[day]||{};u[day][model]=(u[day][model]||0)+1;await kvSet("usage",u)}catch(e){}
+}
+async function renderUsage(){
+  const u=(await kvGet("usage"))||{};const day=localDay();const today=u[day]||{};
+  const names={[MODEL_MAIN]:"Gemini 4 Hydrogen",[MODEL_FALLBACK]:"Gemini 3.5 Flash-Lite"};
+  let rows="";
+  for(const m of [MODEL_MAIN,MODEL_FALLBACK])rows+=`<div class="prow"><span>${names[m]}</span><span class="pval">${today[m]||0} طلب النهارده</span></div>`;
+  const total=Object.values(today).reduce((a,b)=>a+b,0);
+  $("usageBody").innerHTML=`
+    <div class="sect">طلبات API النهارده</div>
+    <div class="pgroup">${rows}
+      <div class="prow"><span><b>الإجمالي</b></span><span class="pval"><b>${total}</b></span></div>
+    </div>
+    <div class="pgroup" style="padding:14px;font-size:14px;color:var(--muted);line-height:1.8">
+      الأرقام دي طلبات الـ API اللي التطبيق ده عملها من الجهاز ده بالظبط، مش رصيدك الرسمي عند جوجل. لاحظ إن إعادة المحاولة وإعادة توليد الرد والذاكرة الخلفية كمان بتستهلك طلبات، فالأرقام أكبر من عدد رسايلك الظاهرة.
+    </div>
+    <div class="sect">حدود الاستخدام المجاني</div>
+    <div class="pgroup" style="padding:14px;font-size:14px;color:var(--muted);line-height:1.8">
+      فيه ٣ أنواع حدود: طلبات في الدقيقة، وتوكنز في الدقيقة، وطلبات في اليوم — أي حد فيهم يخلص بيوقف مؤقتًا.<br>
+      الحدود على المشروع مش على المفتاح، وجوجل مش بتنشر رقمًا ثابتًا لكل موديل: الأرقام الفعلية بتظهر في صفحة مشروعك في AI Studio وهي تقريبية ومتغيرة ومش مضمونة. لو النموذج الأساسي خلص حده، التطبيق بيحاول يحول على النموذج الاحتياطي، بس ده كمان مش مضمون.<br>
+      العدّ اليومي بيصفر الساعة ١٠ صباحًا بتوقيت القاهرة (منتصف الليل بتوقيت المحيط الهادي)، مش منتصف ليلك.<br>
+      الأرقام المباشرة لمشروعك: aistudio.google.com
+    </div>`;
+}
+/* ================= suggestions ================= */
+const SUGG=["اعملي خطة ليومي بكرة","احكيلي نكتة مصرية","لخصلي ثورة ١٩١٩ في ٥ أسطر","اكتبلي رسالة تهنئة لصاحبي","راجعلي فكرة مشروع صغير","علمني ٣ كلمات إنجليزي بتتقال كتير","اعملي قائمة تسوق للأسبوع","اسألني ٥ أسئلة تعرفني بيهم أكتر"];
+function renderEmpty(){
+  const box=$("msgs");
+  box.innerHTML=`<div class="dayempty">ابدأ محادثة جديدة…<br>عنان بيفتكر اللي بيتقال في كل المحادثات.</div>`;
+  if(prefs.suggestions){
+    const pool=[...SUGG].sort(()=>Math.random()-.5).slice(0,4);
+    const w=document.createElement("div");w.id="sugg";
+    for(const s of pool){const b=document.createElement("button");b.className="suggchip";b.textContent=s;b.onclick=()=>{$("input").value=s;autoGrow();send()};w.appendChild(b)}
+    box.appendChild(w);
+  }
+}
+/* ================= memory page ================= */
+function renderMemPage(){
+  const list=$("factList");list.innerHTML="";
+  if(!state.facts.length){list.innerHTML='<div class="memempty">مفيش حاجة محفوظة لسه.<br>عنان بيفتكر من كلامك لوحده أول ما تتكلم.</div>';return}
+  const cats={};
+  for(const f of state.facts){const k=f.cat||"معلومات";(cats[k]=cats[k]||[]).push(f)}
+  for(const cat of Object.keys(cats).sort()){
+    list.insertAdjacentHTML("beforeend",`<div class="factcat">${esc(cat)}</div>`);
+    for(const f of cats[cat].sort((a,b)=>(b.updated||0)-(a.updated||0))){
+      const row=document.createElement("div");row.className="factrow";
+      row.innerHTML=`<div class="ft">${esc(f.text)}<div class="fm">${esc(f.conf||"")}${f.count>1?" · اتقالت "+f.count+" مرة":""}</div></div><button class="factdel" title="حذف">✕</button>`;
+      row.querySelector(".factdel").onclick=async()=>{
+        if(!await confirm2("تمسح المعلومة دي من الذاكرة؟"))return;
+        state.facts=state.facts.filter(x=>x.id!==f.id);await delItem("facts",f.id);
+        row.remove();refreshSettings();
+        if(!state.facts.length)renderMemPage();
+        toast("اتمسحت من الذاكرة");
+      };
+      list.appendChild(row);
+    }
+  }
+}
+$("wipeFacts").onclick=async()=>{
+  if(!await confirm2("هتمسح كل اللي عنان فاكره عنك. متأكد؟"))return;
+  for(const f of state.facts)await delItem("facts",f.id);
+  state.facts=[];renderMemPage();refreshSettings();toast("الذاكرة اتمسحت بالكامل");
+};
+/* ================= backup ================= */
+async function buildBackup(){
+  return {app:"anan-ai",version:2,exportedAt:new Date().toISOString(),
+    convs:await allStore("convs"),msgs:await allStore("msgs"),facts:await allStore("facts"),prefs:prefs};
+}
+$("exportBtn").onclick=async()=>{
+  const data=await buildBackup();
+  const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="anan-backup-"+localDay()+".json";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  toast("النسخة الاحتياطية اتنزلت ✦");
+};
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f)return;e.target.value="";
+  let data;try{data=JSON.parse(await f.text())}catch(_){toast("الملف ده مش نسخة احتياطية صالحة");return}
+  if(!data||data.app!=="anan-ai"||!Array.isArray(data.convs)||!Array.isArray(data.msgs)){toast("الملف ده مش نسخة احتياطية صالحة");return}
+  if(!await confirm2("الاستعادة هتبدل المحادثات والذاكرة الحالية بمحتوى الملف. نكمل؟"))return;
+  for(const c of await allStore("convs"))await delItem("convs",c.id);
+  for(const m of await allStore("msgs"))await delItem("msgs",m.id);
+  for(const x of await allStore("facts"))await delItem("facts",x.id);
+  for(const c of data.convs)await putItem("convs",c);
+  for(const m of data.msgs)await putItem("msgs",m);
+  for(const x of (data.facts||[]))await putItem("facts",x);
+  if(data.prefs&&typeof data.prefs==="object"){
+    prefs=Object.assign({},DEFAULT_PREFS,data.prefs);
+    prefs.persona=Object.assign({},DEFAULT_PREFS.persona,data.prefs.persona||{});
+    await savePrefs();
+  }
+  location.reload();
+});
+/* ================= settings pages wiring ================= */
+function openPage(id){$(id).classList.add("open")}
+function buildSeg(id,opts,cur,cb){
+  const el=$(id);el.innerHTML="";
+  for(const [v,l] of opts){const b=document.createElement("button");b.textContent=l;b.dataset.v=v;
+    if(v===cur)b.classList.add("on");
+    b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");cb(v)};
+    el.appendChild(b)}
+}
+function buildSw(id,map,cur,cb){
+  const el=$(id);el.innerHTML="";
+  for(const k of Object.keys(map)){const b=document.createElement("button");b.className="sw"+(k===cur?" on":"");
+    b.style.background=map[k];b.title=k;
+    b.onclick=()=>{el.querySelectorAll(".sw").forEach(x=>x.classList.remove("on"));b.classList.add("on");cb(k)};
+    el.appendChild(b)}
+}
+function fillSettings(){
+  $("nameInput").value=prefs.name||"";
+  $("instrBox").value=prefs.instructions||"";
+  buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
+  buildSeg("segFont",[["s","صغير"],["m","وسط"],["l","كبير"]],prefs.font,v=>{prefs.font=v;savePrefs();applyAppearance()});
+  buildSeg("segLevel",[["deep","عميق"],["fast","سريع"]],prefs.level,v=>{prefs.level=v;savePrefs();state.model=activeModel();refreshSettings();toast(v==="fast"?"وضع السرعة شغال: ردود أسرع":"وضع العمق شغال: أقوى نموذج")});
+  buildSw("swAccent",ACCENTS,prefs.accent,v=>{prefs.accent=v;savePrefs();applyAppearance()});
+  buildSw("swBubble",BUBBLES,prefs.bubble,v=>{prefs.bubble=v;savePrefs();applyAppearance()});
+  const tg=$("tglSugg");tg.classList.toggle("on",!!prefs.suggestions);
+  tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
+}
+const STYLES=[["sahib","صاحب قريب"],["mukhtasar","مختصر ومباشر"],["rasmi","مهذب وهادي"],["mufassal","مفصّل وشارح"]];
+function bindRng(id,key,labels){
+  const r=$("rng"+id),l=$("lbl"+id);
+  r.value=prefs.persona[key];l.textContent=labels[prefs.persona[key]];
+  r.oninput=()=>{prefs.persona[key]=+r.value;l.textContent=labels[+r.value];savePrefs()};
+}
+function fillPersona(){
+  const w=$("styleChips");w.innerHTML="";
+  for(const [v,l] of STYLES){const b=document.createElement("button");b.className="pchip"+(prefs.persona.style===v?" on":"");
+    b.textContent=l;b.onclick=()=>{prefs.persona.style=v;savePrefs();fillPersona()};w.appendChild(b)}
+  bindRng("Warm","warm",WARM_L);bindRng("Enth","enth",ENTH_L);bindRng("Fmt","fmt",FMT_L);bindRng("Emoji","emoji",EMOJI_L);
+}
 /* ================= drawer / settings ================= */
+let convQuery="",rcvSeq=0;
+$("convSearch").addEventListener("input",e=>{convQuery=e.target.value.trim();clearTimeout(e.target._d);e.target._d=setTimeout(()=>renderConvList(),180)});
 function closeDrawerFn(){$("drawer").classList.remove("open");$("scrim").classList.remove("open")}
 $("menuBtn").onclick=()=>{renderConvList();$("drawer").classList.add("open");$("scrim").classList.add("open")};
-$("closeDrawer").onclick=closeDrawerFn;$("scrim").onclick=closeDrawerFn;
+$("closeDrawer").onclick=closeDrawerFn;$("scrim").onclick=()=>{closeDrawerFn();closeSheet()};
 $("newBtn").onclick=()=>{newConv()};
-$("settingsBtn").onclick=()=>{refreshSettings();$("settings").classList.add("open")};
-$("closeSettings").onclick=()=>$("settings").classList.remove("open");
+$("settingsBtn").onclick=()=>{fillSettings();refreshSettings();openPage("settingsPage")};
+$("closeSettings").onclick=()=>$("settingsPage").classList.remove("open");
+$("closePersona").onclick=()=>$("personaPage").classList.remove("open");
+$("closeMem").onclick=()=>$("memPage").classList.remove("open");
+$("closeUsage").onclick=()=>$("usagePage").classList.remove("open");
+$("openPersona").onclick=()=>{fillPersona();openPage("personaPage")};
+$("openMem").onclick=()=>{renderMemPage();openPage("memPage")};
+$("openUsage").onclick=()=>{renderUsage();openPage("usagePage")};
+$("nameInput").addEventListener("change",()=>{prefs.name=$("nameInput").value.trim();savePrefs();toast("اتحفظ ✦")});
+$("saveInstr").onclick=()=>{prefs.instructions=$("instrBox").value.trim();savePrefs();toast("التعليمات اتحفظت ✦")};
+$("showNewKey").onclick=()=>{const i=$("newKeyInput");i.type=i.type==="password"?"text":"password"};
+$("saveNewKey").onclick=async()=>{
+  const k=$("newKeyInput").value.trim();const ke=$("newKeyError");
+  ke.style.display="none";
+  if(k.length<8){toast("الصق المفتاح الأول");return}
+  $("saveNewKey").disabled=true;$("saveNewKey").textContent="بنجرب المفتاح…";
+  const old=state.key;state.key=k;
+  try{
+    await gemini([{role:"user",parts:[{text:"قول: تمام"}]}]);
+    await kvSet("apiKey",k);state.model=activeModel();
+    $("newKeyInput").value="";refreshSettings();toast("تمام، المفتاح الجديد شغال ✦");
+  }catch(e){
+    state.key=old;
+    if(e.status===429){
+      await kvSet("apiKey",k);$("newKeyInput").value="";refreshSettings();
+      toast("المفتاح اتسجل، بس واصل لحد الاستخدام دلوقتي.");
+    }else if(e.status===400||e.status===401||e.status===403){
+      ke.textContent="المفتاح مترفض من جوجل. اتأكد إنك نسخته كامل. (كود "+e.status+")";ke.style.display="block";
+    }else{
+      ke.textContent="مش قادر أوصل لجوجل دلوقتي. اتأكد من النت وجرّب تاني.";ke.style.display="block";
+    }
+  }
+  $("saveNewKey").disabled=false;$("saveNewKey").textContent="حفظ المفتاح الجديد";
+};
 function refreshSettings(){
   $("keyState").textContent=state.key?("••••"+state.key.slice(-4)):"مفيش";
   $("modelState").textContent=state.model;
   $("convCount").textContent=state.convs.length;
   $("factCount").textContent=state.facts.length;
 }
-$("changeKeyBtn").onclick=()=>{$("settings").classList.remove("open");$("onboard").classList.remove("hidden")};
 $("wipeBtn").onclick=async()=>{
   if(!await confirm2("هيمسح كل المحادثات والذاكرة والمفتاح من الجهاز. متأكد؟"))return;
   indexedDB.deleteDatabase(DB_NAME);location.reload();
@@ -575,10 +1172,13 @@ $("saveKeyBtn").onclick=async()=>{
   state.key=await kvGet("apiKey");
   state.convs=await allStore("convs");
   state.facts=await allStore("facts");
+  prefs=Object.assign({},DEFAULT_PREFS,(await kvGet("prefs"))||{});
+  prefs.persona=Object.assign({},DEFAULT_PREFS.persona,prefs.persona||{});
+  applyAppearance();state.model=activeModel();
   if(!state.key)$("onboard").classList.remove("hidden");
   const last=await kvGet("lastConv");
   if(last&&state.convs.some(c=>c.id===last))await openConv(last);
-  else if(state.convs.length)await openConv(state.convs.sort((a,b)=>b.updated-a.updated)[0].id);
+  else if(state.convs.length)await openConv([...state.convs].sort((a,b)=>b.updated-a.updated)[0].id);
   else renderMsgs([]);
   renderConvList();refreshSettings();
   if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});

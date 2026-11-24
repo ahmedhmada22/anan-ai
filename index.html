@@ -13,7 +13,7 @@
   --bg:#232839; --bg2:#2b3148; --card:#313952; --card2:#39415c;
   --text:#e9ebf4; --muted:#9aa1b8; --accent:#c9a86a; --accent2:#7fd1c0;
   --danger:#e07856; --bubble-me:#46528c; --bubble-ai:#2d3349;
-  --border:#3d4560; --radius:14px;
+  --border:#3d4560; --radius:14px; --bubtail:4px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -73,8 +73,8 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   max-width:86%;padding:10px 14px;border-radius:var(--radius);
   white-space:pre-wrap;word-break:break-word;font-size:var(--msgfont,16.5px);
 }
-.msg.me .bubble{background:var(--bubble-me);border-start-start-radius:4px}
-.msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:4px}
+.msg.me .bubble{background:var(--bubble-me);border-start-start-radius:var(--bubtail)}
+.msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:var(--bubtail)}
 .msg.ai .bubble.err{border-color:var(--danger);color:#f0b09b}
 .typing{color:var(--muted);font-size:14px;padding:4px 8px}
 .msg{align-items:flex-start;gap:2px}
@@ -288,6 +288,39 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 #lockScreen .box{text-align:center}
 #lockPinInput,#pin1,#pin2{text-align:center;font-size:21px;letter-spacing:6px;max-width:210px;margin:8px auto;display:block}
 .linkbtn{background:none;border:none;color:var(--accent2);font-size:14.5px;padding:10px;cursor:pointer}
+/* ===== v16: بحث + رد + تثبيت + أشكال ===== */
+#searchBar{display:none;align-items:center;gap:6px;padding:7px 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
+#searchBar.open{display:flex}
+#searchBar input{flex:1;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 12px;font:inherit;font-size:14.5px;outline:none}
+#searchBar input:focus{border-color:var(--accent)}
+#searchCount{color:var(--muted);font-size:12.5px;white-space:nowrap;min-width:56px;text-align:center;flex:none}
+.snav{width:32px;height:32px;border-radius:9px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;padding:0}
+.snav:disabled{opacity:.35}
+mark.srch-hit{background:var(--accent);color:#1c2030;border-radius:3px;padding:0 1px}
+mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
+.msg.flash .bubble{animation:flashb 1.3s}
+@keyframes flashb{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px var(--accent)}}
+#pinBar{display:none;align-items:center;gap:8px;padding:7px 14px;background:var(--card);border-bottom:1px solid var(--border);cursor:pointer;flex:none}
+#pinBar.open{display:flex}
+#pinBar .pinf{flex:1;min-width:0;border-inline-start:3px solid var(--accent);padding-inline-start:8px}
+#pinBar .pttl{color:var(--accent2);font-size:12px;font-weight:700}
+#pinBar .psnip{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pinind{font-size:10px;opacity:.65;margin-inline-start:5px}
+#replyBar{display:none;align-items:center;gap:8px;padding:7px 14px;background:var(--card);border-top:1px solid var(--border);flex:none}
+#replyBar .rinf{flex:1;min-width:0;border-inline-start:3px solid var(--accent);padding-inline-start:8px}
+#replyBar .rwho{color:var(--accent2);font-size:12.5px;font-weight:700}
+#replyBar .rsnip{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#replyBar>button{color:var(--muted);font-size:16px;padding:2px 8px}
+.quote{border-inline-start:3px solid var(--accent);background:rgba(0,0,0,.20);border-radius:8px;padding:5px 9px;margin-bottom:6px;font-size:13px;cursor:pointer}
+.msg.me .quote{background:rgba(255,255,255,.14)}
+.quote .qwho{font-weight:700;color:var(--accent2);font-size:12px;margin-bottom:1px}
+.msg.me .quote .qwho{color:#fff}
+.quote .qsnip{opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.regenrow{display:flex;justify-content:flex-end;margin:-4px 0 10px}
+.regenchip{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:99px;padding:5px 13px;font-size:12.5px;display:flex;align-items:center;gap:5px}
+.regenchip:active{color:var(--accent);border-color:var(--accent)}
+.msg{transition:transform .18s ease}
+.msg.swiping{transition:none}
 </style>
 </head>
 <body>
@@ -305,6 +338,9 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
         <path d="M30 30 C 40 34.5, 60 34.5, 78 31 C 92 28.5, 104 27, 116 28.5" stroke="#c9a86a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
       </svg>
     </div>
+    <button class="iconbtn" id="searchBtn" aria-label="بحث في المحادثة">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </button>
     <button class="iconbtn" id="settingsBtn" aria-label="الإعدادات">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55h.01a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
     </button>
@@ -312,9 +348,18 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
     </button>
   </header>
+  <div id="searchBar">
+    <input id="searchInput" placeholder="ابحث في المحادثة…" autocomplete="off">
+    <span id="searchCount"></span>
+    <button class="snav" id="searchUp" aria-label="النتيجة اللي قبلها">↑</button>
+    <button class="snav" id="searchDown" aria-label="النتيجة اللي بعدها">↓</button>
+    <button class="snav" id="searchClose" aria-label="قفل البحث">✕</button>
+  </div>
+  <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
+  <div id="replyBar"><div class="rinf"><div class="rwho" id="replyWho"></div><div class="rsnip" id="replySnip"></div></div><button id="cancelReply" aria-label="إلغاء الرد">✕</button></div>
   <div id="composer">
     <div id="compill">
       <button class="cbtn" id="attachBtn" aria-label="إرفاق صورة">
@@ -339,7 +384,9 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   <div id="convList"></div>
 </div>
 <div id="msgSheet">
+  <button class="msbtn" id="msReply">↩ رد على الرسالة</button>
   <button class="msbtn" id="msCopy">نسخ النص</button>
+  <button class="msbtn" id="msPin">📌 تثبيت الرسالة</button>
   <button class="msbtn" id="msEdit">تعديل الرسالة</button>
   <button class="msbtn" id="msRegen" style="color:var(--accent2)">إعادة توليد الرد</button>
   <button class="msbtn danger" id="msDel">حذف الرسالة</button>
@@ -411,6 +458,8 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
       <div class="prow"><span>المظهر</span><div class="seg" id="segTheme"></div></div>
       <div class="prow"><span>لون التمييز</span><div class="swatches" id="swAccent"></div></div>
       <div class="prow"><span>لون فقاعاتك</span><div class="swatches" id="swBubble"></div></div>
+      <div class="prow"><span>لون فقاعات عنان</span><div class="swatches" id="swBubbleAI"></div></div>
+      <div class="prow"><span>شكل الفقاعات</span><div class="seg" id="segBubShape"></div></div>
       <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
     </div>
     <div class="sect">عنان</div>
@@ -654,10 +703,13 @@ function fmtDayFull(ts){
 function bubbleHTML(m){
   state.msgIndex[m.id]=m;
   const img=m.img?`<img class="msgimg" src="${m.img}" alt="صورة">`:"";
-  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${mdRender(m.text)}</div>`:`<div class="bubble${m.err?" err":""}">${esc(m.text)}</div>`;
+  const qt=m.rquote?`<div class="quote" data-qid="${m.rid}"><div class="qwho">${m.rquote.r==="user"?"أنت":"عنان"}</div><div class="qsnip">${esc(m.rquote.t)}</div></div>`:"";
+  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${qt}${mdRender(m.text)}</div>`:`<div class="bubble${m.err?" err":""}">${qt}${esc(m.text)}</div>`;
   const spk=m.role==="model"&&!m.err&&m.text?`<button class="spkbtn" data-spk="${m.id}" aria-label="اسمع الرد">🔊</button>`:"";
   const qbtn=m.role==="model"&&!m.err&&m.text?`<button class="qbtn" data-qm="${m.id}" aria-label="إجراءات على الرد">✨</button>`:"";
-  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${spk}${qbtn}</div>`;
+  const pcv=state.convs.find(c=>c.id===m.convId);
+  const pinm=pcv&&pcv.pins&&pcv.pins.includes(m.id)?`<span class="pinind">📌</span>`:"";
+  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${pinm}${spk}${qbtn}</div>`;
   const retry=m.err?`<button class="retrybtn" data-rid="${m.id}">↻ إعادة المحاولة</button>`:"";
   return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
@@ -677,6 +729,7 @@ function renderMsgs(ms,restore){
     $("jumpBtn").style.display=nearBottom?"none":"block";
     $("jumpBtn").textContent="⬇ آخر الرسايل";
   }else scrollDown(true);
+  refreshRegenChip();
 }
 function appendMsg(m,force){
   const box=$("msgs");box.querySelectorAll(".dayempty,#sugg").forEach(e=>e.remove());
@@ -973,6 +1026,7 @@ async function openConv(id){
   const ms=await msgsOf(id);ms.sort((a,b)=>a.ts-b.ts);
   const conv=state.convs.find(c=>c.id===id);
   renderMsgs(ms,conv&&typeof conv.scroll==="number"?conv.scroll:null);
+  closeSearch();pinIdx=0;renderPinBar();cancelReply();
   if(conv&&conv.draft){$("input").value=conv.draft;autoGrow()}else{$("input").value="";autoGrow()}
   renderConvList();
 }
@@ -985,6 +1039,8 @@ let sheetMsg=null, editing=null;
 function openSheet(m){sheetMsg=m;navOpen("sheet");
   $("msRegen").style.display=m.role==="model"?"block":"none";
   $("msEdit").style.display=m.role==="user"?"block":"none";
+  const _pc=state.convs.find(c=>c.id===m.convId);
+  $("msPin").textContent=(_pc&&_pc.pins&&_pc.pins.includes(m.id))?"📌 إلغاء التثبيت":"📌 تثبيت الرسالة";
   $("toast").style.display="none";$("msgSheet").classList.add("open");$("scrim").classList.add("open")}
 function closeSheet(){if($("msgSheet").classList.contains("open"))navClose("sheet");sheetMsg=null;$("msgSheet").classList.remove("open");if(!$("drawer").classList.contains("open"))$("scrim").classList.remove("open")}
 async function copyText(t){
@@ -1011,13 +1067,20 @@ async function deleteMsg(m){
   delete state.msgIndex[m.id];
   const el=document.querySelector(`.msg[data-id="${m.id}"]`);
   if(el)el.remove();
+  const _dc=state.convs.find(c=>c.id===m.convId);
+  if(_dc&&_dc.pins&&_dc.pins.includes(m.id)){_dc.pins=_dc.pins.filter(x=>x!==m.id);await putItem("convs",_dc);if(_dc.id===state.convId)renderPinBar()}
+  refreshRegenChip();
   toast("اتمسحت");
 }
 $("msCopy").onclick=()=>{if(sheetMsg)copyText(sheetMsg.text);closeSheet()};
+$("msReply").onclick=()=>{const m=sheetMsg;closeSheet();if(m)setReply(m)};
+$("msPin").onclick=()=>{const m=sheetMsg;closeSheet();if(m)togglePin(m)};
 $("msEdit").onclick=()=>{if(sheetMsg)startEdit(sheetMsg)};
 $("msDel").onclick=()=>{if(sheetMsg)deleteMsg(sheetMsg)};
 $("msCancel").onclick=closeSheet;
 $("msgs").addEventListener("click",e=>{
+  const qtv=e.target.closest(".quote");
+  if(qtv){if(!flashMsg(qtv.dataset.qid))toast("الرسالة الأصلية اتمسحت");return}
   const sp=e.target.closest(".spkbtn");
   if(sp){const m=state.msgIndex[sp.dataset.spk];if(m)ttsSpeak(m,sp);return}
   const rt=e.target.closest(".retrybtn");
@@ -1039,6 +1102,168 @@ $("msgs").addEventListener("touchstart",e=>{
 $("msgs").addEventListener("touchend",()=>clearTimeout(lpTimer));
 $("msgs").addEventListener("touchmove",()=>clearTimeout(lpTimer));
 
+/* ================= v16: بحث داخل المحادثة ================= */
+const arNum=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+let searchState={open:false,hits:[],idx:0};
+function clearMarks(){
+  document.querySelectorAll("mark.srch-hit").forEach(mk=>{
+    const pr=mk.parentNode;pr.replaceChild(document.createTextNode(mk.textContent),mk);pr.normalize();
+  });
+}
+function runSearch(){
+  clearMarks();searchState.hits=[];
+  const q=$("searchInput").value.trim();
+  if(q){
+    const ql=q.toLowerCase();
+    for(const b of document.querySelectorAll("#msgs .msg .bubble")){
+      const tw=document.createTreeWalker(b,NodeFilter.SHOW_TEXT);
+      const nodes=[];let nd;while((nd=tw.nextNode()))nodes.push(nd);
+      for(let tn of nodes){
+        let low=tn.nodeValue.toLowerCase(),i;
+        while((i=low.indexOf(ql))>=0){
+          const mid=tn.splitText(i);const rest=mid.splitText(q.length);
+          const mk=document.createElement("mark");mk.className="srch-hit";
+          mid.parentNode.replaceChild(mk,mid);mk.appendChild(mid);
+          searchState.hits.push(mk);
+          tn=rest;low=tn.nodeValue.toLowerCase();
+        }
+      }
+    }
+  }
+  searchState.idx=searchState.hits.length?searchState.hits.length-1:0;
+  paintSearch();
+  if(searchState.hits.length)jumpToHit(searchState.idx,false);
+}
+function paintSearch(){
+  const n=searchState.hits.length;
+  const hasQ=$("searchInput").value.trim()!=="";
+  $("searchCount").textContent=n?(arNum(searchState.idx+1)+" من "+arNum(n)):(hasQ?"لا نتائج":"");
+  $("searchUp").disabled=!n;$("searchDown").disabled=!n;
+  searchState.hits.forEach((h,i)=>h.classList.toggle("cur",i===searchState.idx));
+}
+function jumpToHit(i,smooth){
+  const h=searchState.hits[i];if(!h)return;
+  searchState.idx=i;paintSearch();
+  h.scrollIntoView({block:"center",behavior:smooth===false?"auto":"smooth"});
+}
+function openSearch(){
+  searchState.open=true;$("searchBar").classList.add("open");
+  $("searchInput").focus();
+  if($("searchInput").value.trim())runSearch();
+}
+function closeSearch(){
+  if(!searchState.open)return;
+  searchState.open=false;searchState.hits=[];
+  clearMarks();$("searchBar").classList.remove("open");
+}
+$("searchBtn").onclick=()=>{searchState.open?closeSearch():openSearch()};
+$("searchClose").onclick=closeSearch;
+$("searchInput").addEventListener("input",()=>runSearch());
+$("searchInput").addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeSearch();
+  if(e.key==="Enter"){e.preventDefault();if(searchState.hits.length)jumpToHit((searchState.idx+1)%searchState.hits.length)}
+});
+$("searchUp").onclick=()=>{if(searchState.hits.length)jumpToHit((searchState.idx-1+searchState.hits.length)%searchState.hits.length)};
+$("searchDown").onclick=()=>{if(searchState.hits.length)jumpToHit((searchState.idx+1)%searchState.hits.length)};
+function flashMsg(id){
+  const row=document.querySelector(`.msg[data-id="${id}"]`);if(!row)return false;
+  row.scrollIntoView({block:"center",behavior:"smooth"});
+  row.classList.remove("flash");void row.offsetWidth;row.classList.add("flash");
+  setTimeout(()=>row.classList.remove("flash"),1400);
+  return true;
+}
+/* ================= v16: رد بالسحب + اقتباس ================= */
+let replyTo=null;
+function setReply(m){
+  replyTo=m;
+  $("replyWho").textContent=m.role==="user"?"رد على نفسك":"رد على عنان";
+  $("replySnip").textContent=m.text.slice(0,80)||"📷 صورة";
+  $("replyBar").style.display="flex";
+  $("input").focus();
+}
+function cancelReply(){replyTo=null;$("replyBar").style.display="none"}
+$("cancelReply").onclick=cancelReply;
+let swipeSt=null;
+$("msgs").addEventListener("touchstart",e=>{
+  const row=e.target.closest(".msg");if(!row)return;
+  const t=e.touches[0];swipeSt={row,x:t.clientX,y:t.clientY,dx:0,on:false};
+},{passive:true});
+$("msgs").addEventListener("touchmove",e=>{
+  if(!swipeSt)return;
+  const t=e.touches[0];
+  const dx=t.clientX-swipeSt.x,dy=t.clientY-swipeSt.y;
+  if(!swipeSt.on){
+    if(dx<-10&&Math.abs(dx)>Math.abs(dy)*1.6)swipeSt.on=true;
+    else if(Math.abs(dy)>10){swipeSt=null;return}
+  }
+  if(swipeSt.on){
+    swipeSt.dx=Math.max(-84,Math.min(0,dx));
+    swipeSt.row.classList.add("swiping");
+    swipeSt.row.style.transform=`translateX(${swipeSt.dx}px)`;
+    if(e.cancelable)e.preventDefault();
+  }
+},{passive:false});
+$("msgs").addEventListener("touchend",()=>{
+  if(!swipeSt)return;
+  const{row,dx,on}=swipeSt;swipeSt=null;
+  row.classList.remove("swiping");row.style.transform="";
+  if(on&&dx<-62){
+    const m=state.msgIndex[row.dataset.id];
+    if(m){setReply(m);try{if(navigator.vibrate)navigator.vibrate(8)}catch(_){}}
+  }
+});
+/* ================= v16: تثبيت الرسايل ================= */
+let pinIdx=0;
+async function renderPinBar(){
+  const conv=state.convs.find(c=>c.id===state.convId);
+  let pins=(conv&&conv.pins)||[];
+  const clean=pins.filter(id=>state.msgIndex[id]);
+  if(conv&&clean.length!==pins.length){conv.pins=clean;await putItem("convs",conv);pins=clean}
+  const bar=$("pinBar");
+  if(!pins.length){bar.classList.remove("open");return}
+  pinIdx=pinIdx%pins.length;
+  const m=state.msgIndex[pins[pins.length-1-pinIdx]];
+  $("pinTtl").textContent=pins.length>1?("📌 "+arNum(pins.length)+" رسايل مثبتة"):"📌 رسالة مثبتة";
+  $("pinSnip").textContent=m?((m.role==="user"?"أنت: ":"عنان: ")+m.text.slice(0,70)):"";
+  bar.classList.add("open");
+}
+$("pinBar").onclick=()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);
+  const pins=(conv&&conv.pins)||[];if(!pins.length)return;
+  const id=pins[pins.length-1-pinIdx];
+  pinIdx=(pinIdx+1)%pins.length;
+  renderPinBar();
+  flashMsg(id);
+};
+async function togglePin(m){
+  const conv=state.convs.find(c=>c.id===m.convId);if(!conv)return;
+  conv.pins=conv.pins||[];
+  const i=conv.pins.indexOf(m.id);
+  let on;
+  if(i>=0){conv.pins.splice(i,1);on=false;toast("اتشال التثبيت")}
+  else{conv.pins.push(m.id);on=true;toast("اتثبتت فوق المحادثة 📌")}
+  await putItem("convs",conv);
+  if(conv.id===state.convId){
+    renderPinBar();
+    const mt=document.querySelector(`.msg[data-id="${m.id}"] .mmeta .mtime`);
+    if(mt){
+      const mm=mt.parentElement;mm.querySelectorAll(".pinind").forEach(x=>x.remove());
+      if(on)mt.insertAdjacentHTML("afterend",'<span class="pinind">📌</span>');
+    }
+  }
+}
+/* ================= v16: زرار إعادة الرد ================= */
+function refreshRegenChip(){
+  document.querySelectorAll(".regenrow").forEach(e=>e.remove());
+  const rows=document.querySelectorAll("#msgs .msg");
+  if(!rows.length)return;
+  const last=rows[rows.length-1];
+  const m=state.msgIndex[last.dataset.id];
+  if(m&&m.role==="model"&&!m.err&&!state.busy){
+    last.insertAdjacentHTML("afterend",`<div class="regenrow"><button class="regenchip" id="regenChip">↺ إعادة توليد الرد</button></div>`);
+    $("regenChip").onclick=()=>regenerate(m);
+  }
+}
 /* ================= send flow ================= */
 async function send(){
   if(state.busy)return;
@@ -1072,6 +1297,7 @@ async function send(){
   ta.value="";autoGrow();syncSendBtn();
   if(conv.draft){conv.draft="";putItem("convs",conv)}
   const um={id:uid(),convId:conv.id,role:"user",text,ts:Date.now()};
+  if(replyTo){um.rid=replyTo.id;um.rquote={r:replyTo.role,t:replyTo.text.slice(0,90)};cancelReply()}
   if(pendingImg){um.img=pendingImg.dataUrl;um.imgMime=pendingImg.mime;clearPendingImg()}
   await putItem("msgs",um);appendMsg(um,true);
   conv.updated=Date.now();conv.lastTs=um.ts;conv.lastTxt=text.slice(0,60)||"📷 صورة";await putItem("convs",conv);renderConvList();
@@ -1082,6 +1308,8 @@ async function send(){
     extractMemory(conv,{user:text,ai:am.text}).then(()=>{if(!conv.titled)titleConv(conv,text,am.text)});
     maybeSummarize(conv,all);
   }
+  refreshRegenChip();
+  if(searchState.open)runSearch();
   focusInput();
 }
 /* ================= input behavior: Enter = new line ================= */
@@ -1096,16 +1324,21 @@ $("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abo
 /* ================= preferences & appearance ================= */
 const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
   persona:{style:"sahib",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
-  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12};
+  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round"};
 let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
 async function savePrefs(){await kvSet("prefs",prefs)}
 const THEMES={
   navy:{bg:"#232839",bg2:"#2b3148",card:"#313952",card2:"#39415c",text:"#e9ebf4",muted:"#9aa1b8",border:"#3d4560","bubble-ai":"#2d3349"},
+  oled:{bg:"#0e0f13",bg2:"#15171d",card:"#1c1f27",card2:"#242834",text:"#e8eaf0",muted:"#8f95a6",border:"#2b303c","bubble-ai":"#181b22"},
+  forest:{bg:"#1f2a26",bg2:"#26332e",card:"#2e3f38",card2:"#374a42",text:"#e6efe9",muted:"#93a89d",border:"#3d5247","bubble-ai":"#2a3833"},
+  violet:{bg:"#292637",bg2:"#322e44",card:"#3b3652",card2:"#453f60",text:"#eceaf6",muted:"#a49fc2",border:"#4b4668","bubble-ai":"#343049"},
   grey:{bg:"#26272c",bg2:"#2e2f36",card:"#373943",card2:"#414453",text:"#eceef3",muted:"#a2a6b3",border:"#474a58","bubble-ai":"#343642"},
-  light:{bg:"#eef0f6",bg2:"#ffffff",card:"#e4e7f0",card2:"#d7dbe8",text:"#232839",muted:"#5d6376",border:"#ccd1e0","bubble-ai":"#ffffff"}
+  light:{bg:"#f2ede4",bg2:"#faf7f1",card:"#e9e2d5",card2:"#ddd5c5",text:"#2a2a33",muted:"#6b6a70",border:"#d4ccbc","bubble-ai":"#ffffff"}
 };
 const ACCENTS={gold:"#c9a86a",teal:"#7fd1c0",sky:"#7ea8e0",rose:"#d9909e",lilac:"#a99ad9"};
 const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e",bronze:"#7a5f3a"};
+const AIBUBBLES={ash:"#3d4460",olive:"#4a5340",plum:"#54425e",cocoa:"#5c4a3d",steel:"#3d4f5c"};
+const SHAPES={round:{r:"14px",tail:"4px"},sharp:{r:"7px",tail:"2px"},flat:{r:"14px",tail:"14px"}};
 const FONTS={s:"15px",m:"16.5px",l:"18.5px"};
 function applyAppearance(){
   const r=document.documentElement.style;
@@ -1115,6 +1348,9 @@ function applyAppearance(){
   for(const k of Object.keys(th))r.setProperty("--"+k,th[k]);
   r.setProperty("--accent",ACCENTS[prefs.accent]||ACCENTS.gold);
   r.setProperty("--bubble-me",BUBBLES[prefs.bubble]||BUBBLES.indigo);
+  r.setProperty("--bubble-ai",(prefs.bubbleAI&&prefs.bubbleAI!=="auto"&&AIBUBBLES[prefs.bubbleAI])||th["bubble-ai"]);
+  const _sh=SHAPES[prefs.bubShape]||SHAPES.round;
+  r.setProperty("--radius",_sh.r);r.setProperty("--bubtail",_sh.tail);
   r.setProperty("--msgfont",FONTS[prefs.font]||FONTS.m);
   const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
 }
@@ -1578,6 +1814,7 @@ async function regenerate(am){
   await delItem("msgs",am.id);delete state.msgIndex[am.id];
   const el=document.querySelector(`.msg[data-id="${am.id}"]`);if(el)el.remove();
   await runReply(conv,ms.slice(0,ui+1),um.text);
+  refreshRegenChip();
 }
 $("msRegen").onclick=()=>{const m=sheetMsg;closeSheet();if(m&&m.role==="model")regenerate(m)};
 /* ================= usage counting ================= */
@@ -1732,13 +1969,22 @@ function buildSw(id,map,cur,cb){
 function fillSettings(){
   $("nameInput").value=prefs.name||"";
   $("instrBox").value=prefs.instructions||"";
-  buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
+  buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["oled","أسود"],["forest","زيتي"],["violet","بنفسجي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
   buildSeg("segFont",[["s","صغير"],["m","وسط"],["l","كبير"]],prefs.font,v=>{prefs.font=v;savePrefs();applyAppearance()});
   const mp=$("modelPick");mp.innerHTML="";
   for(const m of MODELS){const o=document.createElement("option");o.value=m.id;o.textContent=m.name+" — "+m.desc;if(m.id===state.model)o.selected=true;mp.appendChild(o)}
   mp.onchange=()=>{prefs.model=mp.value;savePrefs();state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+mp.value+" ✦")};
   buildSw("swAccent",ACCENTS,prefs.accent,v=>{prefs.accent=v;savePrefs();applyAppearance()});
   buildSw("swBubble",BUBBLES,prefs.bubble,v=>{prefs.bubble=v;savePrefs();applyAppearance()});
+  buildSw("swBubbleAI",AIBUBBLES,prefs.bubbleAI==="auto"?"":prefs.bubbleAI,v=>{prefs.bubbleAI=v;savePrefs();applyAppearance()});
+  const _sbA=$("swBubbleAI");
+  const _autoB=document.createElement("button");
+  _autoB.className="sw"+((!prefs.bubbleAI||prefs.bubbleAI==="auto")?" on":"");
+  _autoB.title="تلقائي (حسب المظهر)";
+  _autoB.style.background="conic-gradient(var(--card2) 0 50%, var(--muted) 50% 100%)";
+  _autoB.onclick=()=>{_sbA.querySelectorAll(".sw").forEach(x=>x.classList.remove("on"));_autoB.classList.add("on");prefs.bubbleAI="auto";savePrefs();applyAppearance()};
+  _sbA.prepend(_autoB);
+  buildSeg("segBubShape",[["round","مدوّر"],["sharp","حاد"],["flat","بسيط"]],prefs.bubShape||"round",v=>{prefs.bubShape=v;savePrefs();applyAppearance()});
   const tg=$("tglSugg");tg.classList.toggle("on",!!prefs.suggestions);
   tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
   const trc=$("tglRecall");trc.classList.toggle("on",prefs.recall!==false);

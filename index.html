@@ -183,6 +183,18 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .prow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--border);font-size:15.5px;text-align:start;width:100%;color:var(--text)}
 .prow:last-child{border-bottom:none}
 .pval{color:var(--muted);font-size:13px;direction:ltr}
+.ucard{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin:0 12px 12px;padding:13px 14px}
+.utop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.uname{font-weight:700;font-size:15.5px}
+.unum{font-size:12.5px;color:var(--muted);direction:ltr;white-space:nowrap}
+.unum b{color:var(--text);font-size:17px;font-weight:800}
+.ubar{height:8px;border-radius:99px;background:var(--card2);margin:11px 0 8px;overflow:hidden}
+.ubar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .4s}
+.ubar i.warn{background:#e5a13d}
+.ubar i.full{background:var(--danger)}
+.usub{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted)}
+.utag{font-size:10.5px;background:var(--card2);color:var(--accent2);border-radius:99px;padding:1px 8px;font-weight:400}
+.ubignum{font-size:36px;font-weight:800;line-height:1.2}
 .chev{color:var(--muted);font-size:18px}
 .linkrow{cursor:pointer}
 .fld{border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);padding:10px 12px;font:inherit;font-size:15px;outline:none;width:100%;resize:vertical}
@@ -1533,21 +1545,34 @@ async function usageState(model){
 function modelLimits(id){const m=MODELS.find(x=>x.id===id)||MODELS[0];return {rpm:m.rpm||15,rpd:m.rpd||500}}
 async function renderUsage(){
   const u=(await kvGet("usage"))||{};const day=localDay();const today=u[day]||{};
-  let rows="";
+  const stats=[];
   for(const m of MODELS){
     const st=await usageState(m.id);
     if(!st.dayUsed&&m.id!==state.model)continue;
+    stats.push({m,st,active:m.id===state.model});
+  }
+  stats.sort((a,b)=>(b.active-a.active)||(b.st.dayUsed-a.st.dayUsed));
+  let rows="";
+  for(const {m,st,active} of stats){
     const lim=modelLimits(m.id);
-    const dayLeft=Math.max(0,lim.rpd-st.dayUsed),minLeft=Math.max(0,lim.rpm-st.minUsed);
-    rows+=`<div class="prow"><span><b>${m.name}</b></span><span class="pval">المستهلك ${st.dayUsed} · الباقي ~${dayLeft}</span></div>
-    <div class="prow" style="font-size:12.5px;color:var(--muted);border-top:none;padding-top:0"><span>الحد اليومي ~${lim.rpd} · الدقيقة دي: ${st.minUsed} / ~${lim.rpm} (باقي ~${minLeft})${st.imgUsed?` · منهم ${st.imgUsed} بصور`:""} · تقديري</span></div>`;
+    const dayLeft=Math.max(0,lim.rpd-st.dayUsed);
+    const pct=Math.min(100,Math.round(st.dayUsed/Math.max(1,lim.rpd)*100));
+    const cls=pct>=100?"full":pct>=80?"warn":"";
+    rows+=`<div class="ucard">
+      <div class="utop"><span class="uname">${m.name}${active?' <span class="utag">الحالي</span>':""}</span><span class="unum"><b>${st.dayUsed}</b> / ~${lim.rpd}</span></div>
+      <div class="ubar"><i class="${cls}" style="width:${pct}%;min-width:${pct>0?10:0}px"></i></div>
+      <div class="usub"><span>الباقي النهارده ~${dayLeft}${st.imgUsed?` · منهم ${st.imgUsed} بصور`:""}</span><span>الدقيقة دي ${st.minUsed} / ~${lim.rpm}</span></div>
+    </div>`;
   }
   const total=Object.entries(today).filter(([k])=>!k.includes(":")).reduce((a,[,v])=>a+v,0);
   $("usageBody").innerHTML=`
-    <div class="sect">المستهلك / الباقي النهارده (تقديري)</div>
-    <div class="pgroup">${rows}
-      <div class="prow"><span><b>الإجمالي</b></span><span class="pval"><b>${total}</b></span></div>
+    <div class="ucard" style="text-align:center;padding:18px 14px;margin-top:14px">
+      <div style="font-size:13px;color:var(--muted)">طلبات النهارده من الجهاز ده</div>
+      <div class="ubignum">${total}</div>
+      <div style="font-size:12px;color:var(--muted)">على كل النماذج · العدّاد بيصفر ١٠ الصبح</div>
     </div>
+    <div class="sect">حصة كل نموذج النهارده (تقديري)</div>
+    ${rows}
     <div class="pgroup" style="padding:14px;font-size:14px;color:var(--muted);line-height:1.8">
       الأرقام دي طلبات الـ API اللي التطبيق ده عملها من الجهاز ده بالظبط، مش رصيدك الرسمي عند جوجل. لاحظ إن إعادة المحاولة وإعادة توليد الرد والذاكرة الخلفية كمان بتستهلك طلبات، فالأرقام أكبر من عدد رسايلك الظاهرة.
     </div>

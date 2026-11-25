@@ -81,6 +81,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 /* v22: ردود عنان بلا إطار زي ChatGPT — النص على الخلفية مباشرة (فقاعة المستخدم زي ما هي، ووضع الواتساب كمان) */
 body:not(.wa) .msg.ai .bubble:not(.err){background:transparent;border:none;border-radius:0;padding:4px 2px}
 body:not(.wa) .msg.ai .bcol{max-width:100%;width:100%}
+.msg.ai .bubble:not(.err){-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 /* وضع الواتساب المباشر: لما شخصية "واتساب" مفعّلة، الشات نفسه يبقى بشكل واتساب */
 body.wa #msgs{background:#0b141a}
 body.wa .msg.me .bubble{background:#005c4b;color:#e9edef;border-radius:12px;border-start-start-radius:4px}
@@ -1544,6 +1545,8 @@ let lpTimer=null;
 $("msgs").addEventListener("touchstart",e=>{
   const bub=e.target.closest(".bubble");if(!bub)return;
   const row=bub.closest(".msg");
+  /* v24: ضغطة مطوّلة على رد عنان = تحديد نص عادي (تنسخ الجزء اللي عايزه)؛ قايمة الرسالة من زرار ⋮ جنب الرد */
+  if(row&&row.classList.contains("ai")&&!bub.classList.contains("err"))return;
   lpTimer=setTimeout(()=>{const m=row&&state.msgIndex[row.dataset.id];if(m)openSheet(m)},500);
 },{passive:true});
 $("msgs").addEventListener("touchend",()=>clearTimeout(lpTimer));

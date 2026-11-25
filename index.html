@@ -101,6 +101,18 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 #editBar button{color:var(--muted);font-size:16px;padding:2px 8px}
 .memnote{color:var(--muted);font-size:12px;text-align:center;margin:2px 0 8px}
 /* ===== composer ===== */
+#chipRow{
+  flex:none;display:flex;gap:6px;align-items:center;
+  padding:2px 14px 4px;overflow-x:auto;scrollbar-width:none;
+}
+#chipRow::-webkit-scrollbar{display:none}
+.cmdchip{
+  flex:none;font-size:12.5px;color:var(--muted);
+  background:var(--card);border:1px solid var(--border);border-radius:999px;
+  padding:5px 12px;
+}
+.cmdchip:active{color:var(--accent);border-color:var(--accent)}
+.cmdchip-x{padding:5px 9px;background:none;border:none}
 #composer{
   flex:none;display:flex;
   padding:8px 12px calc(10px + env(safe-area-inset-bottom));
@@ -330,6 +342,26 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 #mwSum{flex:none;background:var(--accent);color:#1c2030;font-weight:700;font-size:12px;border-radius:99px;padding:5px 12px}
 #mwSum:disabled{opacity:.5}
 #mwHide{flex:none;color:var(--muted);font-size:14px;padding:2px 6px}
+/* ===== v17: استمارات + بحث شامل + مجموعات + أرشيف ===== */
+#dchips{display:flex;gap:6px;padding:8px 12px 4px;overflow-x:auto;flex:none;scrollbar-width:none}
+#dchips::-webkit-scrollbar{display:none}
+.dchip{flex:none;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:99px;padding:4px 12px;font-size:12.5px}
+.dchip.on{background:var(--accent);color:#1c2030;font-weight:700;border-color:var(--accent)}
+.gtag{font-size:10px;background:var(--card2);color:var(--accent2);border-radius:99px;padding:0 7px;margin-inline-start:5px;vertical-align:1px}
+.formcard{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-top:8px}
+.fq{font-weight:700;font-size:14px;margin-bottom:8px;color:var(--accent)}
+.fopts{display:flex;flex-direction:column;gap:6px}
+.fopt{display:flex;align-items:center;gap:9px;text-align:start;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 11px;font-size:14px;color:var(--text)}
+.fopt .fc{flex:none;width:17px;height:17px;border-radius:50%;border:2px solid var(--muted)}
+.fopt.multi .fc{border-radius:5px}
+.fopt.sel{border-color:var(--accent)}
+.fopt.sel .fc{border-color:var(--accent);background:var(--accent)}
+.fopt:disabled{opacity:.55}
+.fsend{margin-top:9px;width:100%;background:var(--accent);color:#1c2030;font-weight:700;border-radius:10px;padding:9px;font-size:14px}
+.fsend:disabled{opacity:.45}
+.formdone{margin-top:8px;color:var(--accent2);font-size:12.5px;text-align:center}
+#grpModal .box{text-align:center}
+.grpbtn{width:100%;background:var(--card);color:var(--text);border-radius:10px;padding:11px;font-size:15px;margin-bottom:8px;text-align:start}
 </style>
 </head>
 <body>
@@ -371,6 +403,12 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
   <div id="replyBar"><div class="rinf"><div class="rwho" id="replyWho"></div><div class="rsnip" id="replySnip"></div></div><button id="cancelReply" aria-label="إلغاء الرد">✕</button></div>
+  <div id="chipRow">
+    <button class="cmdchip" data-cmd="summ">لخّص</button>
+    <button class="cmdchip" data-cmd="cont">كمّل</button>
+    <button class="cmdchip" data-cmd="tone">غيّر النبرة</button>
+    <button class="cmdchip cmdchip-x" id="chipHide" aria-label="إخفاء الأزرار">✕</button>
+  </div>
   <div id="composer">
     <div id="compill">
       <button class="cbtn" id="attachBtn" aria-label="إرفاق صورة">
@@ -391,7 +429,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 <div id="scrim"></div>
 <div id="drawer">
   <div class="dhead"><b>المحادثات</b><button class="linkbtn" id="closeDrawer">إغلاق</button></div>
-  <div class="dsearch"><input id="convSearch" placeholder="ابحث في المحادثات…"></div>
+  <div class="dsearch"><input id="convSearch" placeholder="ابحث في كل المحادثات والرسايل…"></div>
+  <div id="dchips"></div>
   <div id="convList"></div>
 </div>
 <div id="msgSheet">
@@ -400,8 +439,30 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <button class="msbtn" id="msPin">📌 تثبيت الرسالة</button>
   <button class="msbtn" id="msEdit">تعديل الرسالة</button>
   <button class="msbtn" id="msRegen" style="color:var(--accent2)">إعادة توليد الرد</button>
+  <button class="msbtn" id="msImg">🖼 تحويل الرد لصورة</button>
   <button class="msbtn danger" id="msDel">حذف الرسالة</button>
   <button class="msbtn" id="msCancel" style="color:var(--muted);text-align:center">إلغاء</button>
+</div>
+<div class="overlay hidden" id="waModal">
+  <div class="box" style="padding:22px 20px;max-height:70vh;overflow-y:auto">
+    <h1 style="margin-top:0;font-size:18px">المحادثة بشكل واتساب 💬</h1>
+    <div class="keyrow" style="margin-bottom:8px">
+      <input id="waNameMe" placeholder="اسمك في الصورة" autocomplete="off">
+    </div>
+    <div class="keyrow" style="margin-bottom:8px">
+      <input id="waNameHim" placeholder="اسم الطرف التاني" autocomplete="off">
+    </div>
+    <div class="keyrow" style="margin-bottom:12px">
+      <select id="waCount" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:10px;font:inherit">
+        <option value="10">آخر ١٠ رسايل</option>
+        <option value="25" selected>آخر ٢٥ رسالة</option>
+        <option value="50">آخر ٥٠ رسالة</option>
+      </select>
+    </div>
+    <button class="bigbtn" id="waGo">إنشاء الصورة</button>
+    <button class="linkbtn" id="waCancel">إلغاء</button>
+    <div class="small" style="margin-top:6px">الصورة بتترسم على جهازك، من غير أي طلبات.</div>
+  </div>
 </div>
 <div class="overlay hidden" id="infoModal">
   <div class="box" style="padding:20px;max-height:70vh;overflow-y:auto">
@@ -443,6 +504,17 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="small" id="pinErr" style="color:var(--danger);display:none;margin-top:6px"></div>
     <button class="bigbtn" id="pinSave" style="margin-top:12px">تفعيل القفل</button>
     <button class="linkbtn" id="pinCancel">إلغاء</button>
+  </div>
+</div>
+<div class="overlay hidden" id="grpModal">
+  <div class="box" style="padding:22px 20px;max-height:70vh;overflow-y:auto">
+    <h1 style="margin-top:0;font-size:18px">نقل لمجموعة 📁</h1>
+    <div id="grpList"></div>
+    <div class="keyrow" style="margin-top:6px">
+      <input id="grpNew" placeholder="اسم مجموعة جديدة" autocomplete="off">
+      <button class="bigbtn" id="grpAdd" style="width:auto;flex:none;padding:10px 16px">إضافة</button>
+    </div>
+    <button class="linkbtn" id="grpCancel">إلغاء</button>
   </div>
 </div>
 <div class="page" id="settingsPage">
@@ -502,12 +574,35 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="sect">البيانات</div>
     <div class="pgroup">
       <button class="prow linkrow" id="openUsage"><span>الاستخدام</span><span class="chev">‹</span></button>
+      <button class="prow linkrow" id="openStats"><span>إحصائياتك</span><span class="chev">‹</span></button>
+      <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
       <button class="prow linkrow" id="exportBtn"><span>تنزيل نسخة احتياطية</span><span class="pval">JSON</span></button>
+      <button class="prow linkrow" id="shareBackupBtn" style="display:none"><span>إرسال النسخة الاحتياطية (جيميل / درايف)</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="importBtn"><span>استعادة نسخة احتياطية</span><span class="chev">‹</span></button>
       <input type="file" id="importFile" accept=".json,application/json" style="display:none">
       <button class="prow linkrow" id="wipeBtn"><span style="color:var(--danger)">مسح كل البيانات من الجهاز</span></button>
     </div>
     <div class="small" style="padding:0 16px">النسخة الاحتياطية بتشمل المحادثات والذاكرة والإعدادات، من غير مفتاح API.</div>
+    <div class="sect">ربط الجيميل</div>
+    <div class="pgroup">
+      <div style="padding:10px 16px">
+        <input id="gmailClientId" type="text" placeholder="معرّف عميل جوجل (Client ID)" autocomplete="off" style="width:100%;margin-bottom:8px">
+        <input id="gmailAddr" type="email" placeholder="إيميل الجيميل بتاعك" autocomplete="off" style="width:100%">
+      </div>
+      <button class="prow linkrow" id="gmailHelpBtn"><span>إزاي أجيب معرّف العميل؟ (خطوتين، مجانًا)</span><span class="chev">‹</span></button>
+      <button class="prow linkrow" id="gmailLinkBtn"><span>ربط الجيميل</span><span class="pval" id="gmailState">غير مربوط</span></button>
+      <button class="prow linkrow" id="gmailSendBtn"><span>إرسال نسخة احتياطية لإيميلي</span><span class="chev">‹</span></button>
+    </div>
+    <div class="small" style="padding:0 16px">الإرسال بيتم من حسابك لنفسك مباشرة، صلاحية "إرسال فقط" من غير أي قراءة لإيميلاتك، ومفيش أي استهلاك لطلبات المحرك. التفاصيل بتتحفظ على جهازك بس.</div>
+    <div class="sect">محادثة واتساب</div>
+    <div class="pgroup">
+      <div style="padding:10px 16px">
+        <input id="waSetName" type="text" placeholder="اسم الطرف التاني في الصورة" autocomplete="off" style="width:100%;margin-bottom:8px">
+        <input id="waSetStatus" type="text" placeholder="السطر اللي تحت الاسم (فاضي = يتخبى)" autocomplete="off" style="width:100%">
+      </div>
+      <div class="prow"><span>علامتين الصح الزرقا</span><div class="seg" id="segWaTicks"></div></div>
+      <div class="prow"><span>خلفية واتساب</span><div class="seg" id="segWaWall"></div></div>
+    </div>
     <div style="height:30px"></div>
   </div>
 </div>
@@ -554,6 +649,10 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 <div class="page" id="usagePage">
   <div class="phead"><button class="iconbtn" id="closeUsage" aria-label="رجوع">→</button><b>الاستخدام</b><span style="width:40px"></span></div>
   <div class="pgbody" id="usageBody"></div>
+</div>
+<div class="page" id="statsPage">
+  <div class="phead"><button class="iconbtn" id="closeStats" aria-label="رجوع">→</button><b>إحصائياتك</b><span style="width:40px"></span></div>
+  <div class="pgbody" id="statsBody"></div>
 </div>
 <div id="toast"></div>
 <div class="overlay hidden" id="onboard">
@@ -663,28 +762,38 @@ function pickFacts(queryText,limit){
 function fmtDay(ts){const d=new Date(ts);return d.toLocaleDateString("ar-EG",{day:"numeric",month:"short"})}
 async function renderConvList(){
   const seq=++rcvSeq;
+  renderChips();
   const sorted=[...state.convs].sort((a,b)=>((b.pinned?1:0)-(a.pinned?1:0))||(b.updated-a.updated));
-  let items=sorted;const snippets={};
+  let base=sorted;
+  if(drawerMode==="arch")base=sorted.filter(c=>c.archived);
+  else if(drawerMode.startsWith("grp:"))base=sorted.filter(c=>!c.archived&&c.group===drawerMode.slice(4));
+  else base=sorted.filter(c=>!c.archived);
+  let items=base;const msgHits=[];
   if(convQuery){
     const q=normAr(convQuery);items=[];
     for(const c of sorted){
-      if(normAr(c.title||"").includes(q)){items.push(c);continue}
+      if(normAr(c.title||"").includes(q))items.push(c);
       const ms=await msgsOf(c.id);
-      const hit=ms.find(m=>normAr(m.text).includes(q));
-      if(hit){items.push(c);const ix=normAr(hit.text).indexOf(q);snippets[c.id]="…"+hit.text.slice(Math.max(0,ix-15),ix+35)+"…"}
+      for(const m of ms){
+        if(msgHits.length>=15)break;
+        const t=normAr(m.text||"");const ix=t.indexOf(q);
+        if(ix>=0)msgHits.push({c,m,snip:"…"+(m.text||"").slice(Math.max(0,ix-15),ix+40)+"…"});
+      }
     }
   }
   if(seq!==rcvSeq)return;
   const list=$("convList");list.innerHTML="";
-  if(convQuery&&!items.length){list.innerHTML='<div class="searchempty">مفيش نتائج مطابقة</div>';return}
-  const anyPinned=!convQuery&&items.some(x=>x.pinned);let sepState=null;
+  if(convQuery&&!items.length&&!msgHits.length){list.innerHTML='<div class="searchempty">مفيش نتائج مطابقة</div>';return}
+  if(drawerMode==="arch"&&!convQuery&&!items.length){list.innerHTML='<div class="searchempty">مفيش محادثات مؤرشفة</div>';return}
+  const anyPinned=!convQuery&&drawerMode==="all"&&items.some(x=>x.pinned);let sepState=null;
   for(const c of items){
     const el=document.createElement("div");el.className="convitem"+(c.id===state.convId?" active":"");
     if(!convQuery&&anyPinned){
       const grp=c.pinned?"pin":"rest";
       if(grp!==sepState){list.insertAdjacentHTML("beforeend",`<div class="convsep">${grp==="pin"?"مثبتة 📌":"كل المحادثات"}</div>`);sepState=grp}
     }
-    el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${esc(c.title||"محادثة جديدة")}</span><span class="cmeta">${snippets[c.id]?esc(snippets[c.id])+" · ":""}${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
+    const gtag=(drawerMode==="all"&&c.group)?`<span class="gtag">${esc(c.group)}</span>`:"";
+    el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${esc(c.title||"محادثة جديدة")}${gtag}</span><span class="cmeta">${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
     el.querySelector(".cmid").onclick=()=>{openConv(c.id);closeDrawerFn()};
     el.querySelector(".cvmenu").onclick=ev=>{ev.stopPropagation();openConvMenu(ev.currentTarget,c)};
     el.querySelector(".cmid").addEventListener("dblclick",()=>renameConv(c));
@@ -694,6 +803,15 @@ async function renderConvList(){
     el.addEventListener("touchmove",()=>clearTimeout(cLp));
 
     list.appendChild(el);
+  }
+  if(convQuery&&msgHits.length){
+    list.insertAdjacentHTML("beforeend",`<div class="convsep">في الرسايل 🔍</div>`);
+    for(const h of msgHits){
+      const el=document.createElement("div");el.className="convitem";
+      el.innerHTML=`<div class="cmid"><span class="t">${esc(h.c.title||"محادثة")}</span><span class="cmeta">${esc(h.snip)}</span></div>`;
+      el.querySelector(".cmid").onclick=async()=>{await openConv(h.c.id);closeDrawerFn();setTimeout(()=>flashMsg(h.m.id),180)};
+      list.appendChild(el);
+    }
   }
 }
 function confirm2(msg,yesLabel){return new Promise(res=>{
@@ -715,7 +833,19 @@ function bubbleHTML(m){
   state.msgIndex[m.id]=m;
   const img=m.img?`<img class="msgimg" src="${m.img}" alt="صورة">`:"";
   const qt=m.rquote?`<div class="quote" data-qid="${m.rid}"><div class="qwho">${m.rquote.r==="user"?"أنت":"عنان"}</div><div class="qsnip">${esc(m.rquote.t)}</div></div>`:"";
-  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${qt}${mdRender(m.text)}</div>`:`<div class="bubble${m.err?" err":""}">${qt}${esc(m.text)}</div>`;
+  let formsHtml="";
+  if(m.role==="model"&&!m.err&&m.forms&&m.forms.length){
+    m.forms.forEach((f,fi)=>{
+      const answered=Array.isArray(f.answered);
+      const opts=f.opts.map((o,oi)=>{
+        const sel=answered&&f.answered.includes(oi);
+        return `<button class="fopt${f.multi?" multi":""}${sel?" sel":""}" data-oi="${oi}" ${answered?"disabled":""}><span class="fc"></span>${esc(o)}</button>`;
+      }).join("");
+      const foot=answered?`<div class="formdone">✓ اتبعت إجابتك</div>`:`<button class="fsend" disabled>تأكيد وإرسال</button>`;
+      formsHtml+=`<div class="formcard" data-fid="${m.id}|:|${fi}" data-multi="${f.multi?1:0}"><div class="fq">${esc(f.q)}</div><div class="fopts">${opts}</div>${foot}</div>`;
+    });
+  }
+  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${qt}${mdRender(m.text)}${formsHtml}</div>`:`<div class="bubble${m.err?" err":""}">${qt}${esc(m.text)}</div>`;
   const spk=m.role==="model"&&!m.err&&m.text?`<button class="spkbtn" data-spk="${m.id}" aria-label="اسمع الرد">🔊</button>`:"";
   const qbtn=m.role==="model"&&!m.err&&m.text?`<button class="qbtn" data-qm="${m.id}" aria-label="إجراءات على الرد">✨</button>`:"";
   const pcv=state.convs.find(c=>c.id===m.convId);
@@ -951,6 +1081,7 @@ async function buildChatParts(conv,ms,userText,recall){
   const parts=[{role:"user",parts:[{text:sysFull+"\n\nاتفقنا؟ رد بـ: اتفقنا."}]},
                {role:"model",parts:[{text:"اتفقنا."}]}];
   sysFull+="\n\nاقتباس الرسايل: كل رسالة في السياق مرقمة [رقم]. تقدر ترد على رسالة أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم الرسالة. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم.";
+  sysFull+="\n\nاستمارات الاختيارات: لو محتاج من المستخدم يختار من اختيارات محددة، ضمّن استمارة في ردك بالشكل ده بالظبط:\n[[form]]\nسؤالك هنا؟\n- اختيار أول\n- اختيار تاني\n[[/form]]\nولو الاختيار لازم يبقى واحد بس استخدم [[form:single]] بنفس الشكل. الاستمارة بتترسم ككارت أزرار تفاعلي: المستخدم بيحدد ويدوس تأكيد وإرسال، وإجابته بتوصلك كرسالة عادية فيها اختياره. استخدمها لما الاختيارات تسهّل عليه الرد، ومتعيدش كتابة الاختيارات كنص عادي بره الاستمارة. افتراضيًا المستخدم يقدر يختار أكتر من إجابة لنفس السؤال، فماتستخدمش single إلا لو السؤال فعلًا ميستحملش غير اختيار واحد.";
   const tail=ms.slice(-KEEP_TAIL);
   state.ctxMsgs=state.ctxMsgs||{};state.ctxMsgs[conv.id]=tail;
   let imgCount=0;
@@ -1068,6 +1199,7 @@ async function currentConv(){
 let sheetMsg=null, editing=null;
 function openSheet(m){sheetMsg=m;navOpen("sheet");
   $("msRegen").style.display=m.role==="model"?"block":"none";
+  $("msImg").style.display=m.role==="model"?"block":"none";
   $("msEdit").style.display=m.role==="user"?"block":"none";
   const _pc=state.convs.find(c=>c.id===m.convId);
   $("msPin").textContent=(_pc&&_pc.pins&&_pc.pins.includes(m.id))?"📌 إلغاء التثبيت":"📌 تثبيت الرسالة";
@@ -1109,6 +1241,16 @@ $("msEdit").onclick=()=>{if(sheetMsg)startEdit(sheetMsg)};
 $("msDel").onclick=()=>{if(sheetMsg)deleteMsg(sheetMsg)};
 $("msCancel").onclick=closeSheet;
 $("msgs").addEventListener("click",e=>{
+  const fo=e.target.closest(".fopt");
+  if(fo&&!fo.disabled){
+    const card=fo.closest(".formcard");
+    if(card.dataset.multi==="1")fo.classList.toggle("sel");
+    else{card.querySelectorAll(".fopt").forEach(x=>x.classList.remove("sel"));fo.classList.add("sel")}
+    const sb=card.querySelector(".fsend");if(sb)sb.disabled=!card.querySelector(".fopt.sel");
+    return;
+  }
+  const fsb=e.target.closest(".fsend");
+  if(fsb&&!fsb.disabled){sendFormAnswer(fsb);return}
   const qtv=e.target.closest(".quote");
   if(qtv){if(!flashMsg(qtv.dataset.qid))toast("الرسالة الأصلية اتمسحت");return}
   const sp=e.target.closest(".spkbtn");
@@ -1334,6 +1476,23 @@ $("mwSum").onclick=async()=>{
   $("mwSum").disabled=false;$("mwSum").textContent="لخّص دلوقتي";
   renderMemBar();
 };
+/* ================= v17: إرسال إجابة استمارة ================= */
+async function sendFormAnswer(btn){
+  const card=btn.closest(".formcard");
+  const fid=card.dataset.fid.split("|:|");
+  const m=state.msgIndex[fid[0]];if(!m||!m.forms)return;
+  const f=m.forms[+fid[1]];if(!f||f.answered)return;
+  const sel=[...card.querySelectorAll(".fopt.sel")].map(o=>+o.dataset.oi);
+  if(!sel.length)return;
+  f.answered=sel;
+  await putItem("msgs",m);
+  const row=document.querySelector(`.msg[data-id="${m.id}"]`);
+  if(row)row.outerHTML=bubbleHTML(m);
+  const chosen=sel.map(i=>f.opts[i]);
+  const txt=`بالنسبة لسؤالك "${f.q}" اخترت: ${chosen.map(c=>'"'+c+'"').join(" و")}`;
+  $("input").value=txt;autoGrow();syncSendBtn();
+  send();
+}
 /* ================= send flow ================= */
 async function send(){
   if(state.busy)return;
@@ -1384,6 +1543,235 @@ async function send(){
 }
 /* ================= input behavior: Enter = new line ================= */
 function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
+/* ================= v17: أزرار الأوامر السريعة ================= */
+function syncChipRow_once(){};function syncChipRow(){$("chipRow").style.display=prefs.hideChips?"none":"flex";$("chipsState").textContent=prefs.hideChips?"مخفية":"شغالة"}
+$("chipsToggle").onclick=async()=>{prefs.hideChips=!prefs.hideChips;await savePrefs();syncChipRow()};
+$("chipHide").onclick=async()=>{prefs.hideChips=true;await savePrefs();syncChipRow()};
+document.querySelectorAll(".cmdchip[data-cmd]").forEach(b=>b.onclick=async()=>{
+  if(state.busy)return;
+  let cmd=b.dataset.cmd,txt="";
+  if(cmd==="summ")txt="لخّصلي المحادثة دي في نقاط قصيرة";
+  else if(cmd==="cont")txt="كمّل من آخر نقطة وقفنا عندها";
+  else if(cmd==="tone"){
+    const ms=await msgsOf(state.convId);const last=ms.filter(m=>m.role==="model"&&!m.err).pop();
+    txt=last?("غيّر نبرة آخر رد منك بشكل كامل وخليه بأسلوب مختلف. الرد: «"+last.text.slice(0,600)+"»"):"غيّر نبرة آخر رد منك";
+  }
+  $("input").value=txt;autoGrow();send();
+});
+
+/* ================= v17: الرد كصورة ================= */
+function replyToImage(m){
+  const cs=getComputedStyle(document.body);
+  const bg=(cs.getPropertyValue("--bg")||"#0f1526").trim();
+  const acc=(cs.getPropertyValue("--accent")||"#c9a86a").trim();
+  const fg=(cs.getPropertyValue("--text")||"#e9ebf4").trim();
+  const mut=(cs.getPropertyValue("--muted")||"#8b93ab").trim();
+  const W=1080,PAD=72,F=42,LH=68,maxW=W-PAD*2;
+  const meas=document.createElement("canvas").getContext("2d");
+  meas.font=F+'px Tahoma, "Noto Naskh Arabic", Arial, sans-serif';
+  const text=m.text.replace(/\*/g,"");
+  const lines=[];
+  for(const para of text.split(/\n/)){
+    if(!para.trim()){lines.push("");continue}
+    let line="";
+    for(const w of para.trim().split(/\s+/)){
+      const t=line?line+" "+w:w;
+      if(meas.measureText(t).width>maxW&&line){lines.push(line);line=w}
+      else line=t;
+    }
+    lines.push(line);
+  }
+  const headH=160,footH=110,H=headH+lines.length*LH+footH+PAD;
+  const cv=document.createElement("canvas");cv.width=W;cv.height=H;
+  const g=cv.getContext("2d");
+  g.fillStyle=bg;g.fillRect(0,0,W,H);
+  g.textAlign="left";g.direction="ltr";
+  g.fillStyle=acc;g.font='bold 46px Georgia, "Noto Serif", serif';g.fillText("Anan AI",PAD,100);
+  g.textAlign="right";g.direction="rtl";
+  g.fillStyle=mut;g.font='30px Tahoma, sans-serif';
+  g.fillText(new Date(m.ts||Date.now()).toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"}),W-PAD,98);
+  g.strokeStyle=acc;g.lineWidth=2;g.beginPath();g.moveTo(PAD,headH-16);g.lineTo(W-PAD,headH-16);g.stroke();
+  g.fillStyle=fg;g.font=F+'px Tahoma, "Noto Naskh Arabic", Arial, sans-serif';
+  let y=headH+PAD-10;
+  for(const ln of lines){if(ln)g.fillText(ln,W-PAD,y);y+=LH}
+  g.fillStyle=mut;g.font='28px Tahoma, sans-serif';g.fillText("من محادثة مع أنان",W-PAD,H-52);
+  return cv;
+}
+$("msImg").onclick=async()=>{
+  const m=sheetMsg;closeSheet();if(!m)return;
+  try{
+    const cv=replyToImage(m);
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    const file=new File([blob],"anan-"+localDay()+".png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]})}
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="anan-"+localDay()+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast("الصورة اتنزلت ✓")}
+  }catch(e){if(e&&e.name!=="AbortError")toast("معرفتش أحوّلها لصورة")}
+};
+
+/* ================= v17: واتساب ريندرر ================= */
+function waFmtTime(ts){
+  const d=new Date(ts);let h=d.getHours();const m=String(d.getMinutes()).padStart(2,"0");
+  const ap=h<12?"ص":"م";h=h%12||12;return h+":"+m+" "+ap;
+}
+function waWrap(g,text,maxW){
+  const out=[];
+  for(const para of String(text).split(/\n/)){
+    if(!para.trim()){out.push("");continue}
+    let line="";
+    for(const w of para.trim().split(/\s+/)){
+      const t=line?line+" "+w:w;
+      if(g.measureText(t).width>maxW&&line){out.push(line);line=w}
+      else line=t;
+    }
+    out.push(line);
+  }
+  return out;
+}
+function renderWhatsApp(msgs,nameMe,nameHim,opts){
+  opts=opts||{};const showTicks=opts.ticks!==false,showWall=opts.wall!==false;const statusLine=opts.status===undefined?"متصل الآن":opts.status;
+  const W=1080,PAD=26,maxBW=Math.round(W*0.76),F=40,LH=58,BPX=22,BPY=16;
+  const meas=document.createElement("canvas").getContext("2d");
+  const FONT=F+'px Tahoma, "Noto Naskh Arabic", Arial, sans-serif';
+  meas.font=FONT;
+  const dayKey=ts=>{const d=new Date(ts);return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate()};
+  const dayLabel=k=>{const[a,b,c]=k.split("-").map(Number);return new Date(a,b,c).toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"numeric",year:"numeric"})};
+  const headH=150,topGap=30,msgGap=18,datePillH=64,bottomPad=60;
+  // pass 1: measure
+  const laid=msgs.map(m=>{
+    const isMe=m.role==="user";
+    meas.font=FONT;
+    const innerMax=maxBW-BPX*2;
+    let qLines=null,qH=0;
+    if(m.rquote){
+      const qf=30;meas.font=qf+'px Tahoma, sans-serif';
+      const who=m.rquote.r==="user"?nameMe:nameHim;
+      qLines=waWrap(meas,who+": "+m.rquote.t,innerMax-30).slice(0,2);
+      qH=qLines.length*44+22;
+    }
+    meas.font=FONT;
+    const lines=waWrap(meas,m.text.replace(/\*/g,""),innerMax);
+    let textW=0;for(const ln of lines)textW=Math.max(textW,meas.measureText(ln).width);
+    const timeW=140;
+    const bw=Math.min(maxBW,Math.max(textW+BPX*2,timeW+BPX*2+40,180));
+    const bh=qH+lines.length*LH+BPY*2+34;
+    return {m,isMe,lines,qLines,qH,bw,bh};
+  });
+  let H=headH+topGap+bottomPad;let prevDay=null;
+  for(const L of laid){const dk=dayKey(L.m.ts||Date.now());if(dk!==prevDay){H+=datePillH;prevDay=dk}H+=L.bh+msgGap}
+  // pass 2: draw
+  const cv=document.createElement("canvas");cv.width=W;cv.height=H;
+  const g=cv.getContext("2d");
+  g.fillStyle="#efe7dd";g.fillRect(0,0,W,H);
+  if(showWall){g.fillStyle="rgba(0,0,0,0.045)";
+  for(let yy=40;yy<H;yy+=120)for(let xx=((yy/120)%2?70:30);xx<W;xx+=140){g.beginPath();g.arc(xx,yy,4,0,7);g.fill()}}
+  // header
+  g.fillStyle="#008069";g.fillRect(0,0,W,headH);
+  g.fillStyle="#fff";g.textAlign="right";g.direction="rtl";
+  g.font='46px Tahoma, sans-serif';g.fillText("➜",W-PAD-6,96);
+  g.beginPath();g.arc(W-PAD-160,headH/2+6,44,0,7);g.fillStyle="#cfd8dc";g.fill();
+  g.fillStyle="#54656f";g.font='bold 44px Tahoma, sans-serif';g.textAlign="center";g.direction="rtl";
+  g.fillText((nameHim||"؟").trim().charAt(0),W-PAD-160,headH/2+22);
+  g.textAlign="right";g.direction="rtl";
+  g.fillStyle="#fff";g.font='bold 44px Tahoma, "Noto Naskh Arabic", sans-serif';
+  g.fillText(nameHim,W-PAD-230,headH/2-2);
+  if(statusLine){g.fillStyle="#d0e8e2";g.font='27px Tahoma, sans-serif';
+  g.fillText(statusLine,W-PAD-230,headH/2+42);}
+  g.fillStyle="#fff";g.font='40px Tahoma, sans-serif';g.textAlign="left";
+  g.fillText("⋮",PAD+8,96);g.fillText("📞",PAD+66,94);g.fillText("📹",PAD+150,94);
+  let y=headH+topGap;prevDay=null;
+  const drawTicks=(x,yy)=>{
+    g.strokeStyle="#53bdeb";g.lineWidth=5;g.lineCap="round";
+    for(const dx of [0,16]){g.beginPath();g.moveTo(x+dx,yy+6);g.lineTo(x+dx+10,yy+16);g.lineTo(x+dx+26,yy-6);g.stroke()}
+  };
+  for(const L of laid){
+    const dk=dayKey(L.m.ts||Date.now());
+    if(dk!==prevDay){
+      prevDay=dk;
+      g.font='27px Tahoma, sans-serif';
+      const lbl=dayLabel(dk);const tw=g.measureText(lbl).width+56;
+      g.fillStyle="#ffffff";g.beginPath();g.roundRect(W/2-tw/2,y+8,tw,48,10);g.fill();
+      g.fillStyle="#54656f";g.textAlign="center";g.direction="rtl";g.fillText(lbl,W/2,y+42);
+      y+=datePillH;
+    }
+    const bx=L.isMe?W-PAD-L.bw:PAD;
+    const by=y;
+    g.fillStyle=L.isMe?"#d9fdd3":"#ffffff";
+    g.beginPath();g.roundRect(bx,by,L.bw,L.bh,18);g.fill();
+    // tail
+    g.beginPath();
+    if(L.isMe){g.moveTo(bx+L.bw,by+14);g.lineTo(bx+L.bw+14,by+22);g.lineTo(bx+L.bw,by+34)}
+    else{g.moveTo(bx,by+14);g.lineTo(bx-14,by+22);g.lineTo(bx,by+34)}
+    g.closePath();g.fill();
+    let ty=by+BPY+8;
+    // quote
+    if(L.qLines){
+      g.fillStyle="rgba(0,0,0,0.07)";g.beginPath();g.roundRect(bx+12,ty,L.bw-24,L.qH-10,10);g.fill();
+      g.fillStyle="#06cf9c";g.fillRect(L.isMe?bx+L.bw-18:bx+12,ty,5,L.qH-10);
+      g.fillStyle="#667781";g.font='30px Tahoma, sans-serif';g.textAlign="right";g.direction="rtl";
+      let qy=ty+36;
+      for(const ql of L.qLines){g.fillText(ql,bx+L.bw-30,qy);qy+=44}
+      ty+=L.qH;
+    }
+    g.fillStyle="#111b21";g.font=FONT;g.textAlign="right";g.direction="rtl";
+    for(const ln of L.lines){if(ln)g.fillText(ln,bx+L.bw-BPX,ty+F*0.85);ty+=LH}
+    // time + ticks
+    g.font='25px Tahoma, sans-serif';g.fillStyle="#667781";g.textAlign="left";g.direction="ltr";
+    g.fillText(waFmtTime(L.m.ts||Date.now()),bx+BPX+(L.isMe?56:0),by+L.bh-14);
+    if(L.isMe&&showTicks)drawTicks(bx+BPX,by+L.bh-30);
+    y+=L.bh+msgGap;
+  }
+  return cv;
+}
+let waConv=null;
+function openWaModal(c){
+  waConv=c;
+  $("waNameMe").value=prefs.name||"أنا";
+  $("waNameHim").value=prefs.waName||"أنان";
+  $("waModal").classList.remove("hidden");navOpen("waModal");
+}
+$("waCancel").onclick=()=>{$("waModal").classList.add("hidden");navClose("waModal")};
+$("waGo").onclick=async()=>{
+  if(!waConv)return;
+  $("waGo").disabled=true;$("waGo").textContent="بترسم…";
+  try{
+    const n=+$("waCount").value||25;
+    let ms=await msgsOf(waConv.id);ms.sort((a,b)=>a.ts-b.ts);
+    ms=ms.filter(m=>!m.err&&m.text&&m.text.trim()).slice(-n);
+    if(!ms.length){toast("مفيش رسايل تتحول");return}
+    const cv=renderWhatsApp(ms,$("waNameMe").value.trim()||"أنا",$("waNameHim").value.trim()||"أنان",{ticks:prefs.waTicks,wall:prefs.waWall,status:prefs.waStatus});
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    const file=new File([blob],"anan-whatsapp-"+localDay()+".png",{type:"image/png"});
+    $("waModal").classList.add("hidden");navClose("waModal");
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]})}
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="anan-whatsapp-"+localDay()+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast("الصورة اتنزلت ✓")}
+  }catch(e){if(e&&e.name!=="AbortError")toast("معرفتش أرسم الصورة")}
+  $("waGo").disabled=false;$("waGo").textContent="إنشاء الصورة";
+};
+
+/* ================= v17: الإحصائيات ================= */
+async function renderStats(){
+  const convs=await allStore("convs"),msgs=await allStore("msgs");
+  const mine=msgs.filter(m=>m.role==="user").length;
+  const his=msgs.filter(m=>m.role==="model"&&!m.err).length;
+  const byDay={};for(const m of msgs){const d=new Date(m.ts||0);const k=d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();byDay[k]=(byDay[k]||0)+1}
+  let topDay=null,topN=0;for(const k in byDay)if(byDay[k]>topN){topN=byDay[k];topDay=k}
+  const byConv={};for(const m of msgs)byConv[m.convId]=(byConv[m.convId]||0)+1;
+  let topC=null,topCN=0;for(const id in byConv)if(byConv[id]>topCN){topCN=byConv[id];topC=convs.find(c=>c.id===id)}
+  const oldest=convs.length?convs.reduce((a,c)=>Math.min(a,c.created||c.updated||Date.now()),Date.now()):Date.now();
+  const fmtDay=k=>{const[a,b,c]=k.split("-").map(Number);return new Date(a,b,c).toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"})};
+  const row=(l,v)=>'<div class="prow" style="cursor:default"><span>'+l+'</span><span class="pval">'+v+'</span></div>';
+  $("statsBody").innerHTML='<div class="pgroup">'
+    +row("رسايلك",arNum(mine))
+    +row("ردود أنان",arNum(his))
+    +row("عدد المحادثات",arNum(convs.length))
+    +row("أنشط يوم",(topDay?fmtDay(topDay):"—")+" ("+arNum(topN)+" رسالة)")
+    +row("أكثر محادثة",(topC?(topC.title||"محادثة"):"—")+" ("+arNum(topCN)+")")
+    +row("بتكلم أنان منذ",new Date(oldest).toLocaleDateString("ar-EG",{day:"numeric",month:"long",year:"numeric"}))
+    +'</div><div class="small" style="padding:0 16px">الأرقام دي بتتحسب على جهازك من بياناتك المحلية، من غير أي طلبات.</div>';
+}
+$("openStats").onclick=()=>{renderStats();openPage("statsPage")};
+$("closeStats").onclick=()=>closePage("statsPage");
+
 function syncSendBtn(){$("sendBtn").classList.toggle("ready",!!$("input").value.trim()&&!state.busy)}
 $("input").addEventListener("input",()=>{
   autoGrow();syncSendBtn();
@@ -1394,7 +1782,7 @@ $("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abo
 /* ================= preferences & appearance ================= */
 const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
   persona:{style:"sahib",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
-  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round"};
+  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round",groups:[]};
 let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
 async function savePrefs(){await kvSet("prefs",prefs)}
 const THEMES={
@@ -1556,6 +1944,9 @@ function openConvMenu(btn,c){
   const items=[
     {t:c.pinned?"📌 إلغاء التثبيت":"📌 تثبيت",fn:async()=>{c.pinned=!c.pinned;await putItem("convs",c);renderConvList()}},
     {t:"✏️ إعادة تسمية",fn:()=>renameConv(c)},
+    {t:"📁 نقل لمجموعة",fn:()=>openGrpModal(c)},
+    {t:c.archived?"📤 إلغاء الأرشفة":"🗄 أرشفة",fn:async()=>{c.archived=!c.archived;await putItem("convs",c);renderChips();renderConvList();toast(c.archived?"اتأرشفت 🗄":"رجعت من الأرشيف ✦")}},
+    {t:"💬 تحويل لشكل واتساب",fn:()=>openWaModal(c)},
     {t:"📝 ملخص المحادثة",fn:()=>showInfo(c.summary?("ملخص أحداث المحادثة لحد دلوقتي:\n\n"+c.summary):"لسه مفيش ملخص للمحادثة دي. بيتعمل تلقائيًا كل "+(prefs.sumEvery||12)+" رسالة، وتقدر تغيّر العدد من الإعدادات.")},
     {t:"🗑 حذف المحادثة",danger:true,fn:async()=>{
       if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
@@ -1621,7 +2012,7 @@ async function runReply(conv,histMsgs,userText){
     const now=Date.now();
     if(!force&&now-lastPaint<90){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},95);return}
     lastPaint=now;
-    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/^\s*\[\[(q\s*:?\s*[0-9٠-٩]*\]?\]?)?/i,""));
+    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"").replace(/^\s*\[\[(q\s*:?\s*[0-9٠-٩]*\]?\]?)?/i,""));
     const b=$("msgs");
     if(b.scrollHeight-b.scrollTop-b.clientHeight>140){$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ آخر الرسايل";nearBottom=false}
   };
@@ -1666,6 +2057,16 @@ async function runReply(conv,histMsgs,userText){
       am.text=am.text.slice(_qm[0].length).replace(/^\s+/,"");
       if(_orig&&_orig.id!==am.id){am.rid=_orig.id;am.rquote={r:_orig.role,t:(_orig.text||"").slice(0,90)}}
     }
+    const _forms=[];
+    am.text=am.text.replace(/\[\[form(:single)?\]\]\r?\n?([\s\S]*?)\[\[\/form\]\]/g,(whole,single,body)=>{
+      const lines=body.split("\n").map(l=>l.trim()).filter(Boolean);
+      const q=lines[0]||"";
+      const opts=lines.slice(1).map(l=>l.replace(/^[-•]\s*/,"")).filter(Boolean);
+      if(!q||opts.length<2)return whole;
+      _forms.push({q,opts,multi:single!==":single",answered:null});
+      return "";
+    }).replace(/\n{3,}/g,"\n\n").trim();
+    if(_forms.length)am.forms=_forms;
     await putItem("msgs",am);
     finalRow();
     conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
@@ -2009,6 +2410,127 @@ $("exportBtn").onclick=async()=>{
   setTimeout(()=>URL.revokeObjectURL(a.href),5000);
   toast("النسخة الاحتياطية اتنزلت ✦");
 };
+if(navigator.canShare){
+  try{
+    const probe=new File(["{}"],"probe.json",{type:"application/json"});
+    if(navigator.canShare({files:[probe]}))$("shareBackupBtn").style.display="";
+  }catch(_){/* مش مدعوم */}
+}
+$("shareBackupBtn").onclick=async()=>{
+  const data=await buildBackup();
+  const file=new File([JSON.stringify(data,null,1)],"anan-backup-"+localDay()+".json",{type:"application/json"});
+  try{
+    await navigator.share({files:[file],title:"نسخة احتياطية من أنان",text:"النسخة الاحتياطية الكاملة من أنان (محادثات + ذاكرة + إعدادات)."});
+  }catch(e){if(e&&e.name!=="AbortError")toast("المشاركة متاحهاش هنا — نزّل النسخة وابعتها يدويًا")}
+};
+/* ================= gmail link (backup to his own inbox) ================= */
+let gsiLoading=null,gmailTok=null,gmailTokExp=0;
+function loadGsi(){
+  if(window.google&&google.accounts&&google.accounts.oauth2)return Promise.resolve();
+  if(gsiLoading)return gsiLoading;
+  gsiLoading=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.onload=()=>res();sc.onerror=()=>rej(new Error("gsi-load"));document.head.appendChild(sc)});
+  return gsiLoading;
+}
+function gmailGetToken(interactive){
+  return loadGsi().then(()=>new Promise((res,rej)=>{
+    const cid=(prefs.gmailClientId||"").trim();
+    if(!cid){rej(new Error("no-cid"));return}
+    try{
+      const tc=google.accounts.oauth2.initTokenClient({
+        client_id:cid,
+        scope:"https://www.googleapis.com/auth/gmail.send",
+        callback:r=>{
+          if(r&&r.access_token){gmailTok=r.access_token;gmailTokExp=Date.now()+(((+r.expires_in)||3500)-60)*1000;$("gmailState").textContent="متصل ✓";res(gmailTok)}
+          else rej(new Error("no-token"));
+        },
+        error_callback:e=>rej(new Error((e&&e.type)||"oauth-error"))
+      });
+      tc.requestAccessToken({prompt:interactive?"consent":""});
+    }catch(e){rej(e)}
+  }));
+}
+async function gmailEnsureToken(){
+  if(gmailTok&&Date.now()<gmailTokExp)return gmailTok;
+  try{return await gmailGetToken(false)}
+  catch(e){return await gmailGetToken(true)}
+}
+function u8b64(u8){let bin="";const CH=0x8000;for(let i=0;i<u8.length;i+=CH)bin+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));return btoa(bin)}
+function strB64(str){return u8b64(new TextEncoder().encode(str))}
+function b64url(str){return strB64(str).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function rfc2047(str){return "=?UTF-8?B?"+strB64(str)+"?="}
+function buildGmailMime(to,filename,jsonText){
+  const boundary="anan_"+Date.now().toString(36);
+  const bodyTxt="النسخة الاحتياطية الكاملة من أنان (محادثات + ذاكرة + إعدادات). الملف مرفق.\nعشان ترجّعها: من إعدادات أنان ← استعادة نسخة احتياطية ← اختار الملف ده.";
+  return [
+    "To: "+to,
+    "Subject: "+rfc2047("نسخة احتياطية من أنان — "+localDay()),
+    "MIME-Version: 1.0",
+    "Content-Type: multipart/mixed; boundary=\""+boundary+"\"",
+    "",
+    "--"+boundary,
+    "Content-Type: text/plain; charset=\"UTF-8\"",
+    "Content-Transfer-Encoding: base64",
+    "",
+    strB64(bodyTxt),
+    "",
+    "--"+boundary,
+    "Content-Type: application/json; charset=\"UTF-8\"; name=\""+filename+"\"",
+    "Content-Transfer-Encoding: base64",
+    "Content-Disposition: attachment; filename=\""+filename+"\"",
+    "",
+    strB64(jsonText).replace(/.{76}/g,"$&\n"),
+    "",
+    "--"+boundary+"--"
+  ].join("\r\n");
+}
+async function gmailSendBackup(){
+  const to=(prefs.gmailAddr||"").trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to))throw new Error("bad-addr");
+  const tok=await gmailEnsureToken();
+  const data=await buildBackup();
+  const mime=buildGmailMime(to,"anan-backup-"+localDay()+".json",JSON.stringify(data));
+  const r=await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send",{method:"POST",headers:{Authorization:"Bearer "+tok,"Content-Type":"application/json"},body:JSON.stringify({raw:b64url(mime)})});
+  if(!r.ok){if(r.status===401)gmailTok=null;throw new Error("gmail-"+r.status)}
+  return r.json();
+}
+$("gmailClientId").addEventListener("change",async e=>{prefs.gmailClientId=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
+$("gmailAddr").addEventListener("change",async e=>{prefs.gmailAddr=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
+$("waSetName").addEventListener("change",async e=>{prefs.waName=e.target.value.trim()||"أنان";await savePrefs();toast("اتحفظ ✓")});
+$("waSetStatus").addEventListener("change",async e=>{prefs.waStatus=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
+$("gmailHelpBtn").onclick=()=>showInfo(
+"عشان الإرسال لجيميلك يشتغل بضغطة واحدة، محتاج معرّف عميل مجاني من جوجل (مرة واحدة بس):\n\n"+
+"1) افتح console.cloud.google.com وسجل دخول بنفس الجيميل\n"+
+"2) اعمل مشروع جديد (New Project) بأي اسم، زي anan\n"+
+"3) من القايمة: APIs & Services ← Library ← دور على Gmail API واعمله Enable\n"+
+"4) APIs & Services ← OAuth consent screen ← اختار External ← اكتب اسم التطبيق وإيميلك، وسيب الباقي زي ما هو\n"+
+"5) في Audience/Test users ضيف إيميلك نفسه كمستخدم تجريبي\n"+
+"6) APIs & Services ← Credentials ← Create Credentials ← OAuth client ID ← النوع Web application\n"+
+"7) في Authorized JavaScript origins ضيف رابط التطبيق بالظبط (من غير / في الآخر)\n"+
+"8) اعمل Create وانسخ الـ Client ID والصقه هنا\n\n"+
+"ده كله مجاني تمامًا وبيعمله جوجل لأي تطبيق، ومفيش أي بطاقة ولا اشتراك. والصلاحية اللي بنطلبها اسمها gmail.send: إرسال فقط، مستحيل نقرا إيميلاتك.");
+$("gmailLinkBtn").onclick=async()=>{
+  $("gmailLinkBtn").disabled=true;
+  try{await gmailGetToken(true);toast("الجيميل اترابط ✓")}
+  catch(e){
+    const m=String((e&&e.message)||e);
+    if(m.includes("no-cid"))toast("الصق معرّف العميل الأول (شوف إزاي أجيبه؟ تحت)");
+    else if(m.includes("popup_closed"))toast("النافذة اتقفلت قبل ما تكمل — جرب تاني");
+    else toast("الربط منجحش — اتأكد من معرّف العميل والإعدادات");
+  }
+  $("gmailLinkBtn").disabled=false;
+};
+$("gmailSendBtn").onclick=async()=>{
+  $("gmailSendBtn").disabled=true;
+  try{await gmailSendBackup();toast("النسخة الاحتياطية اتبعتت لإيميلك ✓")}
+  catch(e){
+    const m=String((e&&e.message)||e);
+    if(m.includes("bad-addr"))toast("اكتب إيميل الجيميل بتاعك الأول فوق");
+    else if(m.includes("popup_closed"))toast("النافذة اتقفلت قبل ما تكمل — جرب تاني");
+    else if(m.startsWith("Error: gmail-"))toast("جوجل رفض الإرسال — راجع الربط وجرب تاني");
+    else toast("الإرسال منجحش — جرب تاني");
+  }
+  $("gmailSendBtn").disabled=false;
+};
 $("importBtn").onclick=()=>$("importFile").click();
 $("importFile").addEventListener("change",async e=>{
   const f=e.target.files[0];if(!f)return;e.target.value="";
@@ -2047,6 +2569,12 @@ function buildSw(id,map,cur,cb){
 function fillSettings(){
   $("nameInput").value=prefs.name||"";
   $("instrBox").value=prefs.instructions||"";
+  $("gmailClientId").value=prefs.gmailClientId||"";
+  $("gmailAddr").value=prefs.gmailAddr||"";
+  $("waSetName").value=prefs.waName||"أنان";
+  $("waSetStatus").value=prefs.waStatus===undefined?"متصل الآن":prefs.waStatus;
+  buildSeg("segWaTicks",[["1","شغالة"],["0","مخفية"]],prefs.waTicks===false?"0":"1",v=>{prefs.waTicks=v==="1";savePrefs()});
+  buildSeg("segWaWall",[["1","شغالة"],["0","مخفية"]],prefs.waWall===false?"0":"1",v=>{prefs.waWall=v==="1";savePrefs()});
   buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["oled","أسود"],["forest","زيتي"],["violet","بنفسجي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
   buildSeg("segFont",[["s","صغير"],["m","وسط"],["l","كبير"]],prefs.font,v=>{prefs.font=v;savePrefs();applyAppearance()});
   const mp=$("modelPick");mp.innerHTML="";
@@ -2161,6 +2689,48 @@ window.addEventListener("popstate",()=>{
 });
 function closePage(id){$(id).classList.remove("open");navClose(id)}
 /* ================= drawer / settings ================= */
+let drawerMode="all";
+function renderChips(){
+  const el=$("dchips");if(!el)return;
+  el.innerHTML="";
+  const mk=(id,label)=>{const b=document.createElement("button");b.className="dchip"+(drawerMode===id?" on":"");b.textContent=label;
+    b.onclick=()=>{drawerMode=id;renderChips();renderConvList()};el.appendChild(b)};
+  mk("all","الكل");
+  for(const g of (prefs.groups||[]))mk("grp:"+g,"📁 "+g);
+  mk("arch","🗄 الأرشيف");
+  const plus=document.createElement("button");plus.className="dchip";plus.textContent="+ مجموعة";
+  plus.onclick=()=>openGrpModal(null);el.appendChild(plus);
+}
+let grpConv=null;
+function openGrpModal(c){
+  grpConv=c;
+  const list=$("grpList");list.innerHTML="";
+  const groups=prefs.groups||[];
+  if(c){
+    const none=document.createElement("button");none.className="grpbtn";none.textContent="🚫 بدون مجموعة";
+    none.onclick=async()=>{c.group="";await putItem("convs",c);$("grpModal").classList.add("hidden");renderChips();renderConvList();toast("اتشالت من المجموعة")};
+    list.appendChild(none);
+  }
+  for(const g of groups){
+    const b=document.createElement("button");b.className="grpbtn";
+    b.textContent=(c&&c.group===g?"✓ 📁 ":"📁 ")+g;
+    b.onclick=async()=>{if(grpConv){grpConv.group=g;await putItem("convs",grpConv);toast("اتنقلت لمجموعة "+g+" ✦")}$("grpModal").classList.add("hidden");renderChips();renderConvList()};
+    list.appendChild(b);
+  }
+  if(!c&&!groups.length)list.innerHTML='<div class="searchempty" style="padding:8px">مفيش مجموعات لسه — اكتب اسم تحت ودوس إضافة</div>';
+  $("grpNew").value="";
+  $("grpModal").classList.remove("hidden");
+}
+$("grpAdd").onclick=async()=>{
+  const name=$("grpNew").value.trim();if(!name)return;
+  prefs.groups=prefs.groups||[];
+  if(!prefs.groups.includes(name))prefs.groups.push(name);
+  await savePrefs();
+  if(grpConv){grpConv.group=name;await putItem("convs",grpConv);toast("اتنقلت لمجموعة "+name+" ✦")}
+  else toast("المجموعة اتعملت ✦");
+  $("grpModal").classList.add("hidden");renderChips();renderConvList();
+};
+$("grpCancel").onclick=()=>$("grpModal").classList.add("hidden");
 let convQuery="",rcvSeq=0;
 $("convSearch").addEventListener("input",e=>{convQuery=e.target.value.trim();clearTimeout(e.target._d);e.target._d=setTimeout(()=>renderConvList(),180)});
 function closeDrawerFn(){$("drawer").classList.remove("open");$("scrim").classList.remove("open");closeQMenu()}
@@ -2202,7 +2772,7 @@ $("saveNewKey").onclick=async()=>{
   }
   $("saveNewKey").disabled=false;$("saveNewKey").textContent="حفظ المفتاح الجديد";
 };
-function refreshSettings(){
+function refreshSettings(){syncChipRow();
   $("keyState").textContent=state.key?("••••"+state.key.slice(-4)):"مفيش";
   $("modelState").textContent=state.model;
   $("convCount").textContent=state.convs.length;

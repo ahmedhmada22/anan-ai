@@ -1086,7 +1086,7 @@ function renderMsgs(ms,restore){
     $("jumpBtn").style.display=nearBottom?"none":"block";
     $("jumpBtn").textContent="⬇ آخر الرسايل";
   }else scrollDown(true);
-  refreshRegenChip();renderMemBar();
+  refreshRegenChip();renderMemBar();renderStoryBar();
 }
 function appendMsg(m,force){
   const box=$("msgs");box.querySelectorAll(".dayempty,#sugg").forEach(e=>e.remove());
@@ -1347,6 +1347,8 @@ op=add لحدث جديد مفتوح، op=close لحدث من القايمة تح
       const existing=state.facts.slice(-60).map(f=>({id:f.id,text:f.text,conf:f.conf}));
       prompt=`انت نظام استخراج ذاكرة. من الحوار الأخير بالعامية المصرية تحت، استخرج بس المعلومات الدائمة اللي تستاهل تتفتكر مستقبلًا: تفاصيل شخصية، اهتمامات، تفضيلات، مشاريع، قرارات، خطط، آراء ثابتة. تجاهل الكلام العابر والتحيات.
 قاعدة صارمة (عزل المحادثات): خزّن بس حقائق محايدة عن المستخدم نفسه (اسمه، تفضيلاته، شغله، خططه الحقيقية). ممنوع منعًا باتًا تخزين أي محتوى خاص بمحادثة واحدة: لا أحداث ولا سيناريوهات ولا شخصيات ولا كلام قيل في سياق تمثيل. أي حاجة من النوع ده مكانها دفتر الأحداث مش الحقائق.
+قاعدة الخطط: أي خطة أو موعد أو حدث مستقبلي حقيقي في حياة المستخدم (قال يوم أو تاريخ أو مناسبة: «بكرة»، «يوم الجمعة»، «الأسبوع الجاي»...) لازم يتسجل كحقيقة في ops برضه (مش بس في دفتر الأحداث) عشان تفضل متاحة في كل المحادثات.
+قاعدة الأمانة: انسخ الحقيقة زي ما المستخدم قالها بالظبط. ممنوع تضيف أو تخمّن أي تفصيلة مش مذكورة صراحة: نوع المناسبة، سببها، مكانها، ناسها. لو قال «حفلة» تتسجل «حفلة» — ممنوع تحوّلها لعيد ميلاد أو أي نوع تاني. المجهول يفضل مجهول.
 صنّف كل حقيقة conf: "مؤكد" (قالها صراحة)، "رأي" (رأي أو تفضيل)، "احتمال" (حاجة مش متأكدة)، "استنتاج" (استنتجتها انت).
 لو معلومة بتعدّل أو تلغي حقيقة قديمة من القائمة، استخدم update مع نفس id. لو حاجة اتنفت تمامًا استخدم delete. ممنوع تكرار حقيقة موجودة زي ما هي.
 كمان حدّث دفتر أحداث المحادثة: أي وعد أو خطة أو سؤال مهم لسه مفتوح، أو حدث مفتوح اتقفل.
@@ -3390,6 +3392,9 @@ async function enterCharConv(pr,setup){
   for(const k of Object.keys(pr.vals||{}))conv.persona[k]=pr.vals[k];
   conv.persona.char=pr.id;
   if(setup)conv.persona.charSetup=setup;
+  const _setupName=setup&&setup.name?String(setup.name).trim():"";
+  conv.title=pr.name+(_setupName?" — "+_setupName:"");
+  conv.titled=true;
   await putItem("convs",conv);
   if(state._gSnap){prefs.persona=state._gSnap;state._gSnap=null}
   let _purged=false;

@@ -321,6 +321,15 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 .regenchip:active{color:var(--accent);border-color:var(--accent)}
 .msg{transition:transform .18s ease}
 .msg.swiping{transition:none}
+/* ===== v16.2: عداد الرسايل + تنبيه الذاكرة ===== */
+#countBar{display:flex;justify-content:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
+#countTxt{color:var(--muted);font-size:11.5px}
+#memWarn{display:none;align-items:center;gap:8px;padding:7px 12px;background:rgba(224,120,86,.10);border-bottom:1px solid var(--danger);flex:none}
+#memWarn.open{display:flex}
+#mwTxt{flex:1;font-size:12.5px;line-height:1.55;min-width:0}
+#mwSum{flex:none;background:var(--accent);color:#1c2030;font-weight:700;font-size:12px;border-radius:99px;padding:5px 12px}
+#mwSum:disabled{opacity:.5}
+#mwHide{flex:none;color:var(--muted);font-size:14px;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -356,6 +365,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <button class="snav" id="searchClose" aria-label="قفل البحث">✕</button>
   </div>
   <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
+  <div id="countBar"><span id="countTxt"></span></div>
+  <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
@@ -715,7 +726,7 @@ function bubbleHTML(m){
 }
 function renderMsgs(ms,restore){
   const box=$("msgs");
-  if(!ms.length){renderEmpty();return}
+  if(!ms.length){renderEmpty();renderMemBar();return}
   let html="",lastDay="";
   for(const m of ms){
     const day=new Date(m.ts).toDateString();
@@ -729,7 +740,7 @@ function renderMsgs(ms,restore){
     $("jumpBtn").style.display=nearBottom?"none":"block";
     $("jumpBtn").textContent="⬇ آخر الرسايل";
   }else scrollDown(true);
-  refreshRegenChip();
+  refreshRegenChip();renderMemBar();
 }
 function appendMsg(m,force){
   const box=$("msgs");box.querySelectorAll(".dayempty,#sugg").forEach(e=>e.remove());
@@ -738,7 +749,7 @@ function appendMsg(m,force){
   if(!lm||new Date(lm.ts).toDateString()!==new Date(m.ts).toDateString())
     box.insertAdjacentHTML("beforeend",`<div class="daysep">${fmtDayFull(m.ts)}</div>`);
   box.insertAdjacentHTML("beforeend",bubbleHTML(m));
-  scrollDown(!!force);
+  scrollDown(!!force);renderMemBar();
 }
 function setTyping(on,txt){
   const box=$("msgs");const old=$("typingRow");if(old)old.remove();
@@ -939,11 +950,19 @@ async function buildChatParts(conv,ms,userText,recall){
   }
   const parts=[{role:"user",parts:[{text:sysFull+"\n\nاتفقنا؟ رد بـ: اتفقنا."}]},
                {role:"model",parts:[{text:"اتفقنا."}]}];
+  sysFull+="\n\nاقتباس الرسايل: كل رسالة في السياق مرقمة [رقم]. تقدر ترد على رسالة أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم الرسالة. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم.";
   const tail=ms.slice(-KEEP_TAIL);
+  state.ctxMsgs=state.ctxMsgs||{};state.ctxMsgs[conv.id]=tail;
   let imgCount=0;
   for(let i=0;i<tail.length;i++){
     const m=tail[i];
-    const pp=[{text:m.text||" "}];
+    let txt=m.text||" ";
+    if(m.rquote){
+      const qwho=m.rquote.r==="user"?"المستخدم":"عنان";
+      const actor=m.role==="user"?"المستخدم":"عنان";
+      txt=`[${actor} بيرد بالاقتباس على رسالة ${qwho}: "${m.rquote.t}"]\n`+txt;
+    }
+    const pp=[{text:"["+(i+1)+"] "+txt}];
     if(m.img&&imgCount<3&&i>=tail.length-6){
       pp.push({inline_data:{mime_type:m.imgMime||"image/jpeg",data:m.img.split(",")[1]}});
       imgCount++;
@@ -990,6 +1009,12 @@ async function extractMemory(conv,exchange){
   }catch(e){/* extraction failure is silent by design */}
 }
 /* ================= rolling summary ================= */
+function summaryPrompt(conv,chunk){
+  return `لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز. دقة التفاصيل أهم من الاختصار: احتفظ بالأرقام والأسماء والتواريخ والقرارات والوعود والتفضيلات حرفيًا زي ما اتقالت. نظم الملخص سطر لكل موضوع بالشكل: الموضوع — أهم اللي اتقال واتفق عليه. الملخص السابق (لو موجود) ادمجه في الجديد من غير ما تضيّع منه أي تفصيلة لسه مهمة.
+الملخص السابق: ${conv.summary||"لا يوجد"}
+الجزء الجديد:
+${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+m.text).join("\n")}`;
+}
 async function maybeSummarize(conv,ms){
   const done=conv.summarizedCount||0;
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
@@ -997,16 +1022,21 @@ async function maybeSummarize(conv,ms){
   const chunk=ms.slice(done,done+every);
   if(!chunk.length)return;
   try{
-    const prompt=`لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز. دقة التفاصيل أهم من الاختصار: احتفظ بالأرقام والأسماء والتواريخ والقرارات والوعود والتفضيلات حرفيًا زي ما اتقالت. نظم الملخص سطر لكل موضوع بالشكل: الموضوع — أهم اللي اتقال واتفق عليه. الملخص السابق (لو موجود) ادمجه في الجديد من غير ما تضيّع منه أي تفصيلة لسه مهمة.
-الملخص السابق: ${conv.summary||"لا يوجد"}
-الجزء الجديد:
-${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+m.text).join("\n")}`;
-    const {text}=await gemini([{role:"user",parts:[{text:prompt}]}]);
+    const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}]);
     if(text){
       conv.summary=text;conv.summarizedCount=done+chunk.length;
       await putItem("convs",conv);
     }
   }catch(e){}
+}
+async function forceSummary(conv){
+  const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
+  const done=conv.summarizedCount||0;
+  const chunk=ms.slice(done);
+  if(!chunk.length)return false;
+  const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}]);
+  if(text){conv.summary=text;conv.summarizedCount=ms.length;conv.memWarnHide=0;await putItem("convs",conv);return true}
+  return false;
 }
 /* ================= conversations ================= */
 async function newConv(){
@@ -1069,7 +1099,7 @@ async function deleteMsg(m){
   if(el)el.remove();
   const _dc=state.convs.find(c=>c.id===m.convId);
   if(_dc&&_dc.pins&&_dc.pins.includes(m.id)){_dc.pins=_dc.pins.filter(x=>x!==m.id);await putItem("convs",_dc);if(_dc.id===state.convId)renderPinBar()}
-  refreshRegenChip();
+  refreshRegenChip();renderMemBar();
   toast("اتمسحت");
 }
 $("msCopy").onclick=()=>{if(sheetMsg)copyText(sheetMsg.text);closeSheet()};
@@ -1264,6 +1294,46 @@ function refreshRegenChip(){
     $("regenChip").onclick=()=>regenerate(m);
   }
 }
+/* ================= v16.2: عداد الرسايل + تنبيه ضغط الذاكرة ================= */
+async function renderMemBar(){
+  const conv=state.convs.find(c=>c.id===state.convId);
+  const total=document.querySelectorAll("#msgs .msg").length;
+  $("countTxt").textContent=total?(arNum(total)+" رسالة"):"لسه مفيش رسايل";
+  const w=$("memWarn");
+  if(!conv||!total){w.classList.remove("open");return}
+  const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
+  const done=conv.summarizedCount||0;
+  const lag=total-done;
+  const gap=total-KEEP_TAIL-done;
+  if(conv.memWarnHide&&lag<conv.memWarnHide)conv.memWarnHide=0;
+  const hide=conv.memWarnHide||0;
+  const danger=gap>0;
+  const approaching=!danger&&total>KEEP_TAIL&&lag>KEEP_TAIL-every;
+  const suppressed=hide>0&&lag<hide+every;
+  if((danger||approaching)&&!suppressed){
+    $("mwTxt").textContent=danger
+      ?("⚠️ تنبيه ذاكرة حقيقي: "+arNum(gap)+" رسالة من أول المحادثة بقت بره نافذة عنان المباشرة ولسه ماتلخصتش — ممكن ينساها أو يخرف فيها. دوس «لخّص دلوقتي» عشان تثبتها.")
+      :("المحادثة بقت طويلة: الملخص متأخر عن آخر "+arNum(lag)+" رسالة، وقريب أجزاء من أول المحادثة تخرج من ذاكرة عنان المباشرة. لخّص دلوقتي وماتخليش حاجة تضيع.");
+    w.classList.add("open");
+  }else w.classList.remove("open");
+}
+$("mwHide").onclick=async()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
+  conv.memWarnHide=document.querySelectorAll("#msgs .msg").length-(conv.summarizedCount||0);
+  await putItem("convs",conv);
+  $("memWarn").classList.remove("open");
+};
+$("mwSum").onclick=async()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
+  if(state.busy){toast("استنى لما الرد الحالي يخلص");return}
+  $("mwSum").disabled=true;$("mwSum").textContent="بيلخص…";
+  try{
+    if(await forceSummary(conv))toast("الملخص اتحدث ✦ الذاكرة متأمنة");
+    else toast("كله متلخص أصلا");
+  }catch(e){toast("الملخص مكملش — جرب تاني")}
+  $("mwSum").disabled=false;$("mwSum").textContent="لخّص دلوقتي";
+  renderMemBar();
+};
 /* ================= send flow ================= */
 async function send(){
   if(state.busy)return;
@@ -1306,7 +1376,7 @@ async function send(){
   if(am){
     const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
     extractMemory(conv,{user:text,ai:am.text}).then(()=>{if(!conv.titled)titleConv(conv,text,am.text)});
-    maybeSummarize(conv,all);
+    maybeSummarize(conv,all).then(()=>renderMemBar());
   }
   refreshRegenChip();
   if(searchState.open)runSearch();
@@ -1551,7 +1621,7 @@ async function runReply(conv,histMsgs,userText){
     const now=Date.now();
     if(!force&&now-lastPaint<90){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},95);return}
     lastPaint=now;
-    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text);
+    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/^\s*\[\[(q\s*:?\s*[0-9٠-٩]*\]?\]?)?/i,""));
     const b=$("msgs");
     if(b.scrollHeight-b.scrollTop-b.clientHeight>140){$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ آخر الرسايل";nearBottom=false}
   };
@@ -1588,6 +1658,14 @@ async function runReply(conv,histMsgs,userText){
       am.text=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
     }
     am.text=am.text.trim();
+    const _qm=am.text.match(/^\s*\[\[\s*q\s*:\s*([0-9٠-٩]+)\s*\]\]\s*/i);
+    if(_qm){
+      const _qn=parseInt(_qm[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
+      const _ctx=(state.ctxMsgs||{})[conv.id]||[];
+      const _orig=_qn>=1&&_qn<=_ctx.length?_ctx[_qn-1]:null;
+      am.text=am.text.slice(_qm[0].length).replace(/^\s+/,"");
+      if(_orig&&_orig.id!==am.id){am.rid=_orig.id;am.rquote={r:_orig.role,t:(_orig.text||"").slice(0,90)}}
+    }
     await putItem("msgs",am);
     finalRow();
     conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();

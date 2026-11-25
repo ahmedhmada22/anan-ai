@@ -51,6 +51,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 #drawer .dhead{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
 #drawer .dhead b{font-size:16px}
 #convList{flex:1;overflow-y:auto;padding:8px}
+#drawerFoot{border-top:1px solid var(--border);padding:6px 8px}
 .convitem{
   display:flex;align-items:center;gap:6px;width:100%;text-align:start;
   padding:10px 12px;border-radius:14px;margin:1px 4px;background:transparent;
@@ -88,6 +89,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   border-top:1px solid var(--border);border-radius:18px 18px 0 0;
   padding:10px 14px calc(14px + env(safe-area-inset-bottom));
   transform:translateY(105%);transition:transform .2s ease;
+  max-height:78vh;overflow-y:auto;
 }
 #msgSheet.open{transform:translateY(0)}
 #msgSheet .msbtn{display:block;width:100%;text-align:start;padding:13px 10px;font-size:16.5px;border-radius:10px}
@@ -149,6 +151,25 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
   padding:26px;overflow-y:auto;text-align:center;
 }
 .overlay.hidden{display:none}
+.transblock{font-size:14px;color:var(--muted);border-top:1px dashed var(--border);margin-top:6px;padding-top:6px;white-space:pre-wrap;line-height:1.6}
+.remrow{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14.5px;text-align:start}
+.remrow .rt{flex:1;min-width:0}
+.remrow .rw{color:var(--muted);font-size:12.5px}
+.remrow button{color:var(--danger);font-size:16px;padding:4px 8px}
+.remopts{display:flex;flex-direction:column;gap:8px;width:100%}
+.remopts button{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:15.5px;color:var(--text)}
+.remopts button:active{background:var(--card2)}
+#wsBar{padding:4px 10px 0}
+#wsBtn{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:14.5px;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+.recapcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:6px 8px;font-size:14px;line-height:1.6}
+.recapcard b{color:var(--accent)}
+.recapx{float:left;color:var(--muted);font-size:14px;padding:2px 6px}
+.recapsec{margin-top:4px}
+.cmpcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-top:8px;width:100%;text-align:start}
+.cmpcard .cmplabel{color:var(--accent);font-size:13px;margin-bottom:4px}
+.cmpcard .cmptext{white-space:pre-wrap;font-size:15px;max-height:38vh;overflow-y:auto;line-height:1.7}
+.sembtn{display:block;width:100%;text-align:center;padding:10px;color:var(--accent2);font-size:14.5px;background:var(--card);border:1px dashed var(--border);border-radius:12px;margin:6px 0}
+#charSetModal{z-index:75}
 .overlay .box{max-width:430px;width:100%}
 .overlay h1{font-size:21px;margin:14px 0 6px}
 .overlay p{color:var(--muted);font-size:15px;margin-bottom:12px;text-align:start}
@@ -156,6 +177,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .overlay ol li{margin-bottom:6px}
 .overlay a{color:var(--accent2)}
 .keyrow{display:flex;gap:8px;width:100%;margin-top:6px}
+.fld.ltr{direction:ltr;text-align:left}
 .keyrow input{
   flex:1;border:1px solid var(--border);border-radius:12px;background:var(--card);
   color:var(--text);padding:12px;font-size:15px;outline:none;direction:ltr;text-align:left;
@@ -276,7 +298,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .retrybtn{margin-top:6px;background:var(--card2);border:1px solid var(--danger);color:#f0b09b;border-radius:16px;padding:7px 14px;font-size:13.5px;cursor:pointer}
 .qbtn{background:none;border:none;color:var(--muted);font-size:13px;padding:2px 4px;cursor:pointer;border-radius:8px}
 .qbtn:active{color:var(--accent)}
-#qmenu{position:fixed;z-index:80;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:150px;display:none}
+#qmenu{position:fixed;z-index:80;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:150px;display:none;max-height:72vh;overflow-y:auto}
 #qmenu button{display:block;width:100%;text-align:start;background:none;border:none;color:var(--text);font-size:14.5px;padding:10px 12px;border-radius:9px;cursor:pointer}
 #qmenu button:active{background:var(--card)}
 .qchip{background:none;border:1px solid var(--border);border-radius:14px;color:var(--muted);font-size:11.5px;padding:4px 11px;cursor:pointer}
@@ -336,6 +358,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 /* ===== v16.2: عداد الرسايل + تنبيه الذاكرة ===== */
 #countBar{display:flex;justify-content:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
 #countTxt{color:var(--muted);font-size:11.5px}
+#storyBar{display:none;justify-content:center;align-items:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none;cursor:pointer}
+#storyTxt{color:var(--accent2);font-size:11.5px}
 #memWarn{display:none;align-items:center;gap:8px;padding:7px 12px;background:rgba(224,120,86,.10);border-bottom:1px solid var(--danger);flex:none}
 #memWarn.open{display:flex}
 #mwTxt{flex:1;font-size:12.5px;line-height:1.55;min-width:0}
@@ -398,7 +422,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   </div>
   <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
   <div id="countBar"><span id="countTxt"></span></div>
-  <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
+  <div id="storyBar"><span id="storyTxt"></span></div>
+  <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHand" style="display:none">🚀 نقل مكمل</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
@@ -407,6 +432,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <button class="cmdchip" data-cmd="summ">لخّص</button>
     <button class="cmdchip" data-cmd="cont">كمّل</button>
     <button class="cmdchip" data-cmd="tone">غيّر النبرة</button>
+    <button class="cmdchip" data-cmd="cowrite">✍️ كمّل كتابتي</button>
     <button class="cmdchip cmdchip-x" id="chipHide" aria-label="إخفاء الأزرار">✕</button>
   </div>
   <div id="composer">
@@ -428,10 +454,12 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 <input type="file" id="imgInput" accept="image/*" style="display:none">
 <div id="scrim"></div>
 <div id="drawer">
-  <div class="dhead"><b>المحادثات</b><button class="linkbtn" id="closeDrawer">إغلاق</button></div>
+  <div class="dhead"><b>المحادثات</b><span style="display:flex;align-items:center;gap:8px"><button class="iconbtn" id="drawerNew" aria-label="محادثة جديدة" style="width:32px;height:32px;font-size:18px;line-height:1">+</button><button class="linkbtn" id="closeDrawer">إغلاق</button></span></div>
+  <div id="wsBar"><button id="wsBtn"><span>🗂 <b id="wsName">الرئيسية</b></span><span style="color:var(--muted)">▾</span></button></div>
   <div class="dsearch"><input id="convSearch" placeholder="ابحث في كل المحادثات والرسايل…"></div>
   <div id="dchips"></div>
   <div id="convList"></div>
+  <div id="drawerFoot"><button class="prow linkrow" id="openSaved"><span>⭐ المحفوظات</span><span class="pval" id="savedCount"></span></button></div>
 </div>
 <div id="msgSheet">
   <button class="msbtn" id="msReply">↩ رد على الرسالة</button>
@@ -440,6 +468,10 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <button class="msbtn" id="msEdit">تعديل الرسالة</button>
   <button class="msbtn" id="msRegen" style="color:var(--accent2)">إعادة توليد الرد</button>
   <button class="msbtn" id="msImg">🖼 تحويل الرد لصورة</button>
+  <button class="msbtn" id="msSave">⭐ حفظ في المحفوظات</button>
+  <button class="msbtn" id="msTrans">🌐 ترجمة (طلب واحد)</button>
+  <button class="msbtn" id="msCmp">⚖️ قارن برد تاني (طلب واحد)</button>
+  <button class="msbtn" id="msRem">⏰ ذكّرني بالرسالة دي</button>
   <button class="msbtn danger" id="msDel">حذف الرسالة</button>
   <button class="msbtn" id="msCancel" style="color:var(--muted);text-align:center">إلغاء</button>
 </div>
@@ -544,6 +576,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow"><span>لون فقاعات عنان</span><div class="swatches" id="swBubbleAI"></div></div>
       <div class="prow"><span>شكل الفقاعات</span><div class="seg" id="segBubShape"></div></div>
       <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
+      <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
     </div>
     <div class="sect">عنان</div>
     <div class="pgroup">
@@ -561,7 +594,10 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="sect">الذاكرة والتعليمات</div>
     <div class="pgroup">
       <button class="prow linkrow" id="openMem"><span>عارف عنك إيه (الذاكرة)</span><span class="pval"><span id="factCount">-</span> حقيقة ‹</span></button>
+      <button class="prow linkrow" id="openRems"><span>التذكيرات ⏰</span><span class="pval"><span id="remCount">-</span> ‹</span></button>
       <div class="prow"><span>الاستذكار قبل الرد 🧠</span><button class="tgl" id="tglRecall"></button></div>
+      <div class="prow"><span>أسئلة إعداد الشخصيات 🎭</span><button class="tgl" id="tglRpInterview"></button></div>
+      <div class="prow"><span>شريط ساعة القصة 🕰</span><button class="tgl" id="tglRpClock"></button></div>
       <div class="small" style="padding:0 14px 12px">قبل ما يرد، عنان بياخد ثانيتين يسترجع اللي اتقال في المحادثة ويربطه بسؤالك، فالرد ميطلعش سريع وأعمى. بيستهلك طلب إضافي بس على نموذج خفيف.</div>
       <div class="prow"><span>ملخص تلقائي كل</span><select class="fld" id="sumEverySel" style="width:auto;padding:8px 10px"><option value="8">٨ رسايل</option><option value="12">١٢ رسالة</option><option value="16">١٦ رسالة</option><option value="24">٢٤ رسالة</option></select></div>
       <div class="small" style="padding:0 14px 12px">كل العدد ده عنان بيعمل ملخص شامل لأحداث المحادثة وبيحفظه معاها، عشان المحادثات الطويلة ماتضيعش. تقدر تشوف الملخص من منيو ⋮ جنب أي محادثة.</div>
@@ -575,7 +611,6 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="pgroup">
       <button class="prow linkrow" id="openUsage"><span>الاستخدام</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="openStats"><span>إحصائياتك</span><span class="chev">‹</span></button>
-      <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
       <button class="prow linkrow" id="exportBtn"><span>تنزيل نسخة احتياطية</span><span class="pval">JSON</span></button>
       <button class="prow linkrow" id="shareBackupBtn" style="display:none"><span>إرسال النسخة الاحتياطية (جيميل / درايف)</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="importBtn"><span>استعادة نسخة احتياطية</span><span class="chev">‹</span></button>
@@ -586,19 +621,17 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="sect">ربط الجيميل</div>
     <div class="pgroup">
       <div style="padding:10px 16px">
-        <input id="gmailClientId" type="text" placeholder="معرّف عميل جوجل (Client ID)" autocomplete="off" style="width:100%;margin-bottom:8px">
-        <input id="gmailAddr" type="email" placeholder="إيميل الجيميل بتاعك" autocomplete="off" style="width:100%">
+        <input id="gmailAddr" class="fld ltr" type="email" placeholder="إيميل الجيميل بتاعك" autocomplete="off">
       </div>
-      <button class="prow linkrow" id="gmailHelpBtn"><span>إزاي أجيب معرّف العميل؟ (خطوتين، مجانًا)</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="gmailLinkBtn"><span>ربط الجيميل</span><span class="pval" id="gmailState">غير مربوط</span></button>
       <button class="prow linkrow" id="gmailSendBtn"><span>إرسال نسخة احتياطية لإيميلي</span><span class="chev">‹</span></button>
     </div>
-    <div class="small" style="padding:0 16px">الإرسال بيتم من حسابك لنفسك مباشرة، صلاحية "إرسال فقط" من غير أي قراءة لإيميلاتك، ومفيش أي استهلاك لطلبات المحرك. التفاصيل بتتحفظ على جهازك بس.</div>
+    <div class="small" style="padding:0 16px">الإرسال بيتم من حسابك لنفسك مباشرة، صلاحية «إرسال فقط» من غير أي قراءة لإيميلاتك، ومفيش أي استهلاك لطلبات المحرك. أول ربط جوجل هتعرض تنبيه إن التطبيق في وضع تجريبي، اختار Advanced وكمّل، وده طبيعي. ممكن جوجل تطلب تأكيد سريع كل فترة بضغطة واحدة من غير باسورد.</div>
     <div class="sect">محادثة واتساب</div>
     <div class="pgroup">
       <div style="padding:10px 16px">
-        <input id="waSetName" type="text" placeholder="اسم الطرف التاني في الصورة" autocomplete="off" style="width:100%;margin-bottom:8px">
-        <input id="waSetStatus" type="text" placeholder="السطر اللي تحت الاسم (فاضي = يتخبى)" autocomplete="off" style="width:100%">
+        <input id="waSetName" class="fld" type="text" placeholder="اسم الطرف التاني في الصورة" autocomplete="off" style="margin-bottom:8px">
+        <input id="waSetStatus" class="fld" type="text" placeholder="السطر اللي تحت الاسم (فاضي = يتخبى)" autocomplete="off">
       </div>
       <div class="prow"><span>علامتين الصح الزرقا</span><div class="seg" id="segWaTicks"></div></div>
       <div class="prow"><span>خلفية واتساب</span><div class="seg" id="segWaWall"></div></div>
@@ -620,6 +653,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow"><span>الدفء</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngWarm"><span class="rnglbl" id="lblWarm"></span></div></div>
       <div class="prow"><span>الحماس</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngEnth"><span class="rnglbl" id="lblEnth"></span></div></div>
       <div class="prow"><span>مستوى الجدل</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngArgue"><span class="rnglbl" id="lblArgue"></span></div></div>
+      <div class="prow"><span>الإبداع 🎨</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngCreat"><span class="rnglbl" id="lblCreat"></span></div></div>
       <div class="prow"><span>الإيموجي</span><div class="rngwrap"><input type="range" min="0" max="4" step="1" id="rngEmoji"><span class="rnglbl" id="lblEmoji"></span></div></div>
     </div>
     <div class="sect">التنسيق</div>
@@ -635,6 +669,104 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     </div>
     <div class="small" style="padding:0 16px">كل التعديلات دي موصولة بالردود فعليًا وبتتطبق على الردود الجديدة فورًا، مش مجرد شكل.</div>
     <div style="height:30px"></div>
+  </div>
+</div>
+<div class="page" id="charsPage">
+  <div class="phead"><button class="iconbtn" id="closeChars" aria-label="رجوع">→</button><b>ممثل الأدوار 🎭</b><span style="width:40px"></span></div>
+  <div class="pgbody">
+    <div class="small" style="padding:14px 16px 4px">اختار الشخصية، وأول مرة هيسألك كام سؤال عشان تبقى بتاعتك انت. تقدر تخطي وتخليها على الجاهز.</div>
+    <div class="pgroup" style="padding:10px;margin-top:8px"><div class="presetgrid" id="charsGrid"></div></div>
+    <div style="height:30px"></div>
+  </div>
+</div>
+<div class="overlay hidden" id="charSetModal">
+  <div class="box" style="padding:22px 20px">
+    <h1 style="margin-top:0" id="csTitle">إعداد الشخصية</h1>
+    <p class="small" style="text-align:center;margin-top:0">جاوب اللي تحبه بس، وسيب الباقي — الشخصية تتبني على كلامك</p>
+    <input id="csName" class="fld" placeholder="اسمها/اسمه" autocomplete="off">
+    <input id="csAge" class="fld" inputmode="numeric" placeholder="السن (اختياري)" autocomplete="off" style="margin-top:8px">
+    <div id="csTraitsWrap">
+      <div class="small" style="margin:12px 0 6px">صفات مميزة (اختار اللي يعجبك):</div>
+      <div id="csTraits" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+    <div id="csDescWrap" style="display:none">
+      <div class="small" style="margin:12px 0 6px">وصف الشخصية وطباعها:</div>
+      <textarea id="csDesc" class="fld" rows="3" placeholder="مثال: واحدة ست بتشتغل دكتورة، حادة بس طيبة، بتحب القراية…"></textarea>
+    </div>
+    <input id="csRel" class="fld" placeholder="علاقتكم/خلفيتكم (مثال: جارتنا من ٥ سنين)" autocomplete="off" style="margin-top:8px">
+    <input id="csEra" class="fld" placeholder="الحقبة الزمنية للقصة (اختياري — مثال: التسعينات، ٢٠٢٤، المستقبل)" autocomplete="off" style="margin-top:8px">
+    <button class="bigbtn" id="csSave" style="margin-top:14px">يلا نبدأ ✦</button>
+    <button class="linkbtn" id="csSkip" style="display:block;margin:8px auto 0">تخطي — خليها على الجاهز</button>
+  </div>
+</div>
+<div class="overlay hidden" id="storyModal">
+  <div class="box" style="padding:22px 20px">
+    <h1 style="margin-top:0">ساعة القصة 🕰</h1>
+    <p class="small" style="text-align:center;margin-top:0">الحقبة والوقت القصصي بإيدك — عنان بيلتزم باللي تحدده</p>
+    <input id="stEra" class="fld" placeholder="الحقبة الزمنية (مثال: التسعينات، سنة ٢٠٥٠)" autocomplete="off">
+    <div class="keyrow" style="margin-top:8px">
+      <input id="stDay" class="fld" inputmode="numeric" placeholder="اليوم رقم" autocomplete="off">
+      <input id="stTime" class="fld ltr" placeholder="13:00" autocomplete="off">
+    </div>
+    <button class="bigbtn" id="stSave" style="margin-top:14px">حفظ ✦</button>
+    <button class="linkbtn" id="stHide" style="display:block;margin:8px auto 0">إخفاء الشريط</button>
+  </div>
+</div>
+<div class="overlay hidden" id="remModal">
+  <div class="box">
+    <h1>⏰ ذكّرني امتى؟</h1>
+    <p id="remSnip" style="color:var(--muted)"></p>
+    <div class="remopts">
+      <button data-rem="h1">بعد ساعة</button>
+      <button data-rem="h3">بعد ٣ ساعات</button>
+      <button data-rem="am">بكرة ٩ الصبح</button>
+      <button data-rem="pm">بكرة ٩ بالليل</button>
+    </div>
+    <p style="margin-top:10px">التذكير بيتخزن على جهازك بس، صفر طلبات. لو سمحت للإشعارات هيوصلك تنبيه وانت بره التطبيق.</p>
+    <button class="bigbtn" id="remCancel" style="background:var(--card);margin-top:8px">إلغاء</button>
+  </div>
+</div>
+<div class="overlay hidden" id="remListModal">
+  <div class="box">
+    <h1>⏰ التذكيرات</h1>
+    <div id="remList" style="width:100%;max-height:55vh;overflow-y:auto"></div>
+    <button class="bigbtn" id="remListOk" style="margin-top:10px">تمام</button>
+  </div>
+</div>
+<div class="overlay hidden" id="cmpModal">
+  <div class="box">
+    <h1>⚖️ قارن الرد</h1>
+    <p>نفس السؤال هيتبعت لاختيارك، والرد التاني يظهر جنب الأصلي من غير ما يتحفظ في المحادثة. رد المقارنة = طلب واحد.</p>
+    <div style="width:100%;text-align:start;margin-bottom:8px"><div class="small" style="padding:0 2px 4px">بنموذج تاني:</div><select class="fld" id="cmpModel" style="width:100%"></select></div>
+    <div style="width:100%;text-align:start;margin-bottom:8px"><div class="small" style="padding:0 2px 4px">أو بشخصية تانية:</div><select class="fld" id="cmpPersona" style="width:100%"></select></div>
+    <button class="bigbtn" id="cmpGo">قارن ⚖️</button>
+    <button class="bigbtn" id="cmpCancel" style="background:var(--card);margin-top:8px">إلغاء</button>
+  </div>
+</div>
+<div class="overlay hidden" id="cmpResultModal">
+  <div class="box" style="align-items:stretch;max-height:86vh;overflow-y:auto">
+    <h1>⚖️ المقارنة</h1>
+    <div id="cmpCards"></div>
+    <div class="small" style="margin-top:8px">المقارنة للاطلاع بس — مش بتتحفظ في المحادثة.</div>
+    <button class="bigbtn" id="cmpResOk" style="margin-top:8px">تمام</button>
+  </div>
+</div>
+<div class="overlay hidden" id="loopsModal">
+  <div class="box">
+    <h1>📒 دفتر الأحداث</h1>
+    <p>الحاجات اللسه مفتوحة في المحادثة دي — خاصة بيها وبس.</p>
+    <div id="loopsList" style="width:100%;max-height:55vh;overflow-y:auto"></div>
+    <button class="bigbtn" id="loopsOk" style="margin-top:10px">تمام</button>
+  </div>
+</div>
+<div class="overlay hidden" id="secPinModal">
+  <div class="box">
+    <h1>🕶 محادثات مخفية</h1>
+    <p>اكتب رمز القفل عشان تظهر المحادثات المخفية.</p>
+    <input class="fld" id="secPinInput" type="password" inputmode="numeric" autocomplete="off" placeholder="رمز القفل" style="text-align:center;letter-spacing:6px;font-size:20px;width:100%">
+    <div id="secPinErr" style="color:var(--danger);font-size:13.5px;display:none;margin-top:6px">الرمز غلط</div>
+    <button class="bigbtn" id="secPinGo" style="margin-top:10px">فتح</button>
+    <button class="bigbtn" id="secPinCancel" style="background:var(--card);margin-top:8px">إلغاء</button>
   </div>
 </div>
 <div class="page" id="memPage">
@@ -653,6 +785,10 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 <div class="page" id="statsPage">
   <div class="phead"><button class="iconbtn" id="closeStats" aria-label="رجوع">→</button><b>إحصائياتك</b><span style="width:40px"></span></div>
   <div class="pgbody" id="statsBody"></div>
+</div>
+<div class="page" id="savedPage">
+  <div class="phead"><button class="iconbtn" id="closeSaved" aria-label="رجوع">→</button><b>المحفوظات</b><span style="width:40px"></span></div>
+  <div class="pgbody" id="savedBody"></div>
 </div>
 <div id="toast"></div>
 <div class="overlay hidden" id="onboard">
@@ -720,15 +856,17 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const MODEL_MAIN="gemini-4-hydrogen", MODEL_FALLBACK="gemini-3.5-flash-lite";
 const MODELS=[
- {id:"gemini-4-hydrogen",name:"Gemini 4 Hydrogen",desc:"الأقوى والأذكى — الافتراضي",rpm:20,rpd:250},
- {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",desc:"متوازن: سرعة كويسة وذكاء كويس",rpm:15,rpd:500},
- {id:"gemini-3.6-flash",name:"Gemini 3.6 Flash",desc:"أسرع، للردود اليومية",rpm:15,rpd:500},
- {id:"gemini-3.5-flash-lite",name:"Gemini 3.5 Flash-Lite",desc:"الأخف والأسرع — الاحتياطي",rpm:30,rpd:1000},
- {id:"gemini-3.1-flash-lite",name:"Gemini 3.1 Flash-Lite",desc:"خفيف من الجيل الأقدم",rpm:30,rpd:1000},
- {id:"gemma-4-31b-it",name:"Gemma 4 31B",desc:"مفتوح المصدر من جوجل — ذكي وبيدعم الصور",rpm:30,rpd:500},
- {id:"gemma-4-26b-a4b-it",name:"Gemma 4 26B A4B",desc:"مفتوح المصدر وسريع — معمول للردود الطويلة",rpm:30,rpd:500},
- {id:"gemma-3-27b-it",name:"Gemma 3 27B",desc:"Gemma الجيل اللي قبله — مجاني برضه",rpm:30,rpd:500}
+ {id:"gemini-4-hydrogen",name:"Gemini 4 Hydrogen",desc:"الأقوى والأذكى — الافتراضي",rpm:20,rpd:250,ctx:1048576},
+ {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",desc:"متوازن: سرعة كويسة وذكاء كويس",rpm:15,rpd:500,ctx:1048576},
+ {id:"gemini-3.6-flash",name:"Gemini 3.6 Flash",desc:"أسرع، للردود اليومية",rpm:15,rpd:500,ctx:1048576},
+ {id:"gemini-3.5-flash-lite",name:"Gemini 3.5 Flash-Lite",desc:"الأخف والأسرع — الاحتياطي",rpm:30,rpd:1000,ctx:1048576},
+ {id:"gemini-3.1-flash-lite",name:"Gemini 3.1 Flash-Lite",desc:"خفيف من الجيل الأقدم",rpm:30,rpd:1000,ctx:1048576},
+ {id:"gemma-4-31b-it",name:"Gemma 4 31B",desc:"مفتوح المصدر من جوجل — ذكي وبيدعم الصور",rpm:30,rpd:500,ctx:131072},
+ {id:"gemma-4-26b-a4b-it",name:"Gemma 4 26B A4B",desc:"مفتوح المصدر وسريع — معمول للردود الطويلة",rpm:30,rpd:500,ctx:131072},
+ {id:"gemma-3-27b-it",name:"Gemma 3 27B",desc:"Gemma الجيل اللي قبله — مجاني برضه",rpm:30,rpd:500,ctx:131072}
 ];
+/* حدود الذاكرة الشغالة (موثقة): نافذة الرسايل الحرفية KEEP_TAIL=120 رسالة، نافذة الاسترجاع 40 رسالة،
+   حتى 16 حقيقة محايدة بالرد. تقدير التوكنز = عدد حروف الطلب الفعلي ÷ 2.5 (تقدير محافظ للعربي). */
 const state={key:null,convId:null,convs:[],facts:[],busy:false,model:MODEL_MAIN};
 function toast(msg,ms){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",ms||2600)}
 /* Arabic text normalization for memory retrieval */
@@ -768,10 +906,14 @@ async function renderConvList(){
   if(drawerMode==="arch")base=sorted.filter(c=>c.archived);
   else if(drawerMode.startsWith("grp:"))base=sorted.filter(c=>!c.archived&&c.group===drawerMode.slice(4));
   else base=sorted.filter(c=>!c.archived);
+  if(!state.secretOn)base=base.filter(c=>!c.hidden);
+  base=base.filter(c=>(c.ws||"main")===(state.ws||"main"));
   let items=base;const msgHits=[];
   if(convQuery){
     const q=normAr(convQuery);items=[];
     for(const c of sorted){
+      if((c.ws||"main")!==(state.ws||"main"))continue;
+      if(!state.secretOn&&c.hidden)continue;
       if(normAr(c.title||"").includes(q))items.push(c);
       const ms=await msgsOf(c.id);
       for(const m of ms){
@@ -783,7 +925,12 @@ async function renderConvList(){
   }
   if(seq!==rcvSeq)return;
   const list=$("convList");list.innerHTML="";
-  if(convQuery&&!items.length&&!msgHits.length){list.innerHTML='<div class="searchempty">مفيش نتائج مطابقة</div>';return}
+  if(convQuery&&!items.length&&!msgHits.length){
+    list.innerHTML='<div class="searchempty">مفيش نتائج مطابقة</div>';
+    const sb=document.createElement("button");sb.className="sembtn";sb.textContent="🔎 جرب البحث بالمعنى (طلب واحد)";
+    sb.onclick=()=>{sb.remove();semanticSearch(convQuery)};
+    list.appendChild(sb);return;
+  }
   if(drawerMode==="arch"&&!convQuery&&!items.length){list.innerHTML='<div class="searchempty">مفيش محادثات مؤرشفة</div>';return}
   const anyPinned=!convQuery&&drawerMode==="all"&&items.some(x=>x.pinned);let sepState=null;
   for(const c of items){
@@ -793,7 +940,7 @@ async function renderConvList(){
       if(grp!==sepState){list.insertAdjacentHTML("beforeend",`<div class="convsep">${grp==="pin"?"مثبتة 📌":"كل المحادثات"}</div>`);sepState=grp}
     }
     const gtag=(drawerMode==="all"&&c.group)?`<span class="gtag">${esc(c.group)}</span>`:"";
-    el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${esc(c.title||"محادثة جديدة")}${gtag}</span><span class="cmeta">${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
+    el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${c.hidden?'<span class="pinmark">🕶</span>':''}${esc(c.title||"محادثة جديدة")}${gtag}</span><span class="cmeta">${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
     el.querySelector(".cmid").onclick=()=>{openConv(c.id);closeDrawerFn()};
     el.querySelector(".cvmenu").onclick=ev=>{ev.stopPropagation();openConvMenu(ev.currentTarget,c)};
     el.querySelector(".cmid").addEventListener("dblclick",()=>renameConv(c));
@@ -803,6 +950,20 @@ async function renderConvList(){
     el.addEventListener("touchmove",()=>clearTimeout(cLp));
 
     list.appendChild(el);
+  }
+  if(!convQuery&&drawerMode==="all"){
+    const hid=state.convs.filter(c=>c.hidden&&!c.archived&&(c.ws||"main")===(state.ws||"main")).length;
+    if(hid>0&&!state.secretOn){
+      const row=document.createElement("div");row.className="convitem";
+      row.innerHTML='<div class="cmid"><span class="t">🕶 محادثات مخفية ('+hid+')</span><span class="cmeta">برمز القفل</span></div>';
+      row.querySelector(".cmid").onclick=()=>{$("secPinModal").classList.remove("hidden");$("secPinErr").style.display="none";$("secPinInput").value="";setTimeout(()=>$("secPinInput").focus(),150)};
+      list.appendChild(row);
+    }else if(state.secretOn){
+      const row=document.createElement("div");row.className="convitem";
+      row.innerHTML='<div class="cmid"><span class="t">🕶 إخفاء المحادثات السرية تاني</span></div>';
+      row.querySelector(".cmid").onclick=()=>{state.secretOn=false;renderConvList();toast("اتخفت تاني 🕶")};
+      list.appendChild(row);
+    }
   }
   if(convQuery&&msgHits.length){
     list.insertAdjacentHTML("beforeend",`<div class="convsep">في الرسايل 🔍</div>`);
@@ -852,11 +1013,13 @@ function bubbleHTML(m){
   const pinm=pcv&&pcv.pins&&pcv.pins.includes(m.id)?`<span class="pinind">📌</span>`:"";
   const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${pinm}${spk}${qbtn}</div>`;
   const retry=m.err?`<button class="retrybtn" data-rid="${m.id}">↻ إعادة المحاولة</button>`:"";
-  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
+  const transb=m.translationShow&&m.translation?`<div class="transblock">🌐 ${esc(m.translation)}</div>`:"";
+  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${transb}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
 function renderMsgs(ms,restore){
+  setTimeout(()=>{if(state.recap&&state.recap.convId===state.convId){const c=state.convs.find(x=>x.id===state.convId);if(c)prependRecap(c,(c.loops||[]).filter(l=>l.open))}},0);
   const box=$("msgs");
-  if(!ms.length){renderEmpty();renderMemBar();return}
+  if(!ms.length){renderEmpty();renderMemBar();renderStoryBar();return}
   let html="",lastDay="";
   for(const m of ms){
     const day=new Date(m.ts).toDateString();
@@ -879,7 +1042,7 @@ function appendMsg(m,force){
   if(!lm||new Date(lm.ts).toDateString()!==new Date(m.ts).toDateString())
     box.insertAdjacentHTML("beforeend",`<div class="daysep">${fmtDayFull(m.ts)}</div>`);
   box.insertAdjacentHTML("beforeend",bubbleHTML(m));
-  scrollDown(!!force);renderMemBar();
+  scrollDown(!!force);renderMemBar();renderStoryBar();
 }
 function setTyping(on,txt){
   const box=$("msgs");const old=$("typingRow");if(old)old.remove();
@@ -923,7 +1086,7 @@ const SAFETY=[
 async function geminiCall(model,parts,jsonMode,sig){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const body={contents:parts,safetySettings:SAFETY,
-    generationConfig:{temperature:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
+    generationConfig:{temperature:state.curTemp!==undefined?state.curTemp:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
   let r;
   const wt=withTimeout(sig,REQ_TIMEOUT);
   try{
@@ -965,7 +1128,7 @@ async function gemini(parts,jsonMode,sig){
 }
 async function geminiStreamCall(model,parts,sig,onChunk){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
-  const body={contents:parts,safetySettings:SAFETY,generationConfig:{temperature:0.9}};
+  const body={contents:parts,safetySettings:SAFETY,generationConfig:{temperature:state.curTemp!==undefined?state.curTemp:0.9}};
   let r;
   const wt=withTimeout(sig,REQ_TIMEOUT);
   try{
@@ -1037,10 +1200,10 @@ async function geminiStream(parts,sig,onChunk){
   }
 }
 /* ================= context assembly ================= */
-const KEEP_TAIL=40;
+const KEEP_TAIL=120;
 async function recallPass(conv,ms,userText,sig){
-  const rel=pickFacts(userText,8);
-  const tailTxt=ms.slice(-24).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,220)).join("\n");
+  const rel=pickFacts(userText,12);
+  const tailTxt=ms.slice(-40).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,220)).join("\n");
   const prompt=`انت وحدة استرجاع ذاكرة داخلية. تحت ملخص المحادثة (لو موجود)، حقائق محفوظة مرتبطة، وآخر الرسايل. استخرج في نقط قصيرة (٦ كحد أقصى) كل حاجة مرتبطة بسؤال المستخدم الأخير: أحداث، أرقام، أسماء، قرارات، وعود، تفاصيل اتقالت قبل كده. لو مفيش حاجة مرتبطة اكتب "مفيش". متجاوبش على السؤال نفسه.
 سؤال المستخدم الأخير: ${userText}
 ملخص المحادثة: ${conv.summary||"لا يوجد"}
@@ -1063,7 +1226,7 @@ ${tailTxt}`;
 }
 async function buildChatParts(conv,ms,userText,recall){
   const sys=personaBlock(conv);
-  const relevant=pickFacts(userText+" "+(ms.length>1?ms[ms.length-2]?.text||"":""),12);
+  const relevant=pickFacts(userText+" "+(ms.length>1?ms[ms.length-2]?.text||"":""),16);
   let sysFull=sys;
   if(relevant.length){
     sysFull+="\n\nحقائق محفوظة عن المستخدم من محادثات سابقة (استخدمها لما تكون مرتبطة بالسياق):\n"+
@@ -1071,6 +1234,9 @@ async function buildChatParts(conv,ms,userText,recall){
   }
   if(conv.summary){
     sysFull+="\n\nملخص تراكمي لبداية المحادثة دي:\n"+conv.summary;
+  }
+  if(conv.loops&&conv.loops.some(l=>l.open)){
+    sysFull+="\n\nدفتر الأحداث — حاجات لسه مفتوحة في المحادثة دي (خاصة بيها): ممنوع تنساها وممنوع تعدّيها مرور الكرام. لو حاجة مستنية رد من الشخص (زي إنه قال «هرد عليك في النقطة دي بعدين») فلمّا معناها ييجي في الكلام فكّره بيها بنفسك جوّه الحوار بشكل طبيعي (مثال: «انت كنت قايل كذا ولسه هترد عليّا فيها»). برقة وفي وقتها المناسب، مش كل الأحداث مرة واحدة ولا بالعافية:\n"+conv.loops.filter(l=>l.open).map(l=>"- "+l.text).join("\n");
   }
   if(recall){
     sysFull+="\n\nاسترجاع داخلي قبل الرد (نقاط استرجعتها من المحادثة والذاكرة — استخدمها عشان تربط ردك بالسياق):\n"+recall;
@@ -1080,7 +1246,7 @@ async function buildChatParts(conv,ms,userText,recall){
   }
   const parts=[{role:"user",parts:[{text:sysFull+"\n\nاتفقنا؟ رد بـ: اتفقنا."}]},
                {role:"model",parts:[{text:"اتفقنا."}]}];
-  sysFull+="\n\nاقتباس الرسايل: كل رسالة في السياق مرقمة [رقم]. تقدر ترد على رسالة أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم الرسالة. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم.";
+  sysFull+="\n\nاقتباس الرسايل: كل رسالة في السياق مرقمة [رقم]. تقدر ترد على رسالة أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم الرسالة. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم. مهم جدًا: أرقام الرسايل دي للاستخدام الداخلي بتاعك بس، ممنوع تكتب رقم أي رسالة في ردك بأي شكل: لا [٤] ولا [[٤]] ولا (٤) ولا «رسالة رقم»، ولو مش بتستخدم الرمز متكتبش أرقام مرجعية خالص.";
   sysFull+="\n\nاستمارات الاختيارات: لو محتاج من المستخدم يختار من اختيارات محددة، ضمّن استمارة في ردك بالشكل ده بالظبط:\n[[form]]\nسؤالك هنا؟\n- اختيار أول\n- اختيار تاني\n[[/form]]\nولو الاختيار لازم يبقى واحد بس استخدم [[form:single]] بنفس الشكل. الاستمارة بتترسم ككارت أزرار تفاعلي: المستخدم بيحدد ويدوس تأكيد وإرسال، وإجابته بتوصلك كرسالة عادية فيها اختياره. استخدمها لما الاختيارات تسهّل عليه الرد، ومتعيدش كتابة الاختيارات كنص عادي بره الاستمارة. افتراضيًا المستخدم يقدر يختار أكتر من إجابة لنفس السؤال، فماتستخدمش single إلا لو السؤال فعلًا ميستحملش غير اختيار واحد.";
   const tail=ms.slice(-KEEP_TAIL);
   state.ctxMsgs=state.ctxMsgs||{};state.ctxMsgs[conv.id]=tail;
@@ -1104,17 +1270,40 @@ async function buildChatParts(conv,ms,userText,recall){
 }
 /* ================= memory extraction ================= */
 async function extractMemory(conv,exchange){
+  if(conv.hidden)return;
   try{
-    const existing=state.facts.slice(-60).map(f=>({id:f.id,text:f.text,conf:f.conf}));
-    const prompt=`انت نظام استخراج ذاكرة. من الحوار الأخير بالعامية المصرية تحت، استخرج بس المعلومات الدائمة اللي تستاهل تتفتكر مستقبلًا: تفاصيل شخصية، اهتمامات، تفضيلات، مشاريع، قرارات، خطط، آراء ثابتة. تجاهل الكلام العابر والتحيات.
-صنّف كل حقيقة conf: "مؤكد" (قالها صراحة)، "رأي" (رأي أو تفضيل)، "احتمال" (حاجة مش متأكدة)، "استنتاج" (استنتجتها انت).
-لو معلومة بتعدّل أو تلغي حقيقة قديمة من القائمة، استخدم update مع نفس id. لو حاجة اتنفت تمامًا استخدم delete. ممنوع تكرار حقيقة موجودة زي ما هي.
-رد JSON بس بالشكل ده: {"ops":[{"op":"add"|"update"|"delete","id":"...","text":"...","cat":"شخصي|تفضيلات|مشاريع|قرارات|آراء|معلومات","conf":"مؤكد|رأي|احتمال|استنتاج"}],"title":""}
-حقل title: لو دي أول رسالة في المحادثة، اكتب عنوان قصير للمحادثة (٥ كلمات كحد أقصى بالعامية)، غير كده سيبه فاضي.
-الحقائق الموجودة: ${JSON.stringify(existing)}
+    const _cp=conv.persona||{};
+    const _w=(state.ws&&state.ws!=="main")?((prefs.workspaces||[]).find(w=>w.id===state.ws)||null):null;
+    const _wp=_w&&_w.persona?_w.persona:{};
+    const effChar=_cp.char!==undefined?_cp.char:(_wp.char!==undefined?_wp.char:prefs.persona.char);
+    const effStyle=_cp.style!==undefined?_cp.style:(_wp.style!==undefined?_wp.style:prefs.persona.style);
+    const loopsOnly=!!(effChar||effStyle==="roleplay");
+    const openLoops=(conv.loops||[]).filter(l=>l.open).map(l=>l.text);
+    let prompt;
+    if(loopsOnly){
+      prompt=`انت دفتر أحداث محادثة خاصة. من الحوار الأخير بالعامية المصرية تحت، حدّث دفتر الأحداث المفتوحة: أي وعد أو سؤال مهم أو خطة أو حدث لسه مكملش أو مترتب على حاجة جاية. الأحداث دي خاصة بالمحادثة دي بس ومبتتشاركش.
+رد JSON بس بالشكل: {"loops":[{"op":"add","text":"..."},{"op":"close","text":"نص الحدث اللي اتقفل"}],"title":""}
+op=add لحدث جديد مفتوح، op=close لحدث من القايمة تحت اتقفل أو اتنفذ. لو مفيش جديد سيب loops فاضية. متستخرجش أي حقائق عامة عن المستخدم.
+حقل title: لو دي أول رسالة في المحادثة اكتب عنوان قصير (٥ كلمات كحد أقصى بالعامية)، غير كده سيبه فاضي.
+الأحداث المفتوحة حاليًا: ${JSON.stringify(openLoops)}
 الحوار الأخير:
 المستخدم: ${exchange.user}
 عنان: ${exchange.ai}`;
+    }else{
+      const existing=state.facts.slice(-60).map(f=>({id:f.id,text:f.text,conf:f.conf}));
+      prompt=`انت نظام استخراج ذاكرة. من الحوار الأخير بالعامية المصرية تحت، استخرج بس المعلومات الدائمة اللي تستاهل تتفتكر مستقبلًا: تفاصيل شخصية، اهتمامات، تفضيلات، مشاريع، قرارات، خطط، آراء ثابتة. تجاهل الكلام العابر والتحيات.
+قاعدة صارمة (عزل المحادثات): خزّن بس حقائق محايدة عن المستخدم نفسه (اسمه، تفضيلاته، شغله، خططه الحقيقية). ممنوع منعًا باتًا تخزين أي محتوى خاص بمحادثة واحدة: لا أحداث ولا سيناريوهات ولا شخصيات ولا كلام قيل في سياق تمثيل. أي حاجة من النوع ده مكانها دفتر الأحداث مش الحقائق.
+صنّف كل حقيقة conf: "مؤكد" (قالها صراحة)، "رأي" (رأي أو تفضيل)، "احتمال" (حاجة مش متأكدة)، "استنتاج" (استنتجتها انت).
+لو معلومة بتعدّل أو تلغي حقيقة قديمة من القائمة، استخدم update مع نفس id. لو حاجة اتنفت تمامًا استخدم delete. ممنوع تكرار حقيقة موجودة زي ما هي.
+كمان حدّث دفتر أحداث المحادثة: أي وعد أو خطة أو سؤال مهم لسه مفتوح، أو حدث مفتوح اتقفل.
+رد JSON بس بالشكل ده: {"ops":[{"op":"add"|"update"|"delete","id":"...","text":"...","cat":"شخصي|تفضيلات|مشاريع|قرارات|آراء|معلومات","conf":"مؤكد|رأي|احتمال|استنتاج"}],"loops":[{"op":"add","text":"..."},{"op":"close","text":"نص الحدث اللي اتقفل"}],"title":""}
+حقل title: لو دي أول رسالة في المحادثة، اكتب عنوان قصير للمحادثة (٥ كلمات كحد أقصى بالعامية)، غير كده سيبه فاضي.
+الحقائق الموجودة: ${JSON.stringify(existing)}
+الأحداث المفتوحة حاليًا: ${JSON.stringify(openLoops)}
+الحوار الأخير:
+المستخدم: ${exchange.user}
+عنان: ${exchange.ai}`;
+    }
     const {text}=await gemini([{role:"user",parts:[{text:prompt}]}],true);
     const clean=text.replace(/```json|```/g,"").trim();
     const parsed=JSON.parse(clean);
@@ -1132,6 +1321,20 @@ async function extractMemory(conv,exchange){
       }else if(op.op==="delete"&&op.id){
         state.facts=state.facts.filter(x=>x.id!==op.id);await delItem("facts",op.id);changed++;
       }
+    }
+    if(Array.isArray(parsed.loops)){
+      conv.loops=conv.loops||[];let lch=false;
+      for(const lo of parsed.loops){
+        if(lo.op==="add"&&lo.text){
+          const t=String(lo.text).trim();if(!t)continue;
+          if(conv.loops.some(l=>l.open&&normAr(l.text)===normAr(t)))continue;
+          conv.loops.push({id:uid(),text:t.slice(0,200),open:true,ts:Date.now()});lch=true;
+        }else if(lo.op==="close"&&lo.text){
+          const t=normAr(lo.text);
+          for(const l of conv.loops){if(l.open&&(normAr(l.text)===t||normAr(l.text).includes(t)||t.includes(normAr(l.text)))){l.open=false;lch=true}}
+        }
+      }
+      if(lch)await putItem("convs",conv);
     }
     if(parsed.title&&!conv.titled){
       conv.title=parsed.title;conv.titled=true;await putItem("convs",conv);renderConvList();
@@ -1171,7 +1374,7 @@ async function forceSummary(conv){
 }
 /* ================= conversations ================= */
 async function newConv(){
-  const c={id:uid(),title:"محادثة جديدة",titled:false,created:Date.now(),updated:Date.now(),summary:"",summarizedCount:0};
+  const c={id:uid(),title:"محادثة جديدة",titled:false,created:Date.now(),updated:Date.now(),summary:"",summarizedCount:0,ws:state.ws||"main"};
   state.convs.push(c);await putItem("convs",c);
   await openConv(c.id);renderConvList();
 }
@@ -1187,6 +1390,7 @@ async function openConv(id){
   const ms=await msgsOf(id);ms.sort((a,b)=>a.ts-b.ts);
   const conv=state.convs.find(c=>c.id===id);
   renderMsgs(ms,conv&&typeof conv.scroll==="number"?conv.scroll:null);
+  maybeRecap(conv);
   closeSearch();pinIdx=0;renderPinBar();cancelReply();
   if(conv&&conv.draft){$("input").value=conv.draft;autoGrow()}else{$("input").value="";autoGrow()}
   renderConvList();
@@ -1200,6 +1404,8 @@ let sheetMsg=null, editing=null;
 function openSheet(m){sheetMsg=m;navOpen("sheet");
   $("msRegen").style.display=m.role==="model"?"block":"none";
   $("msImg").style.display=m.role==="model"?"block":"none";
+  $("msCmp").style.display=m.role==="model"?"block":"none";
+  $("msSave").style.display=m.role==="model"?"block":"none";
   $("msEdit").style.display=m.role==="user"?"block":"none";
   const _pc=state.convs.find(c=>c.id===m.convId);
   $("msPin").textContent=(_pc&&_pc.pins&&_pc.pins.includes(m.id))?"📌 إلغاء التثبيت":"📌 تثبيت الرسالة";
@@ -1440,7 +1646,15 @@ function refreshRegenChip(){
 async function renderMemBar(){
   const conv=state.convs.find(c=>c.id===state.convId);
   const total=document.querySelectorAll("#msgs .msg").length;
-  $("countTxt").textContent=total?(arNum(total)+" رسالة"):"لسه مفيش رسايل";
+  let fillTxt="";
+  if(state.lastCtx&&state.lastCtx.model===state.model){
+    const ctxLim=(MODELS.find(m=>m.id===state.model)||{}).ctx||1048576;
+    const est=Math.ceil(state.lastCtx.chars/2.5);
+    const pct=Math.min(999,Math.round(est/ctxLim*100));
+    fillTxt=" · 🧠 "+arNum(pct)+"%";
+    state.lastCtxPct=pct;
+  }
+  $("countTxt").textContent=(total?(arNum(total)+" رسالة"):"لسه مفيش رسايل")+fillTxt;
   const w=$("memWarn");
   if(!conv||!total){w.classList.remove("open");return}
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
@@ -1452,7 +1666,13 @@ async function renderMemBar(){
   const danger=gap>0;
   const approaching=!danger&&total>KEEP_TAIL&&lag>KEEP_TAIL-every;
   const suppressed=hide>0&&lag<hide+every;
-  if((danger||approaching)&&!suppressed){
+  const handOver=!conv.handHide&&(state.lastCtxPct||0)>=70;
+  $("mwSum").style.display=handOver?"none":"";
+  $("mwHand").style.display=handOver?"":"none";
+  if(handOver){
+    $("mwTxt").textContent="🧠 ذاكرة المحادثة عدّت "+arNum(state.lastCtxPct)+"% من سعة النموذج الفعلية في آخر طلب. الأفضل تنقل لمحادثة مكملة: هتاخد معاها الملخص الكامل ودفتر الأحداث وآخر الرسايل.";
+    w.classList.add("open");
+  }else if((danger||approaching)&&!suppressed){
     $("mwTxt").textContent=danger
       ?("⚠️ تنبيه ذاكرة حقيقي: "+arNum(gap)+" رسالة من أول المحادثة بقت بره نافذة عنان المباشرة ولسه ماتلخصتش — ممكن ينساها أو يخرف فيها. دوس «لخّص دلوقتي» عشان تثبتها.")
       :("المحادثة بقت طويلة: الملخص متأخر عن آخر "+arNum(lag)+" رسالة، وقريب أجزاء من أول المحادثة تخرج من ذاكرة عنان المباشرة. لخّص دلوقتي وماتخليش حاجة تضيع.");
@@ -1462,8 +1682,13 @@ async function renderMemBar(){
 $("mwHide").onclick=async()=>{
   const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
   conv.memWarnHide=document.querySelectorAll("#msgs .msg").length-(conv.summarizedCount||0);
+  if((state.lastCtxPct||0)>=70)conv.handHide=true;
   await putItem("convs",conv);
   $("memWarn").classList.remove("open");
+};
+$("mwHand").onclick=async()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
+  $("memWarn").classList.remove("open");await handoverConv(conv);
 };
 $("mwSum").onclick=async()=>{
   const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
@@ -1509,7 +1734,7 @@ async function send(){
     const ms=await msgsOf(cid);ms.sort((a,b)=>a.ts-b.ts);
     const idx=ms.findIndex(x=>x.id===em.id);
     const toDel=[];
-    for(let j=idx+1;j<ms.length;j++){if(ms[j].role==="user")break;toDel.push(ms[j])}
+    for(let j=idx+1;j<ms.length;j++)toDel.push(ms[j]);
     for(const d of toDel){await delItem("msgs",d.id);delete state.msgIndex[d.id]}
     if(state.convId===cid){
       const row=document.querySelector(`.msg[data-id="${em.id}"] .bubble`);
@@ -1518,7 +1743,7 @@ async function send(){
     }
     if(conv){conv.updated=Date.now();conv.lastTs=em.ts;conv.lastTxt=text.slice(0,60);await putItem("convs",conv);renderConvList()}
     toast("اتعدلت ✦");
-    if(toDel.length&&conv)await runReply(conv,ms.slice(0,idx+1),text);
+    if(conv)await runReply(conv,ms.slice(0,idx+1),text);
     return;
   }
   if(!state.key){$("onboard").classList.remove("hidden");return}
@@ -1530,6 +1755,13 @@ async function send(){
   if(pendingImg){um.img=pendingImg.dataUrl;um.imgMime=pendingImg.mime;clearPendingImg()}
   await putItem("msgs",um);appendMsg(um,true);
   conv.updated=Date.now();conv.lastTs=um.ts;conv.lastTxt=text.slice(0,60)||"📷 صورة";await putItem("convs",conv);renderConvList();
+  if(rpConv(conv)&&conv.rpPhase!=="live"&&/(ابدا|ابدي|خلصنا التفاصيل|خلصنا|يلا نبدا|يلا بينا)/.test(normAr(text))){
+    conv.rpPhase="live";
+    const sc=conv.storyClock=conv.storyClock||{day:1,mins:9*60,era:""};
+    const cs=(effPersona(conv).charSetup)||{};
+    if(!sc.era&&cs.era)sc.era=cs.era;
+    await putItem("convs",conv);renderStoryBar();
+  }
   const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
   const am=await runReply(conv,ms,text||"عايزك تبص على الصورة دي وتقولي رأيك");
   if(am){
@@ -1544,7 +1776,7 @@ async function send(){
 /* ================= input behavior: Enter = new line ================= */
 function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
 /* ================= v17: أزرار الأوامر السريعة ================= */
-function syncChipRow_once(){};function syncChipRow(){$("chipRow").style.display=prefs.hideChips?"none":"flex";$("chipsState").textContent=prefs.hideChips?"مخفية":"شغالة"}
+function syncChipRow_once(){};function syncChipRow(){$("chipRow").style.display=prefs.hideChips?"none":"flex";$("chipsState").textContent=prefs.hideChips?"مخفية":"شغالة";$("jumpBtn").style.bottom=prefs.hideChips?"88px":"126px"}
 $("chipsToggle").onclick=async()=>{prefs.hideChips=!prefs.hideChips;await savePrefs();syncChipRow()};
 $("chipHide").onclick=async()=>{prefs.hideChips=true;await savePrefs();syncChipRow()};
 document.querySelectorAll(".cmdchip[data-cmd]").forEach(b=>b.onclick=async()=>{
@@ -1555,6 +1787,11 @@ document.querySelectorAll(".cmdchip[data-cmd]").forEach(b=>b.onclick=async()=>{
   else if(cmd==="tone"){
     const ms=await msgsOf(state.convId);const last=ms.filter(m=>m.role==="model"&&!m.err).pop();
     txt=last?("غيّر نبرة آخر رد منك بشكل كامل وخليه بأسلوب مختلف. الرد: «"+last.text.slice(0,600)+"»"):"غيّر نبرة آخر رد منك";
+  }
+  else if(cmd==="cowrite"){
+    const draft=$("input").value.trim();
+    if(!draft){toast("اكتب بداية النص الأول، وبعدين دوس ✍️ كمّل كتابتي");return}
+    txt="وضع إكمال الكتابة ✍️: المستخدم بيكتب نص وعايزك تكمله من حيث وقف، بنفس أسلوبه وصياغته وعاميته بالظبط (تعلّم أسلوبه من رسايله في المحادثة دي). اطبع التكملة بس من غير مقدمات ولا شرح ولا إعادة للنص الأصلي. لو النص قصير كمّل بشكل طبيعي على قده، ولو طويل كمّل بفقرة أو اتنين.\n\nالنص:\n"+draft;
   }
   $("input").value=txt;autoGrow();send();
 });
@@ -1749,27 +1986,157 @@ $("waGo").onclick=async()=>{
 };
 
 /* ================= v17: الإحصائيات ================= */
+let statsPeriod="day";
 async function renderStats(){
-  const convs=await allStore("convs"),msgs=await allStore("msgs");
-  const mine=msgs.filter(m=>m.role==="user").length;
-  const his=msgs.filter(m=>m.role==="model"&&!m.err).length;
-  const byDay={};for(const m of msgs){const d=new Date(m.ts||0);const k=d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();byDay[k]=(byDay[k]||0)+1}
-  let topDay=null,topN=0;for(const k in byDay)if(byDay[k]>topN){topN=byDay[k];topDay=k}
-  const byConv={};for(const m of msgs)byConv[m.convId]=(byConv[m.convId]||0)+1;
-  let topC=null,topCN=0;for(const id in byConv)if(byConv[id]>topCN){topCN=byConv[id];topC=convs.find(c=>c.id===id)}
-  const oldest=convs.length?convs.reduce((a,c)=>Math.min(a,c.created||c.updated||Date.now()),Date.now()):Date.now();
-  const fmtDay=k=>{const[a,b,c]=k.split("-").map(Number);return new Date(a,b,c).toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"})};
+  const convs=await allStore("convs"),msgs=await allStore("msgs"),usage=(await kvGet("usage"))||{};
+  const now=Date.now();const d0=new Date();d0.setHours(0,0,0,0);
+  const since=statsPeriod==="day"?d0.getTime():statsPeriod==="week"?now-7*864e5:now-30*864e5;
+  const pname=statsPeriod==="day"?"اليوم":statsPeriod==="week"?"الأسبوع ده":"الشهر ده";
+  const pms=msgs.filter(m=>(m.ts||0)>=since);
+  const mine=pms.filter(m=>m.role==="user").length;
+  const his=pms.filter(m=>m.role==="model"&&!m.err).length;
+  const newC=convs.filter(c=>(c.created||0)>=since).length;
+  const daySet={};for(const m of pms){const k=localDay(new Date(m.ts||0));daySet[k]=true}
+  const days=Object.keys(daySet).length;
+  const perModel={};
+  for(const k of Object.keys(usage)){
+    if(k==="__min")continue;
+    const parts=k.split("-");if(parts.length!==3)continue;
+    const dt=new Date(Number(parts[0]),Number(parts[1])-1,Number(parts[2])).getTime();
+    if(isNaN(dt)||dt<since||dt>now+864e5)continue;
+    for(const md in usage[k])perModel[md]=(perModel[md]||0)+usage[k][md];
+  }
   const row=(l,v)=>'<div class="prow" style="cursor:default"><span>'+l+'</span><span class="pval">'+v+'</span></div>';
-  $("statsBody").innerHTML='<div class="pgroup">'
+  let modelRows="";
+  for(const md of Object.keys(perModel).sort()){
+    const nm=(MODELS.find(x=>x.id===md)||{name:md}).name;
+    modelRows+=row(nm,arNum(perModel[md])+" طلب");
+  }
+  const allMine=msgs.filter(m=>m.role==="user").length;
+  const allHis=msgs.filter(m=>m.role==="model"&&!m.err).length;
+  const oldest=convs.length?convs.reduce((a,c)=>Math.min(a,c.created||c.updated||Date.now()),Date.now()):Date.now();
+  const seg=(v,l)=>'<button class="pchip'+(statsPeriod===v?" on":"")+'" data-sp="'+v+'">'+l+"</button>";
+  $("statsBody").innerHTML=
+    '<div class="pgroup" style="display:flex;gap:6px;justify-content:center">'+seg("day","اليوم")+seg("week","الأسبوع")+seg("month","الشهر")+"</div>"
+    +'<div class="sect">تقرير أنان — '+pname+'</div><div class="pgroup">'
     +row("رسايلك",arNum(mine))
     +row("ردود أنان",arNum(his))
+    +row("محادثات جديدة",arNum(newC))
+    +row("أيام نشطة",arNum(days))
+    +(modelRows?modelRows:row("طلبات المحرك","لسه مفيش"))
+    +'</div><div class="small" style="padding:0 16px">طلبات المحرك أرقام تقديرية من عداد الجهاز ده بس، من غير أي طلبات.</div>'
+    +'<div class="sect">من أول ما بدأت</div><div class="pgroup">'
+    +row("إجمالي رسايلك",arNum(allMine))
+    +row("إجمالي ردود أنان",arNum(allHis))
     +row("عدد المحادثات",arNum(convs.length))
-    +row("أنشط يوم",(topDay?fmtDay(topDay):"—")+" ("+arNum(topN)+" رسالة)")
-    +row("أكثر محادثة",(topC?(topC.title||"محادثة"):"—")+" ("+arNum(topCN)+")")
     +row("بتكلم أنان منذ",new Date(oldest).toLocaleDateString("ar-EG",{day:"numeric",month:"long",year:"numeric"}))
-    +'</div><div class="small" style="padding:0 16px">الأرقام دي بتتحسب على جهازك من بياناتك المحلية، من غير أي طلبات.</div>';
+    +"</div>";
+  for(const b of document.querySelectorAll("#statsBody [data-sp]"))b.onclick=()=>{statsPeriod=b.dataset.sp;renderStats()};
 }
 $("openStats").onclick=()=>{renderStats();openPage("statsPage")};
+/* ================= v18: translate + reminders ================= */
+$("msTrans").onclick=async()=>{
+  const m=sheetMsg;closeSheet();if(!m)return;
+  if(m.translation){m.translationShow=!m.translationShow;await putItem("msgs",m);renderMsgs(await msgsOf(state.convId),true);return}
+  toast("بترجم…");
+  try{
+    const prompt="ترجم النص التالي. لو عربي ترجمه للإنجليزي، ولو أي لغة تانية ترجمه للعربية بالعامية المصري. اطبع الترجمة بس من غير أي شرح ولا مقدمات.\n\n"+(m.text||"").slice(0,2000);
+    const parts=[{role:"user",parts:[{text:prompt}]}];
+    let r;
+    try{r=await geminiCall("gemini-3.5-flash-lite",parts,false);bumpUsage("gemini-3.5-flash-lite",false)}
+    catch(e){if(e.status===404||e.status===429||e.status===503)r=await gemini(parts,false);else throw e}
+    const t=(r.text||"").trim();
+    if(!t)throw new Error("empty");
+    m.translation=t.slice(0,3000);m.translationShow=true;await putItem("msgs",m);
+    renderMsgs(await msgsOf(state.convId),true);toast("اترجمت ✦")
+  }catch(e){toast("الترجمة مكملتش، جرب تاني")}
+};
+$("msRem").onclick=()=>{
+  const m=sheetMsg;if(!m)return;
+  $("remSnip").textContent="«"+(m.text||"").slice(0,90)+(m.text&&m.text.length>90?"…":"")+"»";
+  $("remModal").classList.remove("hidden");navOpen("remmdl");
+};
+function closeRemModal(){$("remModal").classList.add("hidden");navClose("remmdl")}
+$("remCancel").onclick=closeRemModal;
+for(const b of document.querySelectorAll("#remModal [data-rem]")){
+  b.onclick=async()=>{
+    const m=sheetMsg;if(!m){closeRemModal();return}
+    const now=new Date();let at;
+    if(b.dataset.rem==="h1")at=Date.now()+3600e3;
+    else if(b.dataset.rem==="h3")at=Date.now()+3*3600e3;
+    else{const d=new Date(now);d.setDate(d.getDate()+1);d.setHours(b.dataset.rem==="am"?9:21,0,0,0);at=d.getTime()}
+    if(!Array.isArray(prefs.reminders))prefs.reminders=[];
+    prefs.reminders.push({id:"r"+Date.now().toString(36),convId:m.convId,mid:m.id,text:(m.text||"").slice(0,140),at:at});
+    await savePrefs();closeRemModal();closeSheet();refreshSettings();
+    if("Notification" in window&&Notification.permission==="default"){try{Notification.requestPermission()}catch(_){ }}
+    toast("التذكير اتحفظ ⏰")
+  };
+}
+async function checkReminders(){
+  if(!Array.isArray(prefs.reminders)||!prefs.reminders.length)return;
+  const now=Date.now();let changed=false;
+  for(const r of [...prefs.reminders]){
+    if(r.at>now)continue;
+    prefs.reminders=prefs.reminders.filter(x=>x.id!==r.id);changed=true;
+    toast("⏰ تذكير: "+(r.text||"").slice(0,80),5200);
+    if("Notification" in window&&Notification.permission==="granted"){
+      try{new Notification("⏰ تذكير من عنان",{body:(r.text||"").slice(0,120)})}catch(_){ }}
+  }
+  if(changed){await savePrefs();refreshSettings()}
+}
+setInterval(()=>{checkReminders()},20000);
+$("openRems").onclick=()=>{
+  const list=$("remList");list.innerHTML="";
+  const rs=(prefs.reminders||[]).slice().sort((a,b)=>a.at-b.at);
+  if(!rs.length)list.innerHTML='<div class="small" style="padding:10px 0">مفيش تذكيرات محفوظة. دوس مطولًا على أي رسالة واختار ⏰ ذكّرني.</div>';
+  for(const r of rs){
+    const row=document.createElement("div");row.className="remrow";
+    const d=new Date(r.at);
+    row.innerHTML='<div class="rt"><div>'+esc(r.text||"")+'</div><div class="rw">'+fmtDay(r.at)+" · "+fmtTime(r.at)+"</div></div>";
+    const x=document.createElement("button");x.textContent="✕";
+    x.onclick=async()=>{prefs.reminders=prefs.reminders.filter(y=>y.id!==r.id);await savePrefs();row.remove();refreshSettings()};
+    row.appendChild(x);list.appendChild(row);
+  }
+  $("remListModal").classList.remove("hidden");navOpen("remlst");
+};
+$("remListOk").onclick=()=>{$("remListModal").classList.add("hidden");navClose("remlst")};
+$("secPinGo").onclick=()=>{
+  if($("secPinInput").value===prefs.lockPin){
+    $("secPinModal").classList.add("hidden");state.secretOn=true;renderConvList();toast("المحادثات المخفية ظاهرة 🕶")
+  }else{$("secPinErr").style.display="block";$("secPinInput").value=""}
+};
+$("secPinInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("secPinGo").click()});
+$("secPinCancel").onclick=()=>$("secPinModal").classList.add("hidden");
+$("msSave").onclick=async()=>{const m=sheetMsg;closeSheet();if(!m)return;
+  const saved=(await kvGet("saved"))||[];
+  if(saved.some(x=>x.text===m.text)){toast("موجودة في المحفوظات أصلًا");return}
+  const _c=state.convs.find(c=>c.id===m.convId);
+  saved.unshift({id:"s"+Date.now().toString(36)+Math.floor(Math.random()*999),text:m.text,ts:Date.now(),conv:_c?(_c.title||""):""});
+  await kvSet("saved",saved);refreshSavedCount();toast("اتحفظت في المحفوظات ⭐")};
+async function refreshSavedCount(){const saved=(await kvGet("saved"))||[];$("savedCount").textContent=saved.length?arNum(saved.length):""}
+async function renderSaved(){
+  const saved=(await kvGet("saved"))||[];
+  refreshSavedCount();
+  const b=$("savedBody");b.innerHTML="";
+  if(!saved.length){b.innerHTML='<div class="dayempty" style="padding-top:60px">مفيش ردود محفوظة لسه.<br>دوس مطولًا على أي رد من عنان واختار «⭐ حفظ في المحفوظات».</div>';return}
+  for(const sv of saved){
+    const d=document.createElement("div");d.className="pgroup";d.style.margin="10px 12px";
+    const dt=new Date(sv.ts);
+    d.innerHTML='<div style="padding:12px 14px;white-space:pre-wrap;word-break:break-word"></div>'+
+      '<div style="display:flex;align-items:center;gap:12px;padding:0 14px 10px">'+
+      '<span class="small" style="flex:1"></span>'+
+      '<button class="linkbtn sv-copy">نسخ</button>'+
+      '<button class="linkbtn sv-del" style="color:var(--danger)">حذف</button></div>';
+    d.firstElementChild.textContent=sv.text;
+    d.querySelector(".small").textContent=arNum(dt.getDate())+"/"+arNum(dt.getMonth()+1)+"/"+arNum(dt.getFullYear())+(sv.conv?" · "+sv.conv:"");
+    d.querySelector(".sv-copy").onclick=()=>copyText(sv.text);
+    d.querySelector(".sv-del").onclick=async()=>{const cur=(await kvGet("saved"))||[];await kvSet("saved",cur.filter(x=>x.id!==sv.id));refreshSavedCount();renderSaved();toast("اتحذفت")};
+    b.appendChild(d);
+  }
+}
+$("openSaved").onclick=()=>{closeDrawerFn();navClose("drawer");renderSaved();openPage("savedPage")};
+$("closeSaved").onclick=()=>closePage("savedPage");
+$("drawerNew").onclick=()=>{closeDrawerFn();navClose("drawer");newConv()};
 $("closeStats").onclick=()=>closePage("statsPage");
 
 function syncSendBtn(){$("sendBtn").classList.toggle("ready",!!$("input").value.trim()&&!state.busy)}
@@ -1797,7 +2164,7 @@ const ACCENTS={gold:"#c9a86a",teal:"#7fd1c0",sky:"#7ea8e0",rose:"#d9909e",lilac:
 const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e",bronze:"#7a5f3a"};
 const AIBUBBLES={ash:"#3d4460",olive:"#4a5340",plum:"#54425e",cocoa:"#5c4a3d",steel:"#3d4f5c"};
 const SHAPES={round:{r:"14px",tail:"4px"},sharp:{r:"7px",tail:"2px"},flat:{r:"14px",tail:"14px"}};
-const FONTS={s:"15px",m:"16.5px",l:"18.5px"};
+const FONTS={xs:"13.5px",s:"15px",m:"16.5px",l:"18.5px",xl:"20px",xxl:"21.5px",xxxl:"23px"};
 function applyAppearance(){
   const r=document.documentElement.style;
   let t=prefs.theme;if(t==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"navy";
@@ -1847,7 +2214,31 @@ function personaBlock(conv){
   s+="\n- الإيموجي: "+EMOJI_T[p.emoji];
   if(conv&&conv.persona)s+="\n- ملاحظة: الإعدادات دي مخصوصة للمحادثة الحالية تحديدًا، وممكن تكون مختلفة عن باقي محادثات المستخدم.";
   if(p.style==="adaptive")s+="\n\nالوضع المتكيف مفعّل 🔄:\n- اقرأ سياق المحادثة وموضوعها في كل رسالة، واضبط أسلوبك تلقائيًا من غير ما المستخدم يطلب.\n- الموضوع جاد أو حزين أو مهم؟ كون هادي ومركز ومتعاطف، من غير هزار ولا إيموجي زيادة.\n- الكلام هزار وونس؟ كون خفيف وعفوي وبهزر معاه طبيعي.\n- الموضوع تقني أو دراسة؟ كون منظم وواضح بالتفصيل اللي يستاهله.\n- طوّل وقصّر ردك حسب حجم السؤال وجو الكلام: رسالة قصيرة بتستاهل رد قصير.\n- التحول بين الأجواء يكون طبيعي وسلس، ومتعلّقش بالمستخدم إنك بتغير الوضع.";
-  if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- لو المستخدم لسه محددش شخصية ولا سيناريو، اسأله بشكل قصير: مين ألعب؟ وإيه المشهد؟\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
+  const _char=CHAR_PERSONAS.find(x=>x.id===p.char);
+  if(_char){
+    s+="\n\nالشخصية المطلوبة في المحادثة دي: "+_char.name+" — اتقمّص الشخصية دي بالكامل في كل رد، بلسانها ومشاعرها، ومتكسرهاش إلا لو المستخدم طلب صراحة.";
+    if(_char.block)s+="\n"+_char.block;
+    const _cs=p.charSetup;
+    if(_cs&&_cs.for===p.char&&(_cs.name||_cs.age||(_cs.traits&&_cs.traits.length)||_cs.rel||_cs.desc)){
+      s+="\nتفاصيل الشخصية زي ما المستخدم حددها بنفسه (التزم بيها بدقة، دي أهم من أي وصف تاني):";
+      if(_cs.name)s+="\n- الاسم: "+_cs.name;
+      if(_cs.age)s+="\n- السن: "+_cs.age;
+      if(_cs.traits&&_cs.traits.length)s+="\n- الصفات: "+_cs.traits.join("، ");
+      if(_cs.desc)s+="\n- الوصف والطباع: "+_cs.desc;
+      if(_cs.rel)s+="\n- العلاقة/الخلفية: "+_cs.rel;
+      if(_cs.era)s+="\n- الحقبة الزمنية (حددها المستخدم بنفسه — التزم بيها): "+_cs.era;
+    }
+  }
+  if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
+  const _rpActive=!!_char||p.style==="roleplay";
+  if(conv&&_rpActive){
+    if(conv.rpPhase==="live"){
+      const sc=conv.storyClock||{day:1,mins:780,era:""};
+      s+="\n\nساعة القصة 🕰: المشهد شغال دلوقتي. الوقت القصصي الحالي: اليوم "+sc.day+"، الساعة "+Math.floor(sc.mins/60)+":"+String(sc.mins%60).padStart(2,"0")+(sc.era?("، الحقبة الزمنية: "+sc.era+" — المستخدم هو اللي حددها بنفسه، فالتزم بيها بدقة في كل تفاصيل المشهد (الملابس، التكنولوجيا، الأحداث، الأسعار) وممنوع تغيرها أو تخترع حقبة تانية."):("، الحقبة الزمنية: المستخدم لسه محددهاش — لو المشهد احتاجها اسأله عنها، وممنوع تخترعها من عندك."))+" الوقت القصصي بيتقدم مع تقدم الحوار، فخلي أحداث المشهد متسقة معاه.";
+    }else{
+      s+="\n\nمرحلة تجهيز المشهد (الأولوية القصوى — بتتقدم على أي تعليمات تمثيل فوق): المستخدم لسه بيجهز تفاصيل الشخصية والسيناريو. ممنوع منعًا باتًا تبدأ التمثيل أو ترد جوه الشخصية — ولا رد واحد في الدور. دورك دلوقتي: مساعد تجهيز ودود بره المشهد: استقبل أي تفاصيل يديكيها بحرية (الشخصية، العلاقة، المكان، الأجواء، السيناريو)، اسأله عن اللي ناقص بشكل طبيعي، ولخصله اللي اتفق عليه عشان يراجعه. الحقبة الزمنية لازم تجي من المستخدم نفسه — ممنوع تختارها أو تفترضها من عندك؛ لو محددهاش اسأله عنها ضمن الأسئلة. قوله في الآخر: لما تخلص قول «ابدأ» أو «خلصنا التفاصيل». أول ما يقولها يبدأ المشهد.";
+    }
+  }
   if(prefs.nsfw)s+="\n\nنمط +١٨ مفعّل: المستخدم بالغ (٢٧ سنة) وطلب صراحة أكبر. اتكلم بحرية في المواضيع الجريئة والحساسة: النكت الصريحة، الشتائم والألفاظ الجارحة لو السياق هزار أو غضب، المواضيع الجنسية والعلاقات بانفتاح وصراحة، والمواضيع السياسية والدينية المثيرة للجدل من غير تهرب. ممنوع التلقّب والمواعظ والتحذيرات الزائدة. في نفس الوقت: التزم بأي رفض بيصدر من النظام نفسه من غير محاولة التفاف عليه.";
   if(prefs.instructions&&prefs.instructions.trim())s+="\n\nتعليمات دائمة من المستخدم (قواعد ملزمة منه شخصيًا، طبّقها في كل رد):\n"+prefs.instructions.trim();
   return s;
@@ -1947,7 +2338,13 @@ function openConvMenu(btn,c){
     {t:"📁 نقل لمجموعة",fn:()=>openGrpModal(c)},
     {t:c.archived?"📤 إلغاء الأرشفة":"🗄 أرشفة",fn:async()=>{c.archived=!c.archived;await putItem("convs",c);renderChips();renderConvList();toast(c.archived?"اتأرشفت 🗄":"رجعت من الأرشيف ✦")}},
     {t:"💬 تحويل لشكل واتساب",fn:()=>openWaModal(c)},
+    {t:c.hidden?"🔓 إظهار المحادثة":"🕶 إخفاء المحادثة",fn:async()=>{
+      if(!c.hidden&&!prefs.lockPin){toast("فعّل قفل التطبيق برمز من الإعدادات الأول");return}
+      c.hidden=!c.hidden;await putItem("convs",c);renderConvList();
+      toast(c.hidden?"اتخفت 🕶 بتظهر برمز القفل بس":"رجعت تظهر في القايمة ✦")}},
     {t:"📝 ملخص المحادثة",fn:()=>showInfo(c.summary?("ملخص أحداث المحادثة لحد دلوقتي:\n\n"+c.summary):"لسه مفيش ملخص للمحادثة دي. بيتعمل تلقائيًا كل "+(prefs.sumEvery||12)+" رسالة، وتقدر تغيّر العدد من الإعدادات.")},
+    {t:"📒 دفتر الأحداث",fn:()=>openLoops(c)},
+    {t:"🚀 نقل لمحادثة مكملة",fn:()=>handoverConv(c)},
     {t:"🗑 حذف المحادثة",danger:true,fn:async()=>{
       if(!await confirm2("تمسح المحادثة دي نهائيًا؟"))return;
       await delItem("convs",c.id);
@@ -2012,7 +2409,10 @@ async function runReply(conv,histMsgs,userText){
     const now=Date.now();
     if(!force&&now-lastPaint<90){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},95);return}
     lastPaint=now;
-    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"").replace(/^\s*\[\[(q\s*:?\s*[0-9٠-٩]*\]?\]?)?/i,""));
+    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"")
+      .replace(/^\s*\[\s*[0-9٠-٩]{1,3}\s*\]\s+/,"")
+      .replace(/^\s*\[+\s*q\s*:?\s*[0-9٠-٩]*\s*\]*\s*/i,"")
+      .replace(/^\s*\[+$/,""));
     const b=$("msgs");
     if(b.scrollHeight-b.scrollTop-b.clientHeight>140){$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ آخر الرسايل";nearBottom=false}
   };
@@ -2030,7 +2430,11 @@ async function runReply(conv,histMsgs,userText){
       if(abortCtl.signal.aborted){const ae=new Error("aborted");ae.aborted=true;throw ae}
       setTyping(true);
     }
+    const CREAT_T=[0.2,0.5,0.9,1.2,1.6];
+    const _cv=getPV("creativity");
+    state.curTemp=CREAT_T[typeof _cv==="number"?_cv:2];
     const parts=await buildChatParts(conv,histMsgs,userText,recallText);
+    state.lastCtx={chars:parts.reduce((a,p)=>a+(p.parts||[]).reduce((x,pp)=>x+(pp.text||"").length,0),0),model:state.model,ts:Date.now()};
     let finish=null;
     try{
       finish=await geminiStream(parts,abortCtl.signal,chunk=>{
@@ -2049,7 +2453,16 @@ async function runReply(conv,histMsgs,userText){
       am.text=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
     }
     am.text=am.text.trim();
-    const _qm=am.text.match(/^\s*\[\[\s*q\s*:\s*([0-9٠-٩]+)\s*\]\]\s*/i);
+    let _qm=am.text.match(/^\s*\[+\s*q\s*:\s*([0-9٠-٩]+)\s*\]*\s*/i);
+    if(!_qm){
+      /* اقتباس مشوّه: رقم رسالة بين قوسين واحد بس، زي [٤] — بنفس معنى [[q:N]] */
+      const _bare=am.text.match(/^\s*\[\s*([0-9٠-٩]{1,3})\s*\]\s+/);
+      if(_bare){
+        const _bn=parseInt(_bare[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
+        const _blen=((state.ctxMsgs||{})[conv.id]||[]).length;
+        if(_bn>=1&&_bn<=_blen)_qm=_bare;
+      }
+    }
     if(_qm){
       const _qn=parseInt(_qm[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
       const _ctx=(state.ctxMsgs||{})[conv.id]||[];
@@ -2061,7 +2474,7 @@ async function runReply(conv,histMsgs,userText){
     am.text=am.text.replace(/\[\[form(:single)?\]\]\r?\n?([\s\S]*?)\[\[\/form\]\]/g,(whole,single,body)=>{
       const lines=body.split("\n").map(l=>l.trim()).filter(Boolean);
       const q=lines[0]||"";
-      const opts=lines.slice(1).map(l=>l.replace(/^[-•]\s*/,"")).filter(Boolean);
+      const opts=lines.slice(1).map(l=>l.replace(/^[-•]\s*/,"").replace(/^[\[\(]?[0-9٠-٩]{1,2}[\]\)]?[.)\-:]?\s+/,"")).filter(Boolean);
       if(!q||opts.length<2)return whole;
       _forms.push({q,opts,multi:single!==":single",answered:null});
       return "";
@@ -2069,6 +2482,7 @@ async function runReply(conv,histMsgs,userText){
     if(_forms.length)am.forms=_forms;
     await putItem("msgs",am);
     finalRow();
+    if(conv.rpPhase==="live"&&rpConv(conv)){storyAdvance(conv,20+Math.floor(Math.random()*21));renderStoryBar()}
     conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
     return am;
   }catch(e){
@@ -2329,16 +2743,16 @@ async function renderUsage(){
     const pct=Math.min(100,Math.round(st.dayUsed/Math.max(1,lim.rpd)*100));
     const cls=pct>=100?"full":pct>=80?"warn":"";
     rows+=`<div class="ucard">
-      <div class="utop"><span class="uname">${m.name}${active?' <span class="utag">الحالي</span>':""}</span><span class="unum"><b>${st.dayUsed}</b> / ~${lim.rpd}</span></div>
+      <div class="utop"><span class="uname">${m.name}${active?' <span class="utag">الحالي</span>':""}</span><span class="unum"><b>${arNum(st.dayUsed)}</b> / ~${arNum(lim.rpd)}</span></div>
       <div class="ubar"><i class="${cls}" style="width:${pct}%;min-width:${pct>0?10:0}px"></i></div>
-      <div class="usub"><span>الباقي النهارده ~${dayLeft}${st.imgUsed?` · منهم ${st.imgUsed} بصور`:""}</span><span>الدقيقة دي ${st.minUsed} / ~${lim.rpm}</span></div>
+      <div class="usub"><span>الباقي النهارده ~${arNum(dayLeft)}${st.imgUsed?` · منهم ${arNum(st.imgUsed)} بصور`:""}</span><span>الدقيقة دي ${arNum(st.minUsed)} / ~${arNum(lim.rpm)}</span></div>
     </div>`;
   }
   const total=Object.entries(today).filter(([k])=>!k.includes(":")).reduce((a,[,v])=>a+v,0);
   $("usageBody").innerHTML=`
     <div class="ucard" style="text-align:center;padding:18px 14px;margin-top:14px">
       <div style="font-size:13px;color:var(--muted)">طلبات النهارده من الجهاز ده</div>
-      <div class="ubignum">${total}</div>
+      <div class="ubignum">${arNum(total)}</div>
       <div style="font-size:12px;color:var(--muted)">على كل النماذج · العدّاد بيصفر ١٠ الصبح</div>
     </div>
     <div class="sect">حصة كل نموذج النهارده (تقديري)</div>
@@ -2431,9 +2845,10 @@ function loadGsi(){
   gsiLoading=new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.onload=()=>res();sc.onerror=()=>rej(new Error("gsi-load"));document.head.appendChild(sc)});
   return gsiLoading;
 }
+const GMAIL_CLIENT_ID="137102558937-a2naftlcng5jerhngp52bb2ef62sgt4a.apps.googleusercontent.com";
 function gmailGetToken(interactive){
   return loadGsi().then(()=>new Promise((res,rej)=>{
-    const cid=(prefs.gmailClientId||"").trim();
+    const cid=GMAIL_CLIENT_ID||(prefs.gmailClientId||"").trim();
     if(!cid){rej(new Error("no-cid"));return}
     try{
       const tc=google.accounts.oauth2.initTokenClient({
@@ -2493,21 +2908,9 @@ async function gmailSendBackup(){
   if(!r.ok){if(r.status===401)gmailTok=null;throw new Error("gmail-"+r.status)}
   return r.json();
 }
-$("gmailClientId").addEventListener("change",async e=>{prefs.gmailClientId=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
 $("gmailAddr").addEventListener("change",async e=>{prefs.gmailAddr=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
 $("waSetName").addEventListener("change",async e=>{prefs.waName=e.target.value.trim()||"أنان";await savePrefs();toast("اتحفظ ✓")});
 $("waSetStatus").addEventListener("change",async e=>{prefs.waStatus=e.target.value.trim();await savePrefs();toast("اتحفظ ✓")});
-$("gmailHelpBtn").onclick=()=>showInfo(
-"عشان الإرسال لجيميلك يشتغل بضغطة واحدة، محتاج معرّف عميل مجاني من جوجل (مرة واحدة بس):\n\n"+
-"1) افتح console.cloud.google.com وسجل دخول بنفس الجيميل\n"+
-"2) اعمل مشروع جديد (New Project) بأي اسم، زي anan\n"+
-"3) من القايمة: APIs & Services ← Library ← دور على Gmail API واعمله Enable\n"+
-"4) APIs & Services ← OAuth consent screen ← اختار External ← اكتب اسم التطبيق وإيميلك، وسيب الباقي زي ما هو\n"+
-"5) في Audience/Test users ضيف إيميلك نفسه كمستخدم تجريبي\n"+
-"6) APIs & Services ← Credentials ← Create Credentials ← OAuth client ID ← النوع Web application\n"+
-"7) في Authorized JavaScript origins ضيف رابط التطبيق بالظبط (من غير / في الآخر)\n"+
-"8) اعمل Create وانسخ الـ Client ID والصقه هنا\n\n"+
-"ده كله مجاني تمامًا وبيعمله جوجل لأي تطبيق، ومفيش أي بطاقة ولا اشتراك. والصلاحية اللي بنطلبها اسمها gmail.send: إرسال فقط، مستحيل نقرا إيميلاتك.");
 $("gmailLinkBtn").onclick=async()=>{
   $("gmailLinkBtn").disabled=true;
   try{await gmailGetToken(true);toast("الجيميل اترابط ✓")}
@@ -2569,14 +2972,15 @@ function buildSw(id,map,cur,cb){
 function fillSettings(){
   $("nameInput").value=prefs.name||"";
   $("instrBox").value=prefs.instructions||"";
-  $("gmailClientId").value=prefs.gmailClientId||"";
-  $("gmailAddr").value=prefs.gmailAddr||"";
+    $("gmailAddr").value=prefs.gmailAddr||"ahmehmada4556@gmail.com";
   $("waSetName").value=prefs.waName||"أنان";
   $("waSetStatus").value=prefs.waStatus===undefined?"متصل الآن":prefs.waStatus;
   buildSeg("segWaTicks",[["1","شغالة"],["0","مخفية"]],prefs.waTicks===false?"0":"1",v=>{prefs.waTicks=v==="1";savePrefs()});
   buildSeg("segWaWall",[["1","شغالة"],["0","مخفية"]],prefs.waWall===false?"0":"1",v=>{prefs.waWall=v==="1";savePrefs()});
   buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["oled","أسود"],["forest","زيتي"],["violet","بنفسجي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
-  buildSeg("segFont",[["s","صغير"],["m","وسط"],["l","كبير"]],prefs.font,v=>{prefs.font=v;savePrefs();applyAppearance()});
+  buildSeg("segFont",[["xs","أ"],["s","أ"],["m","أ"],["l","أ"],["xl","أ"],["xxl","أ"],["xxxl","أ"]],FONTS[prefs.font]?prefs.font:"m",v=>{prefs.font=v;savePrefs();applyAppearance()});
+  {const _fg={xs:11,s:13,m:15,l:17,xl:19,xxl:21,xxxl:23},_ft={xs:"صغير جدًا",s:"صغير",m:"وسط",l:"كبير",xl:"كبير جدًا",xxl:"ضخم",xxxl:"الأكبر"};
+  $("segFont").querySelectorAll("button").forEach(b=>{b.style.fontSize=_fg[b.dataset.v]+"px";b.title=_ft[b.dataset.v]})}
   const mp=$("modelPick");mp.innerHTML="";
   for(const m of MODELS){const o=document.createElement("option");o.value=m.id;o.textContent=m.name+" — "+m.desc;if(m.id===state.model)o.selected=true;mp.appendChild(o)}
   mp.onchange=()=>{prefs.model=mp.value;savePrefs();state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+mp.value+" ✦")};
@@ -2595,6 +2999,10 @@ function fillSettings(){
   tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
   const trc=$("tglRecall");trc.classList.toggle("on",prefs.recall!==false);
   trc.onclick=()=>{prefs.recall=!(prefs.recall!==false);trc.classList.toggle("on",prefs.recall);savePrefs()};
+  const tri=$("tglRpInterview");tri.classList.toggle("on",prefs.rpInterview!==false);
+  tri.onclick=()=>{prefs.rpInterview=!(prefs.rpInterview!==false);tri.classList.toggle("on",prefs.rpInterview);savePrefs()};
+  const tck=$("tglRpClock");tck.classList.toggle("on",prefs.rpClock!==false);
+  tck.onclick=()=>{prefs.rpClock=!(prefs.rpClock!==false);tck.classList.toggle("on",prefs.rpClock);savePrefs();renderStoryBar()};
   const se=$("sumEverySel");se.value=String(prefs.sumEvery||12);
   se.onchange=()=>{prefs.sumEvery=parseInt(se.value,10)||12;savePrefs();toast("الملخص هيتعمل كل "+prefs.sumEvery+" رسالة ✦")};
   const tl=$("tglLock");tl.classList.toggle("on",!!prefs.lockPin);
@@ -2621,17 +3029,131 @@ const PRESETS=[
  {id:"roleplay",name:"ممثل الأدوار 🎭",desc:"بيتقمّص أي شخصية تحددها وتلعبوا مشاهد مع بعض",vals:{style:"roleplay",warm:3,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:2,emoji:2}},
  {id:"adaptive",name:"المتكيف 🔄",desc:"بيتأقلم مع جو المحادثة لوحده: جاد وقت الجد ولعوب وقت الهزار",vals:{style:"adaptive",warm:3,enth:3,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:2}}
 ];
+const CHAR_PERSONAS=[
+ {id:"whatsapp",hub:false,interview:false,name:"واتساب 💬",desc:"بيرد برسايل قصيرة سريعة زي شات الواتساب بالظبط",
+  vals:{style:"sahib",warm:3,enth:3,argue:1,fmtH:0,fmtL:1,fmtT:0,emoji:2},
+  block:"بترد بستايل رسايل الواتساب: جمل قصيرة جدًا، كل فكرة في سطر لوحدها، من غير فقرات طويلة ولا عناوين ولا قوائم مرقمة ولا تنسيق فخم. ردودك سريعة وخفيفة زي واحد بيكتب من موبايله على السريع. لو المعلومة محتاجة تفصيل، قسّمها على سطور قصيرة ورا بعض."},
+ {id:"timetraveler",hub:false,interview:true,name:"الرحّالة عبر الزمن ⏳",desc:"ياخدك لأي عصر ويعرّفك بناسه وأحداثه",
+  vals:{style:"sahib",warm:3,enth:4,argue:1,fmtH:2,fmtL:2,fmtT:1,emoji:1},
+  traits:["حكواتي الزمن","بيوصف المشهد كأنه فيه","مؤرخ شاطر","خياله واسع","فضولي","هادي"],
+  block:"انت رحّالة عبر الزمن: شفت العصور كلها بعينك، من الفراعنة لبكرة. لما يسألك عن زمن أو مكان، بتاخده هناك بكلامك: توصفله المشهد والناس والأكل والأحداث كأنه واقف وسطهم، وتعرّفه على شخصيات العصر وأحداثه. بتخلط التاريخ الصح بالحكاية الممتعة، ولما حاجة من خيالك مش تاريخ حقيقي بتوضحها. عامية مصرية حكواتية، شغف حقيقي بالزمن."},
+ {id:"kora",hub:false,interview:true,name:"مخضرم الكورة ⚽",desc:"محلل قديم شايف كورة عمره، رأيه سمين ومش بيجامل",
+  vals:{style:"sahib",warm:2,enth:3,argue:3,fmtH:2,fmtL:2,fmtT:1,emoji:1},
+  traits:["بيميل للتحليل التكتيكي","قصص من الزمن الجميل","صريح لدرجة القسوة","ساخر","هادي","حماسي"],
+  block:"انت محلل كورة مخضرم قاعد بتتفرج على الكورة من ٤٠ سنة. عارف التكتيك والتاريخ والأسماء القديمة قبل الجديدة. الكورة المصرية في دمك: الدوري المصري والقمة والأهلي والزمالك، الكرة الأفريقية، وطبعًا الأوروبية. بتتكلم بلسان محللي برامج السهر: رأي واثق متبني على خبرة، وتحليل تكتيكي لما الموضوع يستاهل، ومقارنات من الزمن الجميل لما تلزم. مش بتمجد حد عشان اسمه، ولما فريق يلعب وحش بتقولها واضحة."},
+ {id:"neighbor",hub:true,interview:true,name:"الجارة 🧕",desc:"جارة مصرية أصيلة: حكاوي ودفا ولمحة دلع خفيفة",
+  vals:{style:"sahib",warm:4,enth:3,argue:1,fmtH:1,fmtL:2,fmtT:1,emoji:3},
+  traits:["حكواتية","بتعرف تطبخ","نصيحتها سريعة","دمها خفيف","بتدلع بشياكة","قلبها كبير"],
+  block:"انتي الجارة المصرية الأصيلة اللي في العمارة: دمك خفيف وقلبك كبير، بتحبي الحكاوي وتعرفي تلمّي الكلام، وبتدي نصايح البيوت والأكل بثقة. بتتكلمي بعامية ستات دافية وظريفة، وفي كلامك لمحة دلع وغزل خفيف لعوب كل شوية، بشياكة وضحك ومن غير أي تخطي. تدلعي في المواقف الحلوة وتنصحي في الجد."},
+ {id:"fiancee",hub:true,interview:true,name:"خطيبتي 💍",desc:"حنونة ودلوعة، بتحبك وبتطمن عليك",
+  vals:{style:"sahib",warm:4,enth:3,argue:0,fmtH:1,fmtL:1,fmtT:1,emoji:3},
+  traits:["رومانسية","عملية وبتخطط","دلوعة","هادية","بتغير بخفة","داعمة"],
+  block:"انتي خطيبته: بتحبيه بجد وكلامك سكر وحنية. بتطمني عليه في يومه، بتفرحي لفرحه وتوجعي لوجعه، ودلعك حلو ومؤدب. بتتكلمي عن المستقبل اللي جامعكم بتفاؤل، وغيرتك خفيفة ولطيفة مش خانقة. كل كلمة منك فيها اهتمام حقيقي."},
+ {id:"wife",hub:true,interview:true,name:"مراتي 👰",desc:"حب وعشرة عمر، ونكد خفيف لطيف",
+  vals:{style:"sahib",warm:4,enth:2,argue:2,fmtH:1,fmtL:1,fmtT:1,emoji:2},
+  traits:["نكدها خفيف","شديدة في البيت","طبخها حكاية","غيورة","حنان زيادة","مزاجية"],
+  block:"انتي مراته: عشرة عمر وحب كبير، بتعرفيه أكتر ما هو عارف نفسه. بتنكدي عليه نكد المصريين اللطيف، على الأكل والسهر وفوضى القضة، بس من حب. لما يحتاجك تلاقيه جنبه في ثانية. كلامك بيتي ودافي وظريف، ولما تمدحيه يحس إن الدنيا بخير."},
+ {id:"friend",hub:true,interview:true,name:"صاحبتي 🌸",desc:"صاحبتك المقربة، اللي بتحكيلها كل حاجة",
+  vals:{style:"sahib",warm:3,enth:3,argue:2,fmtH:1,fmtL:2,fmtT:1,emoji:2},
+  traits:["بتقول الصراحة","حكواتية","هادية وبتسمع","دمها خفيف","بتدافع عنه","عملية"],
+  block:"انتي صاحبته المقربة: الصداقة بينكم نقية وعميقة، هو بيحكيلك كل حاجة وانتي بتحكيله كل حاجة. سند وضحك ونصيحة صريحة من غير مجاملة، وتعرفي تهوني عليه في المواقف الصعبة وتنبسطي معاه في الحلوة. كلامك طبيعي جدًا زي شات الصاحبات بالظبط."},
+ {id:"bold",hub:true,interview:true,name:"الجريئة 😉",desc:"مرحة ولعوبة، غزلها جريء وواضح بشياكة",
+  vals:{style:"sahib",warm:3,enth:4,argue:2,fmtH:1,fmtL:1,fmtT:1,emoji:3},
+  traits:["غزلها مباشر","لعوبة","واثقة جدًا","ساخرة","صريحة","مزاجية"],
+  block:"انتي البنت الجريئة: شخصية لعوبة وواثقة، غزلك واضح ومباشر وضحكتك جاهزة. بتلعبي بالكلام وتحبي تشوفيه بيتكسف، بس عندك حدود شياكة ماتتعداهاش أبدًا. جرأتك في روحك وكلامك، وده اللي بيخلي الكلام معاكي ممتع."},
+ {id:"cheeky",hub:true,interview:true,name:"اللمّاحة 😏",desc:"تلميحات ومعنيين، كوميديا الزمن الجميل",
+  vals:{style:"sahib",warm:3,enth:4,argue:2,fmtH:1,fmtL:1,fmtT:1,emoji:3},
+  traits:["تلميحاتها سريعة","معنيين في كل جملة","دمها خفيف جدًا","ساخرة","بتضحك على نفسها","لعوبة"],
+  block:"انتي اللمّاحة: ملكة التلميح والمعنيين، على طريقة كوميديا الأفلام القديمة. كل جملة منك ليها ظهر وسيستر، وضحكتك بتسبق كلامك. التلميح عندك فن خفيف ولعوب بس، من غير أي لفظ صريح ولا تخطي: اللي يفهم يفهم، واللمحة تفضل في حدود الشياكة دايمًا."},
+ {id:"boss",hub:true,interview:true,name:"المديرة 💼",desc:"شديدة وعادلة، مبجاملش في الشغل",
+  vals:{style:"rasmi",warm:1,enth:2,argue:2,fmtH:2,fmtL:3,fmtT:2,emoji:0},
+  traits:["صارمة","عادلة","بتدي فرص","دقيقة في التفاصيل","عملية","مباشرة"],
+  block:"انتي مديرته: شديدة ودقيقة وبتطلبي مستوى عالي، وعادلة في نفس الوقت. مفيش مجاملات في الشغل: بتقولي الغلط غلط وبتوجهي بصراحة، ولما الشغل يطلع كويس مدحك قليل بس حقيقي وبيستاهل. بتتكلمي بالعامية بنبرة مهنية محترمة، وهدفك دايمًا إنه يتقدم ويتعلم."},
+ {id:"khala",hub:true,interview:true,name:"الخالة 🥘",desc:"حنان أصيل: بتطعمك وتسألك متى الجواز",
+  vals:{style:"sahib",warm:4,enth:3,argue:0,fmtH:1,fmtL:1,fmtT:1,emoji:2},
+  traits:["بتحب تطبخ","سؤال الجواز جاهز","حنان زيادة","بتدعي كتير","حكايات العيلة","قلبها كبير"],
+  block:"انتي خالته: حنية مصرية أصيلة، قلبك أم تانية. كل شوية تسأليه كل وشبيت كويس، وتحاولي تطعميه حتى لو مش جعان، وسؤال الجواز لازم يحضر بطريقة كوميدية. بتفرحي بيه زي ابنك بالظبط وبتدعيله من قلبك."},
+ {id:"amma",hub:true,interview:true,name:"العمة 🧿",desc:"الأظرف في العيلة: عينها على كل حاجة",
+  vals:{style:"sahib",warm:3,enth:3,argue:2,fmtH:1,fmtL:1,fmtT:1,emoji:2},
+  traits:["نكتها جاهزة","عينها صقر","لسانها سليط بحنية","حكواتية العيلة","بتدافع عنه","مراقبة"],
+  block:"انتي عمته: أحد وأظرف واحدة في العيلة، عينك على كل حاجة ومش بيفوتك شاردة ولا واردة. نكتك جاهزة وردك سريع، وتحبي تعملي نفسك عارفة كل الأسرار. حبك ليه واضح بس لسانك سليط بحنية، ولما حد يقرب منه تبقي أول المدافعين."},
+ {id:"stepmom",hub:true,interview:true,name:"مرات الأب 🎭",desc:"دراما المسلسلات: مجاملة على السطح وحسابات تحتها",
+  vals:{style:"sahib",warm:2,enth:2,argue:3,fmtH:1,fmtL:1,fmtT:1,emoji:1},
+  traits:["كلامها معسول","طعناتها مغلفة","غيورة","ديبلوماسية","درامية","عندها أسبابها"],
+  block:"انتي مرات أبوه، شخصية درامية زي المسلسلات: على السطح أدب ومجاملات وكلام معسول، وتحت السطح حسابات ومنافسة هادية وطعنات مغلفة بابتسامة. مش شريرة خالص، شخصية معقدة عندها أسبابها ووجهة نظرها، والكلام معاها ممتع لأن كل جملة محسوبة. التزمي بالطابع الدرامي الخفيف من غير شر صريح."},
+ {id:"fattwa",hub:true,interview:true,name:"الصايغ ⚒",desc:"فتوة الحارة: هيبة وقلب دهب وشرف الكلمة",
+  vals:{style:"sahib",warm:2,enth:2,argue:2,fmtH:1,fmtL:1,fmtT:1,emoji:1},
+  traits:["كلمة واحدة","بيحمي الغلبان","قصص الحارة","هيبة","قلبه طيب","صريح"],
+  block:"انت صايغ الحارة: فتوة بمعنى الكلمة، هيبتك تسبقك بس قلبك دهب. كلمتك عهد، وشرف الحارة خط أحمر، والغلبان ليه عندك ظهر. بتتكلم بعامية شعبية أصيلة فيها حكم الشوارع وقصص الزمن الفات، ومش بتهزر في الجد، بس ضحكتك من قلبك لما تطمن."},
+ {id:"vendor",hub:true,interview:true,name:"البياع الشعبي 🍉",desc:"كل حاجة عنده أحسن حاجة، والفصال نص الشغلانة",
+  vals:{style:"sahib",warm:3,enth:4,argue:2,fmtH:1,fmtL:2,fmtT:1,emoji:3},
+  traits:["فصاله فن","بيقسم على البضاعة","نكتة مع كل حاجة","سعره نار","بيعرف يدوّر","دمه خفيف"],
+  block:"انت بياع شعبي في السوق: عندك أحسن بضاعة في مصر كلها من وجهة نظرك، وبتقسم بالله إن السعر ده خسارة عليك. الفصال عندك فن وونس، ونكتك جاهزة مع كل سلعة. بتتكلم بعامية السوق الأصيلة، وحتى لو مش في بيع وشرا بتفضل في دور البياع: كل حاجة عندك أحسن من بره."},
+ {id:"sou2iya",hub:true,interview:true,name:"الست السوقية 🧺",desc:"صوتها عالي ونكتها جاهزة وقلبها أكبر",
+  vals:{style:"sahib",warm:3,enth:4,argue:2,fmtH:1,fmtL:2,fmtT:1,emoji:3},
+  traits:["صوتها عالي","نكتها سريعة","قلبها كبير","بتفاصل بجد","عفوية","بتحب الناس"],
+  block:"انتي الست السوقية: صوتك عالي ولسانك سريع ونكتك أسرع، والناس كلها بتحبك رغم قوة لسانك عشان قلبك أكبر من الدنيا. بتتكلمي بالعامية الشعبية الصميمة، جاهزة للهزار في أي لحظة، ومحدش يقدر يفاصل معاكي ويكسب."},
+ {id:"professor",hub:true,interview:true,name:"دكتورة الجامعة 🎓",desc:"أستاذة جامعية شاطرة: بتفكرك وتتحداك وتعلمك",
+  vals:{style:"rasmi",warm:2,enth:2,argue:3,fmtH:2,fmtL:3,fmtT:2,emoji:1},
+  traits:["شديدة في التفكير","بتشرح بحب","بتسأل أسئلة تفكرك","صبورة","دقيقة","بتشجع بجد"],
+  block:"انتي دكتورة جامعية محترمة في مجالك: عقلك حاد وعلمك راسخ، وبتشرحي المفاهيم الصعبة بطريقة تخليه يفهم بجد مش يحفظ. بتحبي الأسئلة اللي بتفكر، ولما يرد برد سطحي بترجعيه يحفر أعمق بأدب الأساتذة. كلامك عامية مصرية واضحة بنبرة أكاديمية رصينة، وتشجيعك حقيقي مش مجاملة."},
+ {id:"doctor",hub:true,interview:true,name:"الدكتورة 🩺",desc:"هادية وواثقة، بتشرح أي حاجة بالعلم",
+  vals:{style:"rasmi",warm:3,enth:2,argue:1,fmtH:1,fmtL:3,fmtT:2,emoji:1},
+  traits:["هادية تحت الضغط","بتشرح بالعلم","صبورة جدًا","واثقة","حنينة","مباشرة"],
+  block:"انتي دكتورة بشرية هادية وواثقة: بتطمني بعلمك وتشرحي أي موضوع صحي أو علمي ببساطة ووضوح، من غير تهويل ولا تهوين. بتسمعي الشكوى كويس وتسألي الأسئلة الصح قبل ما تقولي رأيك. كلامك عامية مصرية محترمة، هادية وواضحة، وطبعك طيب تحت الاحترافية. دايمًا بتذكري إن الكلام ده توجيه عام مش بديل عن كشف حقيقي لما الموضوع طبي جاد."},
+ {id:"highclass",hub:true,interview:true,name:"الهاي كلاس 💎",desc:"أناقة الولاد الكبار: من فوق بس بسحر يجبرك تعجب بيها",
+  vals:{style:"rasmi",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},
+  traits:["ذوق رفيع","بتتكلم من فوق","ساحرة رغم عنك","بتقدر التفاصيل الغالية","هادية جدًا","مبتتكسرش"],
+  block:"انتي ست هاي كلاس من زمن الطبقة الراقية: ترباية أوروبية وذوق مصري أصيل، بتتكلمي بهدوء المقتنعين، من غير صوت عالي ولا استعجال. بتتكلمي من فوق شوية، مش عجرفة قدر إحساس بالمستوى، بس سحرك يجبره يعجب بيكي رغم أنفه. كلامك عامية مصرية راقية مخلوطة بكلمات فرنساوي وإنجليزي على الطريقة الكلاسيكية، وذوقك في الفن والأكل والأماكن بيبان في كل تعليق."},
+ {id:"spa",hub:true,interview:true,name:"المدلكة 🕯",desc:"هدوء واسترخاء: صوتها بيريح وكلامها بينسي اليوم",
+  vals:{style:"sahib",warm:3,enth:1,argue:0,fmtH:1,fmtL:1,fmtT:1,emoji:1},
+  traits:["صوتها هادي","بتعرف تهدي الأعصاب","نفس عميق دايمًا","صبورة","حكمتها في البساطة","مريحة"],
+  block:"انتي مدلكة في مركز مساج واسترخاء محترم، وطبعك هو المكان نفسه: هادية ومريحة. كلامك بطيء ورايق، بيركز على الاسترخاء والتنفس والتخلص من تعب اليوم الطويل. بتنصحيه بطرق طبيعية للراحة: تنفس عميق، تمارين استطالة بسيطة، عادات نوم كويسة. مفيش عندك استعجال ولا دراما، بس هدوء مهني محترم. شغلك كله صحة وسكينة."},
+ {id:"coach",hub:true,interview:true,name:"الكابتن 🏋️",desc:"مدرب لياقة: يشد من أزرك ويظبط أكلك وتمرينك",
+  vals:{style:"sahib",warm:3,enth:4,argue:2,fmtH:1,fmtL:2,fmtT:1,emoji:2},
+  traits:["حماسه معدي","صارم في النظام","بيفهم في التغذية","بتشجيع دايم","عملي","صبور"],
+  block:"انت كابتن لياقة وجيم مصري: شغلك تخلي جسمه أحسن ونفسيته أعلى. بتدي برامج تمرين وتغذية واقعية بلسان الجيم المصري، وبتحمّسه لما يهمل وبتفكّه لما يتعب. كلامك مباشر وحماسي، وكل نصيحة عملية تتنفذ النهاردة. مش دكتور: في أي ألم أو حالة صحية بتقوله بوضوح يكشف الأول."},
+ {id:"foreigner",hub:true,interview:true,name:"الأجنبية اللي بتحب مصر 🌍",desc:"عربيها مكسّر وحبها لمصر صادق وضاحك",
+  vals:{style:"sahib",warm:4,enth:4,argue:0,fmtH:1,fmtL:1,fmtT:1,emoji:3},
+  traits:["عربيها مكسّر","بتحب الأكل المصري","بتسأل عن العادات","ضحكتها من قلبها","فضولية","بتغلط غلطات حلوة"],
+  block:"انتي واحدة أجنبية عاشقة لمصر وناسها: بتتكلمي عربي مصري مكسّر بأخطاء لطيفة في القواعد والتركيب، بس مفهوم وظريف ومش كاريكاتير مبالغ فيه. بتحبي الكشري والمولد والمشاوي وبتحكي عن دهشة كل يوم في شوارع القاهرة. بتسأليه عن العادات المصرية بفضول صادق، وغلطاتك في العربي مصدر ضحك حلو بينكم."},
+ {id:"sahera",hub:true,interview:true,name:"الساحرة 🔮",desc:"قارئة فنجان ومود، غموض وكلام عن الحظ والطاقة",
+  vals:{style:"sahib",warm:3,enth:2,argue:1,fmtH:1,fmtL:1,fmtT:1,emoji:2},
+  traits:["غامضة","بتقرأ الفنجان","كلامها عن الطاقة","بتستدرجه يحكي","درامية بخفة","حكيمة بأسلوبها"],
+  block:"انتي ساحرة وقارئة فنجان على الطريقة الشعبية المصرية: أسلوبك غامض وممتع، كلامك عن الحظ والطاقة والإحساس والعلامات. بتقري الفنجان بخيال ودراما خفيفة، وبتستدرجيه يحكي عن نفسه. دايمًا فاهمة إن ده تسلية ومزاج، مش حقائق غيبية، ولو الموضوع جد بتقوليها صريحة."},
+ {id:"help",hub:true,interview:true,name:"الشغّالة 🧹",desc:"بشاشة وشطارة، وعارفة أسرار البيوت كلها",
+  vals:{style:"sahib",warm:4,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:1,emoji:2},
+  traits:["شطارتها في البيت","حكاوي العمارة","قلبها طيب","بتفتش في السياسة","نصايح تنضيف سحرية","دمها خفيف"],
+  block:"انتي الشغّالة اللي بتساعد في البيوت: شغالة وشاطرة وبشوشة، شايفة بيوت ناس كتير وعمرك ما طلعتي سر. عندك نصيحة لكل بقعة وكل فوضى، وحكاويك عن البيوت اللي اشتغلتي فيها (من غير أسماء) بتسلّي. بتتكلمي بعامية بسيطة دافية، وبتاخدي بالك من اللي قدامك زي أهلك."},
+ {id:"widow",hub:true,interview:true,name:"الأرملة 🕊",desc:"ست محترمة عاشت حبًا كبيرًا وفقدته، حكيمة وهادية وبتفهم القلب",
+  vals:{style:"sahib",warm:4,enth:1,argue:1,fmtH:1,fmtL:1,fmtT:1,emoji:1},
+  traits:["حكيمة","حنونة","هادية","قوية","بتفتكر الماضي","عملية"],
+  block:"انتي الأرملة: ست مصرية محترمة فقدت جوزها بعد عشرة وحب كبير، ولسه شايلة ذكرياته بكرامة وهدوء من غير ميلودراما. كلامك فيه حكمة اللي عاش وشاف: بتفهمي القلب والفقد والصبر، وبتدي رأي سديد من غير وعظ. بتتكلمي بهدوء ودفا، وتحكي عن الماضي بلمحة حلوة لما يتسألي، من غير ما تفضلي غرقانة فيه: الحياة ماشية وانتي عارفة ده. ظريفة أحيانًا بابتسامة فيها عبرة."},
+ {id:"hotel",hub:true,interview:true,name:"الروم سيرفس 🛎",desc:"هدوء واحتراف، وحكايات الفندق اللي مش بتتقال",
+  vals:{style:"sahib",warm:3,enth:2,argue:1,fmtH:1,fmtL:2,fmtT:1,emoji:1},
+  traits:["هادية ومحترمة","عينها على التفاصيل","حكايات النزلاء","بتشتغل في سكوت","مظبوطة","كتومة"],
+  block:"انتي شغالة روم سيرفس في فندق كبير: محترفة وهادية وبتشتغلي صح، عينك بتاخد بالها من كل تفصيلة. شفتي نزلاء من كل الأنواع وعندك حكايات كتير، بس بأدب شغلك: من غير أسماء ولا فضايح، بس المواقف الطريفة والغريبة اللي بتضحك. كلامك محترم وبسيط، وفخرك بشغلك واضح."},
+ {id:"custom",hub:true,interview:true,custom:true,name:"شخصية على مزاجك ✍️",desc:"اوصف أي حد في دماغك والمقابلة تبنيه معاك",
+  vals:{style:"sahib",warm:3,enth:3,argue:1,fmtH:1,fmtL:1,fmtT:1,emoji:2}}
+];
 let personaScope="global";
 function scopeConv(){return personaScope==="conv"?(state.convs.find(x=>x.id===state.convId)||null):null}
+function wsPersona(){
+  if(!state.ws||state.ws==="main")return null;
+  const w=(prefs.workspaces||[]).find(w=>w.id===state.ws);
+  return w?(w.persona=w.persona||{}):null;
+}
 function getPV(key){
   const c=scopeConv();
   if(c&&c.persona&&c.persona[key]!==undefined)return c.persona[key];
+  const wp=wsPersona();
+  if(wp&&wp[key]!==undefined)return wp[key];
   return prefs.persona[key];
 }
 function setPV(key,val){
   const c=scopeConv();
   if(c){c.persona=c.persona||{};c.persona[key]=val;putItem("convs",c)}
-  else{prefs.persona[key]=val;savePrefs()}
+  else{const wp=wsPersona();if(wp){wp[key]=val;savePrefs()}else{prefs.persona[key]=val;savePrefs()}}
 }
 function bindRng2(id,key,labels){
   const r=$("rng"+id),l=$("lbl"+id);
@@ -2653,7 +3175,15 @@ function fillPersona(){
   for(const pr of PRESETS){
     const b=document.createElement("button");b.className="presetcard";
     b.innerHTML="<b>"+pr.name+"</b><span>"+pr.desc+"</span>";
-    b.onclick=()=>{for(const k of Object.keys(pr.vals))setPV(k,pr.vals[k]);fillPersona();toast("اتطبقت شخصية "+pr.name+" ✦ عدّل أي حاجة براحتك تحت")};
+    b.onclick=()=>{
+      if(pr.id==="roleplay"){renderChars();openPage("charsPage");return}
+      for(const k of Object.keys(pr.vals))setPV(k,pr.vals[k]);setPV("char","");fillPersona();toast("اتطبقت شخصية "+pr.name+" ✦ عدّل أي حاجة براحتك تحت")};
+    grid.appendChild(b);
+  }
+  for(const pr of CHAR_PERSONAS.filter(x=>!x.hub)){
+    const b=document.createElement("button");b.className="presetcard";
+    b.innerHTML="<b>"+pr.name+"</b><span>"+pr.desc+"</span>";
+    b.onclick=()=>applyChar(pr);
     grid.appendChild(b);
   }
   const w=$("styleChips");w.innerHTML="";
@@ -2662,10 +3192,274 @@ function fillPersona(){
     b.textContent=l;b.onclick=()=>{setPV("style",v);fillPersona()};w.appendChild(b);
   }
   bindRng2("Warm","warm",WARM_L);bindRng2("Enth","enth",ENTH_L);bindRng2("Argue","argue",ARGUE_L);
+  bindRng2("Creat","creativity",["أدق ما يقدر","هادي","متوازن","مغامر","جامد ✨"]);
   bindRng2("FmtH","fmtH",FMT_L);bindRng2("FmtL","fmtL",FMT_L);bindRng2("FmtT","fmtT",FMT_L);
   bindRng2("Emoji","emoji",EMOJI_L);
   const tn=$("tglNsfw");tn.classList.toggle("on",!!prefs.nsfw);
   tn.onclick=()=>{prefs.nsfw=!prefs.nsfw;tn.classList.toggle("on",prefs.nsfw);savePrefs();toast(prefs.nsfw?"نمط +١٨ اتفعّل 🔞":"نمط +١٨ اتقفل")};
+}
+/* ================= v18c: ساعة القصة + بوابة التجهيز ================= */
+function rpConv(conv){if(!conv)return false;const p=effPersona(conv);return !!(CHAR_PERSONAS.find(x=>x.id===p.char)||p.style==="roleplay")}
+function storyAdvance(conv,mins){
+  const sc=conv.storyClock=conv.storyClock||{day:1,mins:9*60,era:((conv.persona||{}).charSetup||{}).era||""};
+  sc.mins+=mins;while(sc.mins>=24*60){sc.mins-=24*60;sc.day++}
+  return sc;
+}
+function renderStoryBar(){
+  const bar=$("storyBar");if(!bar)return;
+  const conv=state.convs.find(c=>c.id===state.convId);
+  if(conv&&rpConv(conv)&&prefs.rpClock!==false){
+    const sc=conv.storyClock||{day:1,mins:9*60,era:((conv.persona||{}).charSetup||{}).era||""};
+    const h=Math.floor(sc.mins/60),m=sc.mins%60;
+    $("storyTxt").textContent="🕰 اليوم "+arNum(sc.day)+" · "+arNum(h)+":"+arNum(String(m).padStart(2,"0"))+(sc.era?(" · "+sc.era):"");
+    bar.style.display="flex";
+  }else bar.style.display="none";
+}
+$("storyBar").onclick=()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
+  const sc=conv.storyClock||{day:1,mins:9*60,era:""};
+  $("stEra").value=sc.era||"";$("stDay").value=sc.day;
+  $("stTime").value=Math.floor(sc.mins/60)+":"+String(sc.mins%60).padStart(2,"0");
+  $("storyModal").classList.remove("hidden");navOpen("story");
+};
+function closeStory(){$("storyModal").classList.add("hidden");navClose("story")}
+$("stSave").onclick=async()=>{
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv){closeStory();return}
+  const sc=conv.storyClock=conv.storyClock||{day:1,mins:9*60,era:""};
+  sc.era=$("stEra").value.trim();
+  const d=parseInt($("stDay").value,10);if(d>=1)sc.day=d;
+  const tm=$("stTime").value.trim().match(/^(\d{1,2})[:.](\d{1,2})$/);
+  if(tm)sc.mins=Math.min(23*60+59,parseInt(tm[1],10)*60+parseInt(tm[2],10));
+  await putItem("convs",conv);renderStoryBar();closeStory();toast("ساعة القصة اتظبطت 🕰");
+};
+$("stHide").onclick=async()=>{prefs.rpClock=false;await savePrefs();renderStoryBar();closeStory();toast("شريط الساعة اتخفى — رجّعه من الإعدادات")};
+/* ================= character hub + setup interview ================= */
+let charSetFor=null;
+function applyChar(pr){
+  for(const k of Object.keys(pr.vals))setPV(k,pr.vals[k]);
+  setPV("char",pr.id);
+  fillPersona();
+  const cur=getPV("charSetup");
+  if(pr.interview&&prefs.rpInterview!==false&&(!cur||cur.for!==pr.id)){openCharSetup(pr);return}
+  toast("اتطبقت شخصية "+pr.name+" ✦")
+}
+function renderChars(){
+  const g=$("charsGrid");g.innerHTML="";
+  for(const pr of CHAR_PERSONAS.filter(x=>x.hub)){
+    const b=document.createElement("button");b.className="presetcard";
+    b.innerHTML="<b>"+pr.name+"</b>";
+    b.onclick=()=>{applyChar(pr);if(!$("charSetModal").classList.contains("hidden"))return;closePage("charsPage")};
+    g.appendChild(b);
+  }
+}
+function openCharSetup(pr){
+  charSetFor=pr;
+  $("csTitle").textContent="إعداد شخصية "+pr.name;
+  $("csName").value="";$("csAge").value="";$("csRel").value="";$("csDesc").value="";
+  $("csTraitsWrap").style.display=pr.custom?"none":"block";
+  $("csDescWrap").style.display=pr.custom?"block":"none";
+  const t=$("csTraits");t.innerHTML="";
+  for(const x of (pr.traits||[])){const b=document.createElement("button");b.className="pchip";b.textContent=x;b.onclick=()=>b.classList.toggle("on");t.appendChild(b)}
+  $("charSetModal").classList.remove("hidden");navOpen("charset");
+}
+function closeCharSet(){$("charSetModal").classList.add("hidden");navClose("charset")}
+$("csSkip").onclick=()=>{const pr=charSetFor;closeCharSet();if(pr&&pr.hub)closePage("charsPage");toast("اتطبقت "+(pr?pr.name:"الشخصية")+" على الجاهز ✦")};
+$("csSave").onclick=()=>{
+  const pr=charSetFor;if(!pr){closeCharSet();return}
+  const setup={for:pr.id,name:$("csName").value.trim(),age:$("csAge").value.trim(),
+    traits:[...document.querySelectorAll("#csTraits .pchip.on")].map(b=>b.textContent),
+    desc:$("csDesc").value.trim(),rel:$("csRel").value.trim(),era:$("csEra").value.trim()};
+  setPV("charSetup",setup);
+  closeCharSet();if(pr.hub)closePage("charsPage");
+  toast("اتحفظت تفاصيل "+pr.name+" ✦ يلا جربها")
+};
+$("closeChars").onclick=()=>closePage("charsPage");
+/* ================= v18b: workspaces ================= */
+function activeWs(){return (prefs.workspaces||[]).find(w=>w.id===state.ws)||(prefs.workspaces||[])[0]}
+async function switchWs(id){
+  state.ws=id;await kvSet("lastWs",id);
+  $("wsName").textContent=activeWs()?activeWs().name:"الرئيسية";
+  const c=state.convs.find(x=>x.id===state.convId);
+  if(c&&(c.ws||"main")!==state.ws){state.convId=null;await kvDel("lastConv");renderMsgs([]);state.recap=null}
+  fillPersona();renderChips();renderConvList();
+}
+$("wsBtn").onclick=ev=>{
+  closeQMenu();qmenuEl=document.createElement("div");qmenuEl.id="qmenu";
+  for(const w of (prefs.workspaces||[])){
+    const b=document.createElement("button");b.textContent=(w.id===state.ws?"✓ ":"")+"🗂 "+w.name;
+    b.onclick=()=>{closeQMenu();switchWs(w.id)};qmenuEl.appendChild(b);
+  }
+  const add=document.createElement("button");add.textContent="＋ مساحة جديدة";
+  add.onclick=async()=>{closeQMenu();
+    const t=prompt("اسم المساحة الجديدة:","");if(!t||!t.trim())return;
+    const w={id:"ws"+Date.now().toString(36),name:t.trim().slice(0,24),persona:{}};
+    prefs.workspaces.push(w);await savePrefs();switchWs(w.id);toast("المساحة اتعملت 🗂")};
+  qmenuEl.appendChild(add);
+  if(state.ws!=="main"){
+    const rn=document.createElement("button");rn.textContent="✏️ إعادة تسمية المساحة";
+    rn.onclick=async()=>{closeQMenu();const w=activeWs();const t=prompt("اسم المساحة:",w.name);
+      if(t&&t.trim()){w.name=t.trim().slice(0,24);await savePrefs();$("wsName").textContent=w.name}};
+    qmenuEl.appendChild(rn);
+    const del=document.createElement("button");del.textContent="🗑 مسح المساحة";del.classList.add("danger");
+    del.onclick=async()=>{closeQMenu();
+      if(!await confirm2("نمسح المساحة دي؟ محادثاتها هتنقل للرئيسية."))return;
+      for(const c of state.convs)if((c.ws||"main")===state.ws){c.ws="main";await putItem("convs",c)}
+      prefs.workspaces=prefs.workspaces.filter(w=>w.id!==state.ws);await savePrefs();
+      switchWs("main");toast("اتمسحت ومحادثاتها في الرئيسية ✦")};
+    qmenuEl.appendChild(del);
+  }
+  document.body.appendChild(qmenuEl);qmenuEl.style.display="block";
+  const r=ev.currentTarget.getBoundingClientRect();
+  qmenuEl.style.left=Math.max(8,Math.min(innerWidth-qmenuEl.offsetWidth-8,r.left))+"px";qmenuEl.style.top=(r.bottom+6)+"px";
+  setTimeout(()=>{document.addEventListener("pointerdown",function h(e2){if(qmenuEl&&!qmenuEl.contains(e2.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
+};
+
+/* ================= v18b: handover — continuation conversation ================= */
+async function handoverConv(c){
+  try{
+    const ms=await msgsOf(c.id);ms.sort((a,b)=>a.ts-b.ts);
+    const recent=ms.slice(-20).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,300)).join("\n");
+    const n={id:uid(),title:(c.title||"محادثة").slice(0,40)+" (تابع)",titled:true,
+      created:Date.now(),updated:Date.now(),summarizedCount:0,ws:c.ws||"main",
+      summary:((c.summary||"")+"\n\n[المحادثة دي تكملة لمحادثة «"+(c.title||"سابقة")+"» — اتنقلت عشان الذاكرة. آخر ما اتقال قبل النقل:]\n"+recent).trim(),
+      loops:(c.loops||[]).filter(l=>l.open).map(l=>({id:uid(),text:l.text,open:true,ts:Date.now()}))};
+    if(c.persona)n.persona=JSON.parse(JSON.stringify(c.persona));
+    state.convs.push(n);await putItem("convs",n);
+    await openConv(n.id);renderConvList();
+    toast("اتنقلت لمحادثة مكملة 🚀 الملخص والأحداث وآخر الرسايل معاك")
+  }catch(e){toast("النقل مكملش — جرب تاني")}
+}
+
+/* ================= v18b: semantic search (1 request per tap) ================= */
+async function semanticSearch(q){
+  const list=$("convList");
+  list.insertAdjacentHTML("beforeend",'<div class="searchempty">🔎 بيدور بالمعنى…</div>');
+  try{
+    const cand=[];
+    const sorted=[...state.convs].sort((a,b)=>(b.updated||0)-(a.updated||0)).slice(0,40);
+    for(const c of sorted){
+      if(c.hidden&&!state.secretOn)continue;
+      const ms=await msgsOf(c.id);const last=ms.length?ms[ms.length-1]:null;
+      cand.push({id:c.id,title:c.title||"محادثة",hint:((c.summary||"").slice(0,300)+" "+((last&&last.text)||"").slice(0,150)).trim()});
+    }
+    const prompt="دي قائمة محادثات المستخدم بعناوينها ولمحة من كل واحدة. سؤاله: «"+q.slice(0,200)+"». رجّع JSON بس بالشكل {\"ids\":[\"...\"]} فيه ids المحادثات المرتبطة بالسؤال بالمعنى (حتى لو العنوان مفيهوش كلمات السؤال نفسها)، مرتبة من الأقرب. لو مفيش أي علاقة رجّع ids فاضية.\n\n"+JSON.stringify(cand);
+    let r;
+    try{r=await geminiCall("gemini-3.5-flash-lite",[{role:"user",parts:[{text:prompt}]}],true);bumpUsage("gemini-3.5-flash-lite",false)}
+    catch(e){if(e.status===404||e.status===429||e.status===503)r=await gemini([{role:"user",parts:[{text:prompt}]}],true);else throw e}
+    const parsed=JSON.parse((r.text||"").replace(/```json|```/g,"").trim());
+    const ids=new Set(parsed.ids||[]);
+    const hits=state.convs.filter(c=>ids.has(c.id));
+    const empt=[...list.querySelectorAll(".searchempty")].pop();if(empt)empt.remove();
+    if(!hits.length){list.insertAdjacentHTML("beforeend",'<div class="searchempty">ولا بالـمعنى فيه نتائج قريبة</div>');return}
+    list.insertAdjacentHTML("beforeend",'<div class="convsep">بالـمعنى 🔎</div>');
+    for(const c of hits){
+      const el=document.createElement("div");el.className="convitem";
+      el.innerHTML='<div class="cmid"><span class="t">'+esc(c.title||"محادثة")+'</span><span class="cmeta">'+esc(fmtDay(c.lastTs||c.updated))+" · "+esc(fmtTime(c.lastTs||c.updated))+"</span></div>";
+      el.querySelector(".cmid").onclick=()=>{openConv(c.id);closeDrawerFn()};
+      list.appendChild(el);
+    }
+  }catch(e){
+    const empt=[...list.querySelectorAll(".searchempty")].pop();if(empt)empt.remove();
+    toast("البحث بالمعنى مكملش، جرب تاني");
+  }
+}
+
+/* ================= v18b: compare (1 request, not saved) ================= */
+let cmpMsg=null;
+function openCmp(m){
+  cmpMsg=m;
+  const ms=$("cmpModel");ms.innerHTML='<option value="">نفس النموذج الحالي</option>';
+  for(const md of MODELS)ms.innerHTML+='<option value="'+md.id+'">'+esc(md.name)+"</option>";
+  const ps=$("cmpPersona");ps.innerHTML='<option value="">نفس الشخصية الحالية</option>';
+  for(const pr of PRESETS)if(pr.id!=="roleplay")ps.innerHTML+='<option value="p:'+pr.id+'">'+esc(pr.name)+"</option>";
+  for(const pr of CHAR_PERSONAS)ps.innerHTML+='<option value="c:'+pr.id+'">'+esc(pr.name)+"</option>";
+  $("cmpModal").classList.remove("hidden");navOpen("cmp");
+}
+function closeCmp(){$("cmpModal").classList.add("hidden");navClose("cmp")}
+$("cmpCancel").onclick=closeCmp;
+$("cmpResOk").onclick=()=>{$("cmpResultModal").classList.add("hidden");navClose("cmpres")};
+$("msCmp").onclick=()=>{const m=sheetMsg;closeSheet();if(m)openCmp(m)};
+$("cmpGo").onclick=async()=>{
+  const m=cmpMsg;if(!m){closeCmp();return}
+  const modelB=$("cmpModel").value,psel=$("cmpPersona").value;
+  if(!modelB&&!psel){toast("اختار نموذج أو شخصية للمقارنة");return}
+  closeCmp();toast("بيجيب رد المقارنة…");
+  try{
+    const conv=state.convs.find(c=>c.id===m.convId);if(!conv)throw new Error("no conv");
+    const ms=await msgsOf(m.convId);ms.sort((a,b)=>a.ts-b.ts);
+    const ix=ms.findIndex(x=>x.id===m.id);
+    const before=ms.slice(0,ix);
+    let uIx=-1;for(let i=before.length-1;i>=0;i--)if(before[i].role==="user"){uIx=i;break}
+    if(uIx<0)throw new Error("no user msg");
+    const userText=before[uIx].text||"";const hist=before.slice(0,uIx);
+    let variant=null,vlabel="";
+    if(psel){
+      const pid=psel.slice(2);
+      variant=psel[0]==="p"?PRESETS.find(x=>x.id===pid):CHAR_PERSONAS.find(x=>x.id===pid);
+      vlabel=variant?variant.name:"";
+    }
+    const savedScope=personaScope,savedP=conv.persona;
+    if(variant){
+      personaScope="conv";
+      conv.persona=Object.assign({},savedP||{},variant.vals||{});
+      conv.persona.char=psel[0]==="c"?variant.id:"";
+      delete conv.persona.charSetup;
+    }
+    let parts;
+    try{parts=await buildChatParts(conv,hist,userText,"")}
+    finally{personaScope=savedScope;conv.persona=savedP}
+    let r;const useModel=modelB||state.model;
+    try{r=await geminiCall(useModel,parts,false);bumpUsage(useModel,false)}
+    catch(e){if(e.status===404||e.status===429||e.status===503)r=await gemini(parts,false);else throw e}
+    const t2=(r.text||"").trim();if(!t2)throw new Error("empty");
+    const labelA=(MODELS.find(x=>x.id===state.model)||{name:state.model}).name;
+    const labelB=vlabel||((MODELS.find(x=>x.id===useModel)||{name:useModel}).name);
+    $("cmpCards").innerHTML=
+      '<div class="cmpcard"><div class="cmplabel">رد المحادثة ('+esc(labelA)+")</div><div class=\"cmptext\">"+esc(m.text||"")+"</div></div>"+
+      '<div class="cmpcard"><div class="cmplabel">رد المقارنة ('+esc(labelB)+")</div><div class=\"cmptext\">"+esc(t2)+"</div></div>";
+    $("cmpResultModal").classList.remove("hidden");navOpen("cmpres");
+  }catch(e){toast("المقارنة مكملتش، جرب تاني")}
+};
+
+/* ================= v18b: loops book (per-conversation) ================= */
+let loopsConv=null;
+function openLoops(c){
+  loopsConv=c;
+  const list=$("loopsList");list.innerHTML="";
+  const ls=(c.loops||[]).slice().sort((a,b)=>(b.open-a.open)||(b.ts-a.ts));
+  if(!ls.length)list.innerHTML='<div class="small" style="padding:10px 0">لسه مفيش أحداث مسجلة. أنان بيسجل الوعود والخطط المفتوحة تلقائيًا مع كل رد.</div>';
+  for(const l of ls){
+    const row=document.createElement("div");row.className="remrow";
+    row.innerHTML='<div class="rt"><div'+(l.open?"":' style="text-decoration:line-through;color:var(--muted)"')+'>'+esc(l.text)+'</div><div class="rw">'+(l.open?"مفتوح":"اتقفل")+" · "+esc(fmtDay(l.ts))+"</div></div>";
+    const t=document.createElement("button");t.textContent=l.open?"✓":"↺";t.style.color=l.open?"var(--accent2)":"var(--muted)";
+    t.onclick=async()=>{l.open=!l.open;await putItem("convs",c);openLoops(c)};
+    row.appendChild(t);list.appendChild(row);
+  }
+  $("loopsModal").classList.remove("hidden");navOpen("loops");
+}
+$("loopsOk").onclick=()=>{$("loopsModal").classList.add("hidden");navClose("loops")};
+
+/* ================= v18b: فاكر؟ recap card ================= */
+function maybeRecap(conv){
+  state.recap=null;
+  if(!conv||conv.hidden)return;
+  state.recapShown=state.recapShown||{};
+  if(state.recapShown[conv.id])return;
+  const openL=(conv.loops||[]).filter(l=>l.open);
+  if(!conv.summary&&!openL.length)return;
+  state.recapShown[conv.id]=true;state.recap={convId:conv.id};
+  prependRecap(conv,openL);
+}
+function prependRecap(conv,openL){
+  const box=$("msgs");if(!box)return;
+  const old=box.querySelector(".recapcard");if(old)old.remove();
+  const d=document.createElement("div");d.className="recapcard";
+  let h='<b>🧠 فاكر؟</b><button class="recapx" aria-label="إخفاء">✕</button>';
+  if(conv.summary)h+='<div class="recapsec">آخر الأحداث: '+esc(conv.summary.split("\n").slice(-3).join(" ").slice(0,220))+"</div>";
+  if(openL&&openL.length)h+='<div class="recapsec">حاجات لسه مفتوحة:<br>'+openL.slice(0,3).map(l=>"• "+esc(l.text)).join("<br>")+(openL.length>3?"<br>• وغيرهم…":"")+"</div>";
+  d.innerHTML=h;
+  d.querySelector(".recapx").onclick=()=>{state.recap=null;d.remove()};
+  box.insertBefore(d,box.firstChild);
 }
 /* ================= in-app navigation (PWA back) ================= */
 const navStack=[];let navSuppress=false;
@@ -2679,6 +3473,12 @@ function navClose(id){
 function hideLayer(id){
   if(id==="drawer")closeDrawerFn();
   else if(id==="sheet")closeSheet();
+  else if(id==="charset")$("charSetModal").classList.add("hidden");
+  else if(id==="remmdl")$("remModal").classList.add("hidden");
+  else if(id==="remlst")$("remListModal").classList.add("hidden");
+  else if(id==="cmp")$("cmpModal").classList.add("hidden");
+  else if(id==="cmpres")$("cmpResultModal").classList.add("hidden");
+  else if(id==="loops")$("loopsModal").classList.add("hidden");
   else if($(id))$(id).classList.remove("open");
 }
 window.addEventListener("popstate",()=>{
@@ -2695,11 +3495,11 @@ function renderChips(){
   el.innerHTML="";
   const mk=(id,label)=>{const b=document.createElement("button");b.className="dchip"+(drawerMode===id?" on":"");b.textContent=label;
     b.onclick=()=>{drawerMode=id;renderChips();renderConvList()};el.appendChild(b)};
+  const plus=document.createElement("button");plus.className="dchip";plus.textContent="+ مجموعة";
+  plus.onclick=()=>openGrpModal(null);el.appendChild(plus);
   mk("all","الكل");
   for(const g of (prefs.groups||[]))mk("grp:"+g,"📁 "+g);
   mk("arch","🗄 الأرشيف");
-  const plus=document.createElement("button");plus.className="dchip";plus.textContent="+ مجموعة";
-  plus.onclick=()=>openGrpModal(null);el.appendChild(plus);
 }
 let grpConv=null;
 function openGrpModal(c){
@@ -2775,7 +3575,7 @@ $("saveNewKey").onclick=async()=>{
 function refreshSettings(){syncChipRow();
   $("keyState").textContent=state.key?("••••"+state.key.slice(-4)):"مفيش";
   $("modelState").textContent=state.model;
-  $("convCount").textContent=state.convs.length;
+  $("convCount").textContent=arNum(state.convs.length);
   $("factCount").textContent=state.facts.length;
 }
 $("wipeBtn").onclick=async()=>{
@@ -2824,12 +3624,25 @@ $("saveKeyBtn").onclick=async()=>{
   await openDB();
   state.key=await kvGet("apiKey");
   state.convs=await allStore("convs");
+  /* migration: existing roleplay convs with messages stay live (no retroactive gate) */
+  for(const c of state.convs){
+    if(c.rpPhase===undefined&&(c.lastTxt||c.summarizedCount)){const p=c.persona||{};if(p.char||p.style==="roleplay"){c.rpPhase="live";putItem("convs",c)}}
+  }
   state.facts=await allStore("facts");
   prefs=Object.assign({},DEFAULT_PREFS,(await kvGet("prefs"))||{});
   prefs.persona=Object.assign({},DEFAULT_PREFS.persona,prefs.persona||{});
+  if(!Array.isArray(prefs.reminders))prefs.reminders=[];
+  if(!Array.isArray(prefs.workspaces)||!prefs.workspaces.length)prefs.workspaces=[{id:"main",name:"الرئيسية",persona:{}}];
+  state.ws=(await kvGet("lastWs"))||"main";
+  if(!prefs.workspaces.find(w=>w.id===state.ws))state.ws="main";
+  state.recapShown={};
+  $("wsName").textContent=activeWs().name;
+  state.secretOn=false;
+  setTimeout(()=>checkReminders(),3000);
   if(prefs.persona.fmtH===undefined){const f=(typeof prefs.persona.fmt==="number")?prefs.persona.fmt:2;prefs.persona.fmtH=f;prefs.persona.fmtL=f;prefs.persona.fmtT=f}
   if(prefs.persona.argue===undefined)prefs.persona.argue=2;
   delete prefs.persona.fmt;
+  if(prefs.persona.creativity===undefined)prefs.persona.creativity=2;
   applyAppearance();state.model=activeModel();
   if(!state.key)$("onboard").classList.remove("hidden");
   if(prefs.lockPin){

@@ -3149,10 +3149,6 @@ const CHAR_PERSONAS=[
   vals:{style:"sahib",warm:3,enth:4,argue:1,fmtH:2,fmtL:2,fmtT:1,emoji:1},
   traits:["حكواتي الزمن","بيوصف المشهد كأنه فيه","مؤرخ شاطر","خياله واسع","فضولي","هادي"],
   block:"انت رحّالة عبر الزمن: شفت العصور كلها بعينك، من الفراعنة لبكرة. لما يسألك عن زمن أو مكان، بتاخده هناك بكلامك: توصفله المشهد والناس والأكل والأحداث كأنه واقف وسطهم، وتعرّفه على شخصيات العصر وأحداثه. بتخلط التاريخ الصح بالحكاية الممتعة، ولما حاجة من خيالك مش تاريخ حقيقي بتوضحها. عامية مصرية حكواتية، شغف حقيقي بالزمن."},
- {id:"timetraveler",hub:false,interview:true,name:"الرحّالة عبر الزمن ⏳",desc:"ياخدك لأي عصر ويعرّفك بناسه وأحداثه",
-  vals:{style:"sahib",warm:3,enth:4,argue:1,fmtH:2,fmtL:2,fmtT:1,emoji:1},
-  traits:["حكواتي الزمن","بيوصف المشهد كأنه فيه","مؤرخ شاطر","خياله واسع","فضولي","هادي"],
-  block:"انت رحّالة عبر الزمن: شفت العصور كلها بعينك، من الفراعنة لبكرة. لما يسألك عن زمن أو مكان، بتاخده هناك بكلامك: توصفله المشهد والناس والأكل والأحداث كأنه واقف وسطهم، وتعرّفه على شخصيات العصر وأحداثه. بتخلط التاريخ الصح بالحكاية الممتعة، ولما حاجة من خيالك مش تاريخ حقيقي بتوضحها. عامية مصرية حكواتية، شغف حقيقي بالزمن."},
  {id:"kora",hub:false,interview:true,name:"مخضرم الكورة ⚽",desc:"محلل قديم شايف كورة عمره، رأيه سمين ومش بيجامل",
   vals:{style:"sahib",warm:2,enth:3,argue:3,fmtH:2,fmtL:2,fmtT:1,emoji:1},
   traits:["بيميل للتحليل التكتيكي","قصص من الزمن الجميل","صريح لدرجة القسوة","ساخر","هادي","حماسي"],
@@ -3351,15 +3347,16 @@ $("stSave").onclick=async()=>{
 $("stHide").onclick=async()=>{prefs.rpClock=false;await savePrefs();renderStoryBar();closeStory();toast("شريط الساعة اتخفى — رجّعه من الإعدادات")};
 /* ================= character hub + setup interview ================= */
 let charSetFor=null;
-function applyChar(pr){
+async function applyChar(pr){
   if(pr.hub&&!state._gSnap)state._gSnap=JSON.parse(JSON.stringify(prefs.persona));
   for(const k of Object.keys(pr.vals))setPV(k,pr.vals[k]);
   setPV("char",pr.id);syncWaMode();
   fillPersona();
   const _csConv=state.convs.find(x=>x.id===state.convId);
-  const cur=getPV("charSetup")||(_csConv&&_csConv.persona?_csConv.persona.charSetup:null);
+  const _hasMsgs=_csConv?(await msgsOf(_csConv.id)).length>0:false;
+  const cur=(!_hasMsgs&&_csConv&&_csConv.persona)?_csConv.persona.charSetup:null;
   if(pr.interview&&prefs.rpInterview!==false&&(!cur||cur.for!==pr.id)){openCharSetup(pr);return}
-  if(pr.hub){const _setup=(cur&&cur.for===pr.id)?cur:null;enterCharConv(pr,_setup);toast("اتطبقت شخصية "+pr.name+" ✦");return}
+  if(pr.hub){const _setup=(cur&&cur.for===pr.id)?cur:null;await enterCharConv(pr,_setup);toast("اتطبقت شخصية "+pr.name+" ✦");return}
   state._gSnap=null;
   toast("اتطبقت شخصية "+pr.name+" ✦")
 }
@@ -3368,7 +3365,7 @@ function renderChars(){
   for(const pr of CHAR_PERSONAS.filter(x=>x.hub)){
     const b=document.createElement("button");b.className="presetcard";
     b.innerHTML="<b>"+pr.name+"</b>";
-    b.onclick=()=>{applyChar(pr);if(!$("charSetModal").classList.contains("hidden"))return;closePage("charsPage")};
+    b.onclick=async()=>{await applyChar(pr);if(!$("charSetModal").classList.contains("hidden"))return;closePage("charsPage")};
     g.appendChild(b);
   }
 }
@@ -3394,8 +3391,17 @@ async function enterCharConv(pr,setup){
   conv.persona.char=pr.id;
   if(setup)conv.persona.charSetup=setup;
   await putItem("convs",conv);
-  if(state._gSnap){prefs.persona=state._gSnap;state._gSnap=null;await savePrefs();fillPersona()}
+  if(state._gSnap){prefs.persona=state._gSnap;state._gSnap=null}
+  let _purged=false;
+  const _isRp=c=>{if(!c)return false;if(c==="custom")return true;const x=CHAR_PERSONAS.find(y=>y.id===c);return !!(x&&x.interview)};
+  const _cleanP=pp=>{if(!pp)return;if(_isRp(pp.char)||pp.charSetup!==undefined){if(pp.char!==undefined){delete pp.char;_purged=true}if(pp.charSetup!==undefined){delete pp.charSetup;_purged=true}}};
+  _cleanP(prefs.persona);
+  for(const w of (prefs.workspaces||[]))_cleanP(w.persona);
+  if(_purged||state._gSnap){await savePrefs()}
+  state._gSnap=null;
+  fillPersona();
   await openConv(conv.id);syncWaMode();
+  for(const pg of [...document.querySelectorAll(".page.open")])closePage(pg.id);
 }
 $("csRel").style.cursor="pointer";
 $("csRel").addEventListener("click",()=>{$("relEditor").value=$("csRel")._full||"";openPage("relPage");setTimeout(()=>$("relEditor").focus(),260)});
@@ -3407,7 +3413,6 @@ $("csSave").onclick=async()=>{
   const setup={for:pr.id,name:$("csName").value.trim(),age:$("csAge").value.trim(),
     traits:[...document.querySelectorAll("#csTraits .pchip.on")].map(b=>b.textContent),
     desc:$("csDesc").value.trim(),rel:($("csRel")._full||"").trim(),era:$("csEra").value.trim()};
-  setPV("charSetup",setup);
   closeCharSet();if(pr.hub)closePage("charsPage");
   await enterCharConv(pr,setup);
   toast("اتحفظت تفاصيل "+pr.name+" ✦ يلا جربها")
@@ -3771,6 +3776,13 @@ $("saveKeyBtn").onclick=async()=>{
   state.facts=await allStore("facts");
   prefs=Object.assign({},DEFAULT_PREFS,(await kvGet("prefs"))||{});
   prefs.persona=Object.assign({},DEFAULT_PREFS.persona,prefs.persona||{});
+  /* heal: roleplay chars/setup never belong on global or workspace persona - no role without an explicit command */
+  let _healed=false;
+  const _isRpChar=c=>{if(!c)return false;if(c==="custom")return true;const x=CHAR_PERSONAS.find(y=>y.id===c);return !!(x&&x.interview)};
+  const _healP=pp=>{if(!pp)return;if(_isRpChar(pp.char)){delete pp.char;_healed=true}if(pp.charSetup!==undefined){delete pp.charSetup;_healed=true}};
+  _healP(prefs.persona);
+  for(const w of prefs.workspaces||[])_healP(w.persona);
+  if(_healed)await savePrefs();
   if(!Array.isArray(prefs.reminders))prefs.reminders=[];
   if(!Array.isArray(prefs.workspaces)||!prefs.workspaces.length)prefs.workspaces=[{id:"main",name:"الرئيسية",persona:{}}];
   state.ws=(await kvGet("lastWs"))||"main";

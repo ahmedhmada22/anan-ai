@@ -78,6 +78,9 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .msg.me .bubble{background:var(--bubble-me);border-start-start-radius:var(--bubtail)}
 .msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:var(--bubtail)}
 .msg.ai .bubble.err{border-color:var(--danger);color:#f0b09b}
+/* v22: ردود عنان بلا إطار زي ChatGPT — النص على الخلفية مباشرة (فقاعة المستخدم زي ما هي، ووضع الواتساب كمان) */
+body:not(.wa) .msg.ai .bubble:not(.err){background:transparent;border:none;border-radius:0;padding:4px 2px}
+body:not(.wa) .msg.ai .bcol{max-width:100%;width:100%}
 /* وضع الواتساب المباشر: لما شخصية "واتساب" مفعّلة، الشات نفسه يبقى بشكل واتساب */
 body.wa #msgs{background:#0b141a}
 body.wa .msg.me .bubble{background:#005c4b;color:#e9edef;border-radius:12px;border-start-start-radius:4px}
@@ -177,6 +180,7 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 .cmpcard .cmptext{white-space:pre-wrap;font-size:15px;max-height:38vh;overflow-y:auto;line-height:1.7}
 .sembtn{display:block;width:100%;text-align:center;padding:10px;color:var(--accent2);font-size:14.5px;background:var(--card);border:1px dashed var(--border);border-radius:12px;margin:6px 0}
 #charSetModal{z-index:75}
+#scopeAsk{z-index:80}
 .pcard{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;margin:10px 0 2px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--card2)),var(--card2));text-align:start}
 .pcard .pcIcon{flex:none;width:34px;height:34px;border-radius:10px;background:var(--accent);color:#1c2030;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
 .pcard .pcText{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -574,6 +578,15 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div id="modelList"></div>
   </div>
 </div>
+<div class="overlay hidden" id="scopeAsk">
+  <div class="box" style="padding:22px 20px">
+    <h1 style="margin-top:0;font-size:18px" id="saTitle">تطبق ده على إيه؟</h1>
+    <div class="small" style="margin-bottom:12px">اختار الشخصية تشتغل في المحادثة دي بس، ولا في كل المحادثات.</div>
+    <button class="bigbtn" id="saConv" style="margin-bottom:8px">للمحادثة دي بس</button>
+    <button class="bigbtn" id="saAll" style="margin-bottom:6px">لكل المحادثات</button>
+    <button class="linkbtn" id="saCancel">إلغاء</button>
+  </div>
+</div>
 <div class="overlay hidden" id="grpModal">
   <div class="box" style="padding:22px 20px;max-height:70vh;overflow-y:auto">
     <h1 style="margin-top:0;font-size:18px">نقل لمجموعة 📁</h1>
@@ -679,8 +692,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 <div class="page" id="personaPage">
   <div class="phead"><button class="iconbtn" id="closePersona" aria-label="رجوع">→</button><b>الشخصية</b><span style="width:40px"></span></div>
   <div class="pgbody">
-    <div class="pgroup" style="margin-top:14px;padding:8px"><div class="seg" id="segScope"></div></div>
-    <div class="small" id="scopeNote" style="padding:0 16px"></div>
+    <div class="small" id="scopeNote" style="padding:14px 16px 0"></div>
     <div class="sect">شخصيات جاهزة</div>
     <div class="pgroup" style="padding:10px"><div class="presetgrid" id="presetGrid"></div></div>
     <div class="sect">أسلوب الكلام</div>
@@ -3274,30 +3286,34 @@ function bindRng2(id,key,labels){
   r.value=getPV(key);l.textContent=labels[getPV(key)];
   r.oninput=()=>{setPV(key,+r.value);l.textContent=labels[+r.value]};
 }
+function askScope(){
+  /* بيظهر وقت اختيار شخصية بس: للمحادثة دي ولا لكل المحادثات. لو مفيش محادثة مفتوحة، التطبيق كله */
+  return new Promise(res=>{
+    const conv=state.convs.find(x=>x.id===state.convId);
+    if(!conv){res("global");return}
+    const ov=$("scopeAsk");ov.classList.remove("hidden");
+    const done=v=>{ov.classList.add("hidden");res(v)};
+    $("saConv").onclick=()=>done("conv");$("saAll").onclick=()=>done("global");$("saCancel").onclick=()=>done(null);
+  });
+}
 function fillPersona(){
   if(personaScope==="conv"&&!state.convs.find(x=>x.id===state.convId))personaScope="global";
-  const seg=$("segScope");seg.innerHTML="";
-  for(const [v,l] of [["global","للتطبيق كله"],["conv","للمحادثة دي بس"]]){
-    const b=document.createElement("button");b.textContent=l;
-    if(personaScope===v)b.classList.add("on");
-    b.onclick=()=>{personaScope=v;fillPersona()};
-    seg.appendChild(b);
-  }
   const c=scopeConv();
-  $("scopeNote").textContent=c?("التعديلات اللي تحت خاصة بمحادثة «"+(c.title||"محادثة جديدة")+"» بس، مش بتأثر على باقي المحادثات."):"التعديلات اللي تحت بتتطبق على كل المحادثات، معدا اللي ليها تخصيص خاص.";
+  $("scopeNote").textContent=c?("التعديلات اللي تحت خاصة بمحادثة «"+(c.title||"محادثة جديدة")+"» بس، مش بتأثر على باقي المحادثات."):"التعديلات اللي تحت بتتطبق على كل المحادثات، معدا اللي ليها تخصيص خاص. لما تختار شخصية جاهزة هيسألك تطبقها فين.";
   const grid=$("presetGrid");grid.innerHTML="";
   for(const pr of PRESETS){
     const b=document.createElement("button");b.className="presetcard";
     b.innerHTML="<b>"+pr.name+"</b><span>"+pr.desc+"</span>";
-    b.onclick=()=>{
+    b.onclick=async()=>{
       if(pr.id==="roleplay"){renderChars();openPage("charsPage");return}
+      const _sc=await askScope();if(!_sc)return;personaScope=_sc;
       for(const k of Object.keys(pr.vals))setPV(k,pr.vals[k]);setPV("char","");syncWaMode();fillPersona();toast("اتطبقت شخصية "+pr.name+" ✦ عدّل أي حاجة براحتك تحت")};
     grid.appendChild(b);
   }
   for(const pr of CHAR_PERSONAS.filter(x=>!x.hub)){
     const b=document.createElement("button");b.className="presetcard";
     b.innerHTML="<b>"+pr.name+"</b><span>"+pr.desc+"</span>";
-    b.onclick=()=>applyChar(pr);
+    b.onclick=async()=>{const _sc=await askScope();if(!_sc)return;personaScope=_sc;applyChar(pr)};
     grid.appendChild(b);
   }
   const w=$("styleChips");w.innerHTML="";
@@ -3693,7 +3709,7 @@ $("closeSettings").onclick=()=>closePage("settingsPage");
 $("closePersona").onclick=()=>closePage("personaPage");
 $("closeMem").onclick=()=>closePage("memPage");
 $("closeUsage").onclick=()=>closePage("usagePage");
-$("openPersona").onclick=()=>{fillPersona();openPage("personaPage")};
+$("openPersona").onclick=()=>{personaScope="global";fillPersona();openPage("personaPage")};
 $("openMem").onclick=()=>{renderMemPage();openPage("memPage")};
 $("openUsage").onclick=()=>{renderUsage();openPage("usagePage")};
 $("nameInput").addEventListener("change",()=>{prefs.name=$("nameInput").value.trim();savePrefs();toast("اتحفظ ✦")});

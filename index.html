@@ -539,7 +539,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   </div>
   <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
   <div id="countBar"><span id="offBadge" class="hidden">أوفلاين 📶</span><span id="countTxt"></span><span id="capWrap"><i id="capFill"></i></span><span id="capTxt">🧠 —</span></div>
-  <div id="storyBar"><span id="storyTxt"></span><button id="storyCast" aria-label="المتحدثين والألوان">🎨</button></div>
+  <div id="storyBar"><span id="storyTxt"></span></div>
   <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHand" style="display:none">🚀 نقل مكمل</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
@@ -857,7 +857,6 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     </div>
     <input id="csRel" class="fld" placeholder="علاقتكم/خلفيتكم — دوس هنا واكتب براحتك في صفحة كاملة 📖" autocomplete="off" style="margin-top:8px" readonly>
     <input id="csEra" class="fld" placeholder="الحقبة الزمنية للقصة (اختياري — مثال: التسعينات، ٢٠٢٤، المستقبل)" autocomplete="off" style="margin-top:8px">
-    <button class="linkbtn" id="csCast" style="display:block;margin:12px auto 0">🎨 المتحدثين والألوان (اختياري)</button>
     <button class="bigbtn" id="csSave" style="margin-top:14px">يلا نبدأ ✦</button>
     <button class="linkbtn" id="csSkip" style="display:block;margin:8px auto 0">تخطي — خليها على الجاهز</button>
   </div>
@@ -2002,7 +2001,7 @@ const XQ_SIGNAL=/[0-9٠-٩]|اسمي|اسمى|بحب|مبحبش|بكره|بكر�
 async function queueExtract(conv,user,ai){
   const q=conv._xq=conv._xq||[];
   q.push({u:String(user||"").slice(0,1500),a:String(ai||"").slice(0,1500)});
-  const due=!conv.titled||rpConv(conv)||q.length>=3||XQ_SIGNAL.test(String(user||""));
+  const due=!conv.titled||q.length>=3||XQ_SIGNAL.test(String(user||""));
   if(!due){try{await putItem("convs",conv)}catch(_){}return}
   return flushExtract(conv);
 }
@@ -3141,7 +3140,6 @@ function personaBlock(conv){
   }
   if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد. ممنوع تتدخل بره الدور من عندك: لا كلام في الهامش، ولا تعليق على الأحداث، ولا ملاحظات مخرج، ولا أرقام رسايل أو أي إشارات مرجعية. الكلام بره الدور بيتم بس لما المستخدم يوقف المشهد بنفسه صراحة.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
   const _rpActive=!!_char||p.style==="roleplay";
-  if(conv&&_rpActive&&conv.rpPhase==="live")s+=castPrompt(conv);
   if(conv&&_rpActive){
     if(conv.rpPhase==="paused"){
       const sc=conv.storyClock||{day:1,mins:780,era:""};
@@ -3549,19 +3547,6 @@ async function runReply(conv,histMsgs,userText){
     if(state.attempts&&state.attempts.length)am.fb=state.attempts.slice(0,4).map(a=>({m:a.model,w:a.why}));
     if(finish==="MAX_TOKENS")am.incomplete=true;
     am.text=await sanitizeReply(am.text,sysText);
-    /* v31: فحص صيغة المشهد (إعداد الأدوار والألوان ملزم): تطبيع محلي، ولو لسه مخالفة تتعاد مرة واحدة بس */
-    if(rpConv(conv)&&conv.rpPhase==="live"&&castOn(conv)&&!am.err){
-      am.text=castNormalize(am.text,conv);
-      const _pr=castCheck(am.text,conv);
-      if(_pr.length){
-        try{
-          toast("بنظبط صيغة المشهد…");
-          const _r2=await gemini(parts,false,abortCtl.signal,sysText+"\n\n[تصحيح من التطبيق] ردك السابق خالف صيغة المشهد: "+_pr.join("؛ ")+". اكتب الرد من الأول بنفس الأحداث، وكل سطر يبدأ باسم متحدث من القايمة متبوعًا بنقطتين.");
-          const _t2=castNormalize((_r2.text||"").trim(),conv);
-          if(_t2&&castCheck(_t2,conv).length<_pr.length){am.text=_t2;am.castRetried=true}
-        }catch(_re){if(_re&&_re.aborted)throw _re}
-      }
-    }
     /* منقّي تقليد السقالة: سطور قالب الحقن الحرفي + تكرارات [N] و[[N]] */
     am.text=am.text.replace(/^\s*\[[^\]\n]*بيرد بالاقتباس على رسالة[^\]\n]*\]\s*/gm,"");
     am.text=am.text.replace(/\[\[\s*[0-9٠-٩]{1,3}\s*\]\]/g,"");
@@ -4482,7 +4467,8 @@ function legible(hex,bg){
 }
 function castChars(conv){return ((conv&&conv.cast)||[]).filter(x=>!x.me&&x.name)}
 function castMe(conv){return ((conv&&conv.cast)||[]).find(x=>x.me)||null}
-function castOn(conv){return !!(conv&&rpConv(conv)&&castChars(conv).length)}
+/* v32: لعب الأدوار من غير طبقة المتحدثين/الألوان/الراوي: الدور بيمشي على إعداده هو بس. بيانات cast القديمة محفوظة في المحادثات ومش بتتستخدم */
+function castOn(conv){return false}
 /* v31: مُطبِّع محلي لصيغة المشهد: بيصلّح أشكال الأسماء الشايعة (**اسم**: / [اسم] / اسم - / اسم (حركة): / الاسم الأول بس) من غير ما يغيّر الكلام */
 function castIndex(conv){
   return ((conv&&conv.cast)||[]).filter(x=>x.name).map(c=>({n:normAr(c.name),c}));
@@ -4625,8 +4611,6 @@ $("castSave").onclick=async()=>{
     state.pendingCast=rows;closeCast();toast("الألوان هتتطبق أول ما تبدأ المشهد ✦");
   }
 };
-$("storyCast").onclick=ev=>{ev.stopPropagation();const c=state.convs.find(x=>x.id===state.convId);if(c)openCast(c)};
-$("csCast").onclick=()=>{state.pendingCastBase={name:$("csName").value.trim()||((charSetFor&&charSetFor.name)||"").replace(/[^\u0600-\u06FFa-zA-Z ]/g,"").trim()};openCast(null)};
 /* بعد اختيار شخصية من المركز: ادخل على طول في محادثة جاهزة بالشخصية دي، من غير رجوع لأي شاشة وسيطة */
 async function enterCharConv(pr,setup){
   let conv=state.convs.find(c=>c.id===state.convId);

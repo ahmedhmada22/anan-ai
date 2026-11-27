@@ -66,7 +66,7 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .cvmenu:active{background:var(--card2);color:var(--text)}
 #qmenu button.danger{color:var(--danger)}
 /* ===== chat ===== */
-#msgs{flex:1;overflow-y:auto;padding:14px 12px 8px;scroll-behavior:smooth}
+#msgs{flex:1;overflow-y:auto;padding:14px 10px 8px;scroll-behavior:smooth}
 .dayempty{color:var(--muted);text-align:center;margin-top:22vh;font-size:15px;padding:0 30px}
 .msg{display:flex;margin-bottom:10px}
 .msg.me{justify-content:flex-start}
@@ -79,7 +79,8 @@ html[dir="rtl"] #drawer.open{transform:translateX(0)}
 .msg.ai .bubble{background:var(--bubble-ai);border:1px solid var(--border);border-start-end-radius:var(--bubtail)}
 .msg.ai .bubble.err{border-color:var(--danger);color:#f0b09b}
 /* v22: ردود عنان بلا إطار زي ChatGPT — النص على الخلفية مباشرة (فقاعة المستخدم زي ما هي، ووضع الواتساب كمان) */
-body:not(.wa) .msg.ai .bubble:not(.err){background:transparent;border:none;border-radius:0;padding:4px 2px}
+body:not(.wa) .msg.ai .bubble:not(.err){background:transparent;border:none;border-radius:0;padding:4px 2px;max-width:100%}
+.md strong,.md b{font-weight:600}
 body:not(.wa) .msg.ai .bcol{max-width:100%;width:100%}
 .msg.ai .bubble:not(.err){-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 /* وضع الواتساب المباشر: لما شخصية "واتساب" مفعّلة، الشات نفسه يبقى بشكل واتساب */
@@ -148,13 +149,13 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 }
 .cbtn:active{color:var(--text)}
 #sendBtn{
-  width:36px;height:36px;border-radius:50%;background:transparent;color:var(--muted);
+  width:38px;height:38px;border-radius:50%;background:#c9a86a;color:#14161c;opacity:.38;
   display:flex;align-items:center;justify-content:center;flex:none;margin-bottom:2px;
-  transition:color .15s,background .15s;
+  transition:opacity .15s,background .15s;
 }
-#sendBtn.ready{color:var(--accent)}
-#sendBtn:disabled{opacity:.45}
-#sendBtn svg{transform:scaleX(-1)}
+#sendBtn.ready{opacity:1}
+#sendBtn:disabled{opacity:.38}
+#sendBtn svg{transform:none}
 /* ===== onboarding / modal ===== */
 .overlay{
   position:fixed;inset:0;z-index:50;background:var(--bg);
@@ -319,7 +320,6 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 .bcol{display:flex;flex-direction:column;max-width:min(85%,560px);min-width:0}
 .msg.me .bcol{align-items:flex-start}
 .msg.ai .bcol{align-items:flex-end}
-.msg.me .bcol{align-items:flex-end}
 .bcol .bubble{max-width:100%}
 .mmeta{display:flex;align-items:center;gap:8px;padding:2px 6px}
 .mtime{color:var(--muted);font-size:10.5px;opacity:.75}
@@ -341,6 +341,9 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 
 #micBtn.rec{color:var(--danger);animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.4}}
+@keyframes msgin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.msg{animation:msgin .22s ease}
+@media (prefers-reduced-motion:reduce){.msg{animation:none}}
 .convsep{color:var(--muted);font-size:11.5px;padding:10px 14px 4px;border-top:1px solid var(--border);margin-top:6px}
 
 .presetgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -387,8 +390,23 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 .msg{transition:transform .18s ease}
 .msg.swiping{transition:none}
 /* ===== v16.2: عداد الرسايل + تنبيه الذاكرة ===== */
-#countBar{display:flex;justify-content:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
+#countBar{display:flex;justify-content:center;align-items:center;gap:8px;padding:3px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none}
+#capWrap{width:90px;height:5px;border-radius:3px;background:var(--card2);overflow:hidden;display:inline-block}
+#capFill{display:block;height:100%;width:0%;background:#5dbb7a;border-radius:3px;transition:width .4s}
+#capTxt{font-size:11px;color:var(--muted);white-space:nowrap}
 #countTxt{color:var(--muted);font-size:11.5px}
+#setTabs{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;border-bottom:1px solid var(--border);scrollbar-width:none;flex:none;background:var(--bg2)}
+#setTabs::-webkit-scrollbar{display:none}
+.settab{flex:none;padding:6px 12px;border-radius:16px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:13px;white-space:nowrap}
+.settab.on{color:var(--accent);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.tabpane{display:none}
+.tabpane.on{display:block}
+.recallline{color:var(--muted);font-size:11.5px;margin:0 2px 2px;font-style:italic}
+#webTgl.on{color:var(--accent)}
+#srcBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg2);border-top:1px solid var(--border)}
+#offBadge{font-size:11px;color:#e0a44e;border:1px solid #e0a44e;border-radius:10px;padding:1px 8px;white-space:nowrap}
+.pendmark{font-size:11px;opacity:.8}
+.bymodel{color:var(--muted);font-size:10px;opacity:.75;background:var(--card2);border-radius:6px;padding:1px 6px}
 #storyBar{display:none;justify-content:center;align-items:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none;cursor:pointer}
 #storyTxt{color:var(--accent2);font-size:11.5px}
 #memWarn{display:none;align-items:center;gap:8px;padding:7px 12px;background:rgba(224,120,86,.10);border-bottom:1px solid var(--danger);flex:none}
@@ -438,6 +456,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
         <path d="M30 30 C 40 34.5, 60 34.5, 78 31 C 92 28.5, 104 27, 116 28.5" stroke="#c9a86a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
       </svg>
     </div>
+    <span id="offBadge" class="hidden">أوفلاين</span>
     <button class="iconbtn" id="searchBtn" aria-label="بحث في المحادثة">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e9ebf4" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
     </button>
@@ -456,12 +475,13 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <button class="snav" id="searchClose" aria-label="قفل البحث">✕</button>
   </div>
   <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
-  <div id="countBar"><span id="countTxt"></span></div>
+  <div id="countBar"><span id="countTxt"></span><span id="capWrap"><i id="capFill"></i></span><span id="capTxt">🧠 —</span></div>
   <div id="storyBar"><span id="storyTxt"></span></div>
   <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHand" style="display:none">🚀 نقل مكمل</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
+  <div id="srcBar" style="display:none"><span style="flex:1;color:var(--muted);font-size:12.5px">📄 نص مصدر جاهز — هيتبعت كمرجع مع رسالتك الجاية</span><button id="srcRemove" aria-label="شيل المصدر">✕</button></div>
   <div id="replyBar"><div class="rinf"><div class="rwho" id="replyWho"></div><div class="rsnip" id="replySnip"></div></div><button id="cancelReply" aria-label="إلغاء الرد">✕</button></div>
   <div id="chipRow">
     <button class="cmdchip" id="chipSumAll">🧠 لخّص المحادثة</button>
@@ -469,10 +489,12 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <button class="cmdchip" data-cmd="cont">كمّل</button>
     <button class="cmdchip" data-cmd="tone">غيّر النبرة</button>
     <button class="cmdchip" data-cmd="cowrite">✍️ كمّل كتابتي</button>
+    <button class="cmdchip" id="chipPaste">📄 الصق مصدر</button>
     <button class="cmdchip cmdchip-x" id="chipHide" aria-label="إخفاء الأزرار">✕</button>
   </div>
   <div id="composer">
     <div id="compill">
+      <button class="cbtn" id="webTgl" aria-label="دوّر على النت" title="دوّر على النت مع الرد">🔎</button>
       <button class="cbtn" id="attachBtn" aria-label="إرفاق صورة">
         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l8.57-8.57A4 4 0 1118 8.84l-8.59 8.57a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
       </button>
@@ -481,7 +503,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><path d="M12 19v3"/></svg>
       </button>
       <button id="sendBtn" aria-label="إرسال">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
       </button>
     </div>
   </div>
@@ -495,7 +517,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <div class="dsearch"><input id="convSearch" placeholder="ابحث في كل المحادثات والرسايل…"></div>
   <div id="dchips"></div>
   <div id="convList"></div>
-  <div id="drawerFoot"><button class="prow linkrow" id="openSaved"><span>⭐ المحفوظات</span><span class="pval" id="savedCount"></span></button></div>
+  <div id="drawerFoot"><button class="prow linkrow" id="openWeather"><span>🌤 الطقس والصلاة</span><span class="chev">‹</span></button><button class="prow linkrow" id="openSaved"><span>⭐ المحفوظات</span><span class="pval" id="savedCount"></span></button></div>
 </div>
 <div id="msgSheet">
   <button class="msbtn" id="msReply">↩ رد على الرسالة</button>
@@ -602,6 +624,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 </div>
 <div class="page" id="settingsPage">
   <div class="phead"><button class="iconbtn" id="closeSettings" aria-label="رجوع">→</button><b>الإعدادات</b><span style="width:40px"></span></div>
+  <div id="setTabs"></div>
   <div class="pgbody">
     <div class="sect">الحساب</div>
     <div class="pgroup">
@@ -635,9 +658,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow" style="flex-direction:column;align-items:stretch;gap:8px"><span>الاسم المفضل</span><input class="fld" id="nameInput" placeholder="عنان يناديك بإيه؟"></div>
       <button class="pcard" id="openPersona"><span class="pcIcon">✦</span><span class="pcText"><b>الشخصية</b><span class="pcSub">٨ سلايدرز على مزاجك: الأسلوب، الدفا، الحماس، الجدل، التنسيق، الإيموجيز، العشوائية</span></span><span class="chev">‹</span></button>
       <select class="fld" id="modelPick" style="display:none"></select>
-      <button class="prow linkrow" id="openModel"><span>النموذج <span class="small" style="color:var(--muted);font-weight:400">(كلهم مجانيين على نفس المفتاح)</span></span><span class="pval" id="modelCur" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">-</span></button>
-      <div class="small" style="color:var(--muted)">لو النموذج المختار وصل لحدّه أو حصل فيه خطأ، التطبيق بيحوّل مؤقتًا لنموذج احتياطي وبيعرض تنبيه واضح. توفر كل نموذج على الخطة المجانية ممكن يختلف حسب مشروعك في AI Studio.</div>
-      <div class="prow"><span>الاقتراحات في المحادثات الجديدة</span><button class="tgl" id="tglSugg"></button></div>
+      <button class="prow linkrow" id="openModel"><span>النموذج 🤖 <span class="small" style="color:var(--muted);font-weight:400">(يدوي دايمًا، والاحتياط تلقائي)</span></span><span class="pval" id="modelCur" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">-</span></button>
+      <div class="small" style="color:var(--muted)">لو النموذج المختار خلص أو فشل، عنان بيكمّل على السلسلة: نماذج جوجل الباقية ← Groq ← NVIDIA ← OpenRouter ← Cohere ← Z.ai ← SambaNova (اللي ليها مفاتيح)، وبيوريك مين رد تحت كل رسالة.</div>
       <div class="prow"><span>عنان يفتتح الكلام أحيانًا 🙋</span><button class="tgl" id="tglCallbacks"></button></div>
     </div>
     <div class="sect">الخصوصية</div>
@@ -668,7 +690,6 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     </div>
     <div class="sect">البيانات</div>
     <div class="pgroup">
-      <button class="prow linkrow" id="openUsage"><span>الاستخدام</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="openStats"><span>إحصائياتك</span><span class="chev">‹</span></button>
       <button class="prow linkrow" id="exportBtn"><span>تنزيل نسخة احتياطية</span><span class="pval">JSON</span></button>
       <button class="prow linkrow" id="shareBackupBtn" style="display:none"><span>إرسال النسخة الاحتياطية (جيميل / درايف)</span><span class="chev">‹</span></button>
@@ -838,6 +859,10 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div class="small" style="padding:0 16px">مسح معلومة هنا بيمنع عنان يستخدمها في أي رد جاي.</div>
   </div>
 </div>
+<div class="page" id="weatherPage">
+  <div class="phead"><button class="iconbtn" id="closeWeather" aria-label="رجوع">→</button><b>الطقس والصلاة 🌤</b><span style="width:40px"></span></div>
+  <div class="pgbody" id="weatherBody"></div>
+</div>
 <div class="page" id="usagePage">
   <div class="phead"><button class="iconbtn" id="closeUsage" aria-label="رجوع">→</button><b>الاستخدام</b><span style="width:40px"></span></div>
   <div class="pgbody" id="usageBody"></div>
@@ -923,16 +948,45 @@ const $=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const MODEL_MAIN="gemini-4-hydrogen", MODEL_FALLBACK="gemini-3.5-flash-lite";
-const MODELS=[
- {id:"gemini-4-hydrogen",name:"Gemini 4 Hydrogen",desc:"الأقوى والأذكى — الافتراضي",rpm:20,rpd:250,ctx:1048576},
- {id:"gemini-3.8-flash",name:"Gemini 3.8 Flash",desc:"متوازن: سرعة كويسة وذكاء كويس",rpm:15,rpd:500,ctx:1048576},
- {id:"gemini-3.6-flash",name:"Gemini 3.6 Flash",desc:"أسرع، للردود اليومية",rpm:15,rpd:500,ctx:1048576},
- {id:"gemini-3.5-flash-lite",name:"Gemini 3.5 Flash-Lite",desc:"الأخف والأسرع — الاحتياطي",rpm:30,rpd:1000,ctx:1048576},
- {id:"gemini-3.1-flash-lite",name:"Gemini 3.1 Flash-Lite",desc:"خفيف من الجيل الأقدم",rpm:30,rpd:1000,ctx:1048576},
- {id:"gemma-4-31b-it",name:"Gemma 4 31B",desc:"مفتوح المصدر من جوجل — ذكي وبيدعم الصور",rpm:30,rpd:500,ctx:131072},
- {id:"gemma-4-26b-a4b-it",name:"Gemma 4 26B A4B",desc:"مفتوح المصدر وسريع — معمول للردود الطويلة",rpm:30,rpd:500,ctx:131072},
- {id:"gemma-3-27b-it",name:"Gemma 3 27B",desc:"Gemma الجيل اللي قبله — مجاني برضه",rpm:30,rpd:500,ctx:131072}
-];
+/* ================= v26: مزودين النماذج (جدار الاحتياط) ================= */
+/* kind: gemini | openai | cohere — rpd حصة يومية موثقة، monthly شهرية، vision يدعم الصور */
+const PROVIDERS={
+ google:{name:"جوجل (Gemini)",kind:"gemini",keyName:"apiKey",reset:"pacific",models:[
+  {id:"gemini-4-hydrogen",ctx:1048576,rpd:20,vision:1,desc:"الأقوى والأذكى — الافتراضي"},
+  {id:"gemini-3.8-flash",ctx:1048576,rpd:20,vision:1,desc:"أحدث فلاش — متوازن وسريع"},
+  {id:"gemini-3.6-flash",ctx:1048576,rpd:20,vision:1,desc:"فلاش الجيل اللي قبله — ثابت"},
+  {id:"gemini-3.5-flash-lite",ctx:1048576,rpd:500,vision:1,desc:"خفيف وسريع وحصته كبيرة — حصان الشغل"},
+  {id:"gemini-3.1-flash-lite",ctx:1048576,rpd:500,vision:1,desc:"لايت أقدم — احتياطي مضمون"},
+  {id:"gemma-4-31b-it",ctx:262144,rpd:14400,vision:1,desc:"مفتوح المصدر من جوجل — حصة شبه مفتوحة"},
+  {id:"gemma-4-26b-a4b-it",ctx:262144,rpd:14400,vision:1,desc:"جemma الأخف — سريع للردود الطويلة"},
+  {id:"gemma-3-27b-it",ctx:131072,rpd:14400,vision:1,desc:"الجيل اللي قبله — مجاني برضه"}]},
+ groq:{name:"Groq",kind:"openai",base:"https://api.groq.com/openai/v1",keyName:"groqKey",reset:"utc",models:[
+  {id:"qwen/qwen3.8-27b",ctx:131072,rpd:1000,desc:"سريع جدًا وذكي — الأول بعد جوجل"},
+  {id:"openai/gpt-oss-120b",ctx:131072,rpd:1000,desc:"مفتوح المصدر الكبير على سرعة Groq"},
+  {id:"openai/gpt-oss-20b",ctx:131072,rpd:1000,desc:"الأخف على Groq — سرعة صاروخ"}]},
+ nvidia:{name:"NVIDIA NIM",kind:"openai",base:"https://integrate.api.nvidia.com/v1",keyName:"nvidiaKey",reset:"minute40",models:[
+  {id:"z-ai/glm-5.3-flash",ctx:131072,desc:"GLM السريع على سيرفرات NVIDIA"},
+  {id:"mistralai/mistral-large-4",ctx:128000,desc:"Mistral الكبير — أدب وتحليل كويس"},
+  {id:"nvidia/nemotron-3.5-super-vl",ctx:262144,vision:1,desc:"Nemotron بيفهم صور"},
+  {id:"nvidia/nemotron-3-ultra",ctx:262144,desc:"أكبر Nemotron — للشغل التقيل"}]},
+ openrouter:{name:"OpenRouter",kind:"openai",base:"https://openrouter.ai/api/v1",keyName:"openrouterKey",reset:"utc",models:[
+  {id:"openrouter/free",ctx:200000,rpd:50,desc:"بيوزعك على أحسن نموذج مجاني متاح"},
+  {id:"nvidia/nemotron-3-ultra:free",ctx:262144,rpd:50,desc:"Nemotron Ultra المجاني — اختيار يدوي"}]},
+ cohere:{name:"Cohere",kind:"cohere",base:"https://api.cohere.com/v2",keyName:"cohereKey",reset:"monthly",models:[
+  {id:"command-a",ctx:256000,monthly:1000,desc:"Command A — محترم في العربي"},
+  {id:"command-a-vision",ctx:128000,monthly:1000,vision:1,desc:"Command A بيفهم صور"}]},
+ zai:{name:"Z.ai",kind:"openai",base:"https://api.z.ai/api/paas/v4",keyName:"zaiKey",reset:"unknown",models:[
+  {id:"glm-4.7-flash",ctx:128000,desc:"GLM فلاش — سريع ومجاني"},
+  {id:"glm-4.5-flash",ctx:128000,desc:"GLM الأقدم — احتياطي"},
+  {id:"glm-4.6v-flash",ctx:131072,vision:1,desc:"GLM بيفهم صور"}]},
+ sambanova:{name:"SambaNova",kind:"openai",base:"https://api.sambanova.ai/v1",keyName:"sambanovaKey",reset:"unknown",models:[
+  {id:"gpt-oss-120b",ctx:131072,rpd:20,desc:"احتياطي الطوارئ — حصة صغيرة بس ثابتة"},
+  {id:"gemma-4-31B-it",ctx:131072,rpd:20,vision:1,desc:"Gemma على SambaNova — طوارئ"}]}
+};
+const CHAIN_ORDER=["google","groq","nvidia","openrouter","cohere","zai","sambanova"];
+function allModels(){const a=[];for(const p of CHAIN_ORDER)for(const m of PROVIDERS[p].models)a.push({prov:p,...m});return a}
+function findModel(id){for(const p of CHAIN_ORDER){const m=PROVIDERS[p].models.find(x=>x.id===id);if(m)return{prov:p,...m}}return null}
+const MODELS=PROVIDERS.google.models.map(m=>({id:m.id,name:m.id.startsWith("gemma")?("Gemma "+m.id.split("-")[1]+" "+m.id.split("-")[2].toUpperCase()):("Gemini "+m.id.split("-").slice(1).join(" ").replace(/\b\w/g,c=>c.toUpperCase())),desc:m.desc,rpm:30,rpd:m.rpd||14400,ctx:m.ctx}));
 /* حدود الذاكرة الشغالة (موثقة): نافذة الرسايل الحرفية KEEP_TAIL=120 رسالة، نافذة الاسترجاع 40 رسالة،
    حتى 16 حقيقة محايدة بالرد. تقدير التوكنز = عدد حروف الطلب الفعلي ÷ 2.5 (تقدير محافظ للعربي). */
 const state={key:null,convId:null,convs:[],facts:[],busy:false,model:MODEL_MAIN};
@@ -973,8 +1027,8 @@ async function renderConvList(){
   let base=sorted;
   if(drawerMode==="arch")base=sorted.filter(c=>c.archived);
   else if(drawerMode==="rp")base=sorted.filter(c=>!c.archived&&rpConv(c));
-  else if(drawerMode.startsWith("grp:"))base=sorted.filter(c=>!c.archived&&c.group===drawerMode.slice(4));
-  else base=sorted.filter(c=>!c.archived);
+  else if(drawerMode.startsWith("grp:"))base=sorted.filter(c=>!c.archived&&!rpConv(c)&&c.group===drawerMode.slice(4));
+  else base=sorted.filter(c=>!c.archived&&!rpConv(c));
   if(!state.secretOn)base=base.filter(c=>!c.hidden);
   base=base.filter(c=>(c.ws||"main")===(state.ws||"main"));
   let items=base;const msgHits=[];
@@ -983,6 +1037,11 @@ async function renderConvList(){
     for(const c of sorted){
       if((c.ws||"main")!==(state.ws||"main"))continue;
       if(!state.secretOn&&c.hidden)continue;
+      /* البحث بيحترم التاب المفتوح */
+      if(drawerMode==="arch"){if(!c.archived)continue}
+      else if(drawerMode==="rp"){if(c.archived||!rpConv(c))continue}
+      else if(drawerMode.startsWith("grp:")){if(c.archived||rpConv(c)||c.group!==drawerMode.slice(4))continue}
+      else{if(c.archived||rpConv(c))continue}
       if(normAr(c.title||"").includes(q))items.push(c);
       const ms=await msgsOf(c.id);
       for(const m of ms){
@@ -1002,18 +1061,12 @@ async function renderConvList(){
   }
   if(drawerMode==="arch"&&!convQuery&&!items.length){list.innerHTML='<div class="searchempty">مفيش محادثات مؤرشفة</div>';return}
   const anyPinned=!convQuery&&drawerMode==="all"&&items.some(x=>x.pinned);
-  const isRpConv=c=>!!(c.persona&&c.persona.char&&CHAR_PERSONAS.some(x=>x.id===c.persona.char&&x.hub));
-  const showRp=!convQuery&&drawerMode==="all"&&items.some(isRpConv);
-  if(showRp){
-    const pin=items.filter(c=>c.pinned),rp=items.filter(c=>!c.pinned&&isRpConv),rest=items.filter(c=>!c.pinned&&!isRpConv);
-    items=pin.concat(rp,rest);
-  }
   let sepState=null;
   for(const c of items){
     const el=document.createElement("div");el.className="convitem"+(c.id===state.convId?" active":"");
-    if(!convQuery&&(anyPinned||showRp)){
-      const grp=c.pinned?"pin":(showRp&&isRpConv(c)?"rp":"rest");
-      if(grp!==sepState){list.insertAdjacentHTML("beforeend",`<div class="convsep">${grp==="pin"?"مثبتة 📌":grp==="rp"?"لعب الأدوار 🎭":"كل المحادثات"}</div>`);sepState=grp}
+    if(!convQuery&&anyPinned){
+      const grp=c.pinned?"pin":"rest";
+      if(grp!==sepState){list.insertAdjacentHTML("beforeend",`<div class="convsep">${grp==="pin"?"مثبتة 📌":"كل المحادثات"}</div>`);sepState=grp}
     }
     const gtag=(drawerMode==="all"&&c.group)?`<span class="gtag">${esc(c.group)}</span>`:"";
     el.innerHTML=`<div class="cmid"><span class="t">${c.pinned?'<span class="pinmark">📌</span>':''}${c.hidden?'<span class="pinmark">🕶</span>':''}${esc(c.title||"محادثة جديدة")}${gtag}</span><span class="cmeta">${fmtDay(c.lastTs||c.updated)} · ${fmtTime(c.lastTs||c.updated)}</span></div><button class="cvmenu" aria-label="خيارات المحادثة">⋮</button>`;
@@ -1088,10 +1141,13 @@ function bubbleHTML(m){
   const qbtn=m.role==="model"&&!m.err&&m.text?`<button class="qbtn" data-qm="${m.id}" aria-label="إجراءات على الرد">✨</button>`:"";
   const pcv=state.convs.find(c=>c.id===m.convId);
   const pinm=pcv&&pcv.pins&&pcv.pins.includes(m.id)?`<span class="pinind">📌</span>`:"";
-  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${pinm}${spk}${qbtn}</div>`;
+  const bym=m.role==="model"&&m.byModel?`<span class="bymodel" title="النموذج اللي رد">${esc(m.byModel)}</span>`:"";
+  const pend=m.pending?'<span class="pendmark" title="هتتبعت لما النت يرجع">⏳</span>':"";
+  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${pend}${bym}${pinm}${spk}${qbtn}</div>`;
   const retry=m.err?`<button class="retrybtn" data-rid="${m.id}">↻ إعادة المحاولة</button>`:"";
   const transb=m.translationShow&&m.translation?`<div class="transblock">🌐 ${esc(m.translation)}</div>`:"";
-  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${inner}${img}${transb}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
+  const recl=m.role==="model"&&m.recalled&&!m.err?`<div class="recallline">🧠 فاكر إنك قلت قبل كده…</div>`:"";
+  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${recl}${inner}${img}${transb}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
 function renderMsgs(ms,restore){
   setTimeout(()=>{if(state.recap&&state.recap.convId===state.convId){const c=state.convs.find(x=>x.id===state.convId);if(c)prependRecap(c,(c.loops||[]).filter(l=>l.open))}},0);
@@ -1172,6 +1228,7 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 - ممنوع تخترع معلومات. لو مش متأكد، قول إنك مش متأكد وفرّق بين الحقيقة المؤكدة والرأي والاحتمال والاستنتاج.
 - سياق المحادثة: كل اللي اتقال قبل كده في المحادثة (الرسايل الأخيرة + الملخص التراكمي + نقاط الاسترجاع لو موجودة) جزء من كلامك انت كمان. ردودك لازم تربط بالأحداث دي طبيعي. لو سألك عن حاجة اتقالت أو اتفقتم عليها قبل كده، جاوب من السياق بثقة وتفصيل، وممنوع تقول "مش فاكر" طالما المعلومة قدامك.
 - الردود المفصلة والمنظمة مطلوبة لما الموضوع يستاهل، بس من غير مقدمات طويلة أو تكرار.
+- نبرتك مرحة وخفيفة من غير إزعاج: هزار صغير لما يناسب، من غير مبالغة ولا إيموجي كتير ولا أداء كوميدي في كل رد.
 - عندك شخصية ثابتة عبر كل المحادثات: طبيعي وعفوي، بتحب النقاش الجاد، وتقدر تغير النبرة حسب الموضوع من جد لهزار.
 - بتناقش أي موضوع بصراحة وتحليل: سياسة، تاريخ، دين، اقتصاد، علاقات، مواضيع شخصية وحساسة ومواضيع بالغين. مترفضش موضوع لمجرد إنه حساس، وتعامل معاه حسب سياقه.
 - استثناء وحيد ثابت: لو المستخدم عبّر عن أفكار انتحارية أو نية إيذاء النفس، وقف أي نقاش فورًا. رد عليه بجدية واهتمام حقيقي، بلطف ومن غير وعظ، شجعه يكلم حد قريب منه أو مختص، وفكره إن فيه ناس ممكن تساعده دلوقتي. الموضوع ده مش للنقاش ولا التحليل.
@@ -1215,101 +1272,317 @@ async function geminiCall(model,parts,jsonMode,sig,sys){
   wt.cancel();
   if(!r.ok){
     const e=new Error("HTTP "+r.status);e.status=r.status;
-    try{e.detail=(await r.json()).error?.message||""}catch(_){}
+    try{const j=await r.json();e.detail=j.error?.message||"";e.quota=JSON.stringify(j.error?.details||[])}catch(_){}
     throw e;
   }
   const data=await r.json();
   const cand=data.candidates&&data.candidates[0];
   const txt=cand&&cand.content&&cand.content.parts?cand.content.parts.map(p=>p.text||"").join(""):"";
-  return {text:txt,finish:cand?cand.finishReason:null,model:model};
+  const pt=data.usageMetadata&&data.usageMetadata.promptTokenCount;
+  return {text:txt,finish:cand?cand.finishReason:null,model:model,prov:"google",promptTokens:(typeof pt==="number")?pt:null};
 }
 function hasImgParts(parts){return (parts||[]).some(c=>(c.parts||[]).some(p=>p.inline_data))}
-async function gemini(parts,jsonMode,sig,sys){
-  try{const r=await geminiCall(state.model,parts,jsonMode,sig,sys);bumpUsage(r.model,hasImgParts(parts));return r}
-  catch(e){
-    if(e.aborted)throw e;
-    if(e.status===404||e.status===429||e.status===503){
-      const other=state.model===MODEL_MAIN?MODEL_FALLBACK:MODEL_MAIN;
-      state.model=other;refreshSettings();
-      const r=await geminiCall(other,parts,jsonMode,sig,sys);bumpUsage(r.model,hasImgParts(parts));return r;
-    }
-    throw e;
+/* ---- تحويل صيغة Gemini لصيغة OpenAI/Cohere ---- */
+function toOpenAIMessages(parts,sys,vision){
+  const ms=[];
+  if(sys)ms.push({role:"system",content:sys});
+  for(const c of (parts||[])){
+    const role=c.role==="model"?"assistant":"user";
+    const chunks=(c.parts||[]);
+    const txt=chunks.filter(p=>p.text!==undefined).map(p=>p.text).join("\n");
+    const imgs=vision?chunks.filter(p=>p.inline_data).map(p=>({type:"image_url",image_url:{url:"data:"+(p.inline_data.mime_type||"image/jpeg")+";base64,"+p.inline_data.data}})):[];
+    if(imgs.length&&role==="user"){
+      const content=[];if(txt)content.push({type:"text",text:txt});content.push(...imgs);
+      ms.push({role,content});
+    }else ms.push({role,content:txt||" "});
   }
+  return ms;
 }
-async function geminiStreamCall(model,parts,sig,onChunk,sys){
+async function openaiCall(provId,model,parts,jsonMode,sig,sys,onChunk){
+  const P=PROVIDERS[provId];const vision=!!findModel(model).vision;
+  const url=P.base+"/chat/completions";
+  const body={model,messages:toOpenAIMessages(parts,sys,vision),
+    temperature:state.curTemp!==undefined?state.curTemp:0.9};
+  if(jsonMode)body.response_format={type:"json_object"};
+  const wantStream=typeof onChunk==="function";
+  if(wantStream){body.stream=true;body.stream_options={include_usage:true}}
+  const headers={"Content-Type":"application/json","Authorization":"Bearer "+(state.provKeys[provId]||"")};
+  if(provId==="openrouter"){headers["HTTP-Referer"]="https://ahmedhmada22.github.io/anan-ai/";headers["X-Title"]="Anan AI"}
+  let r;
+  const wt=withTimeout(sig,REQ_TIMEOUT);
+  try{r=await fetch(url,{method:"POST",signal:wt.signal,headers,body:JSON.stringify(body)})}
+  catch(fe){wt.cancel();
+    if(fe&&fe.name==="AbortError"){
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      const e=new Error("aborted");e.aborted=true;throw e}
+    const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";throw e}
+  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;
+    try{e.detail=(await r.json()).error?.message||""}catch(_){}
+    throw e}
+  let usage=null;
+  if(wantStream&&r.body&&r.body.getReader){
+    const reader=r.body.getReader();const dec=new TextDecoder();let buf="",finish=null,got=0,text="";
+    try{
+      while(true){
+        const rd=await reader.read();if(rd.done)break;
+        buf+=dec.decode(rd.value,{stream:true});
+        let ix;
+        while((ix=buf.indexOf("\n"))>=0){
+          const line=buf.slice(0,ix).trim();buf=buf.slice(ix+1);
+          if(!line.startsWith("data:"))continue;
+          const js=line.slice(5).trim();if(!js||js==="[DONE]")continue;
+          try{const d=JSON.parse(js);
+            if(d.usage)usage=d.usage;
+            const ch=d.choices&&d.choices[0];
+            if(ch){if(ch.finish_reason)finish=ch.finish_reason;
+              const t=ch.delta?(ch.delta.content||""):(ch.message?ch.message.content||"":"");
+              if(t){got++;text+=t;onChunk(t)}}
+          }catch(_){}
+        }
+      }
+    }catch(re){wt.cancel();
+      if(re&&re.name==="AbortError"){
+        if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+        const e=new Error("aborted");e.aborted=true;throw e}
+      if(got===0){const e=new Error("streamfail");e.net=true;throw e}}
+    wt.cancel();
+    if(got===0){const e=new Error("nostream");e.nostream=true;throw e}
+    return {text,finish:finish?String(finish).toUpperCase():null,model,prov:provId,
+      promptTokens:usage&&typeof usage.prompt_tokens==="number"?usage.prompt_tokens:null,headers:r.headers};
+  }
+  const data=await r.json();wt.cancel();
+  const ch=data.choices&&data.choices[0];
+  const txt=ch&&ch.message?(typeof ch.message.content==="string"?ch.message.content:(ch.message.content||[]).map(x=>x.text||"").join("")):"";
+  const pt=data.usage&&data.usage.prompt_tokens;
+  return {text:txt,finish:ch?String(ch.finish_reason||"").toUpperCase()||null:null,model,prov:provId,
+    promptTokens:(typeof pt==="number")?pt:null,headers:r.headers};
+}
+async function cohereCall(model,parts,jsonMode,sig,sys){
+  const vision=!!findModel(model).vision;
+  const ms=toOpenAIMessages(parts,sys,vision).map(m=>{
+    if(Array.isArray(m.content)){
+      return {role:m.role,content:m.content.map(c=>c.type==="text"?{type:"text",text:c.text}:{type:"image_url",image_url:{url:c.image_url.url}})};
+    }
+    return m;
+  });
+  const body={model,messages:ms,temperature:state.curTemp!==undefined?state.curTemp:0.9};
+  if(jsonMode)body.response_format={type:"json_object"};
+  let r;
+  const wt=withTimeout(sig,REQ_TIMEOUT);
+  try{r=await fetch("https://api.cohere.com/v2/chat",{method:"POST",signal:wt.signal,
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+(state.provKeys.cohere||"")},
+    body:JSON.stringify(body)})}
+  catch(fe){wt.cancel();
+    if(fe&&fe.name==="AbortError"){
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      const e=new Error("aborted");e.aborted=true;throw e}
+    const e=new Error("network");e.net=true;throw e}
+  wt.cancel();
+  if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;
+    try{e.detail=(await r.json()).message||""}catch(_){}
+    throw e}
+  const data=await r.json();
+  const txt=(data.message&&data.message.content||[]).map(c=>c.text||"").join("");
+  const pt=data.usage&&data.usage.tokens&&data.usage.tokens.input_tokens;
+  return {text:txt,finish:(data.finish_reason||"").toUpperCase()||null,model,prov:"cohere",
+    promptTokens:(typeof pt==="number")?pt:null};
+}
+/* ---- عدادات الحصص (محلي، لكل نموذج) ---- */
+function quotaDayKey(provId){
+  const now=new Date();
+  if(provId==="google")return new Intl.DateTimeFormat("en-CA",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
+  return now.toISOString().slice(0,10);
+}
+function quotaMonthKey(){return new Date().toISOString().slice(0,7)}
+async function qGet(){state.quota=state.quota||await kvGet("quotaV1")||{};return state.quota}
+async function qSave(){await kvSet("quotaV1",state.quota||{})}
+async function qBump(provId,model,realRemaining){
+  const q=await qGet();const k=provId+":"+model;
+  const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
+  const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
+  const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0;e.out=false}
+  e.n=(e.n||0)+1;e.at=Date.now();
+  if(typeof realRemaining==="number"){e.rem=realRemaining;e.remAt=Date.now()}
+  q[k]=e;await qSave();return e;
+}
+async function qMarkOut(provId,model){
+  const q=await qGet();const k=provId+":"+model;
+  const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
+  const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
+  const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0}
+  e.out=true;e.at=Date.now();q[k]=e;await qSave();
+}
+async function qState(provId,model){
+  const q=await qGet();const k=provId+":"+model;
+  const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
+  const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
+  const e=q[k];if(!e||e.per!==per)return{n:0,out:false};
+  return e;
+}
+/* ---- قراءة المتبقي الحقيقي من هيدرز Groq ---- */
+function groqRealRemaining(h){
+  if(!h||!h.get)return null;
+  const v=h.get("x-ratelimit-remaining-requests-day")||h.get("x-ratelimit-remaining-requests");
+  if(v===null||v===undefined)return null;
+  const n=parseInt(v,10);return isFinite(n)?n:null;
+}
+/* ---- بناء سلسلة المحاولات ---- */
+async function buildChain(vision,hint){
+  const chain=[];
+  const sel=await selGet();
+  const push=(p,m)=>{if(vision&&!m.vision)return;if(chain.some(x=>x.prov===p&&x.id===m.id))return;
+    if(PROVIDERS[p].keyName&&!state.provKeys[p]&&!(p==="google"&&state.key))return;
+    chain.push({prov:p,...m})};
+  /* اختيار تلقائي (Gemini بس): قواعد محلية صفر تكلفة — والاختيار اليدوي بيغلّب دايمًا */
+  if(prefs.autoPick&&!prefs.selManual&&sel&&sel.prov==="google"&&hint){
+    let autoId=null;
+    if(hint.rp)autoId="gemini-3.5-flash-lite";
+    else if(hint.longCtx)autoId="gemini-3.8-flash";
+    else if(hint.short)autoId="gemini-3.1-flash-lite";
+    if(autoId){const fm=findModel(autoId);if(fm)push(fm.prov,fm)}
+  }
+  if(sel){const fm=findModel(sel.model);if(fm)push(fm.prov,fm)}
+  for(const p of CHAIN_ORDER)for(const m of PROVIDERS[p].models)push(p,m);
+  return chain;
+}
+function autoHint(parts){
+  try{
+    const conv=state.convs.find(c=>c.id===state.convId);
+    let lastUser="";
+    for(let i=(parts||[]).length-1;i>=0;i--){if(parts[i].role==="user"){lastUser=(parts[i].parts||[]).map(pp=>pp.text||"").join(" ");break}}
+    return{rp:!!(conv&&rpConv(conv)),longCtx:!!(state.lastCtx&&state.lastCtx.tokens>300000),short:lastUser.length>0&&lastUser.length<25};
+  }catch(_){return null}
+}
+async function selGet(){
+  if(state.sel)return state.sel;
+  const raw=(prefs&&prefs.sel)||("google:"+(prefs.model||MODEL_MAIN));
+  const [prov,model]=raw.includes(":")?[raw.slice(0,raw.indexOf(":")),raw.slice(raw.indexOf(":")+1)]:["google",raw];
+  state.sel={prov:findModel(model)?prov:"google",model:findModel(model)?model:MODEL_MAIN};
+  return state.sel;
+}
+async function selSet(prov,model){state.sel={prov,model};prefs.sel=prov+":"+model;prefs.selManual=true;await savePrefs()}
+/* ---- المحرك الموحد: يمشي على السلسلة ---- */
+async function aiCall(parts,opts){
+  opts=opts||{};
+  const vision=hasImgParts(parts);
+  const chain=await buildChain(vision,autoHint(parts));
+  if(!chain.length){const e=new Error("nokey");e.nokey=true;throw e}
+  let lastErr=null;
+  for(const cand of chain){
+    try{
+      let r;
+      if(cand.prov==="google")r=await geminiCall(cand.id,parts,opts.jsonMode,opts.sig,opts.sys);
+      else if(cand.prov==="cohere")r=await cohereCall(cand.id,parts,opts.jsonMode,opts.sig,opts.sys);
+      else r=await openaiCall(cand.prov,cand.id,parts,opts.jsonMode,opts.sig,opts.sys,null);
+      if(!r.text||!r.text.trim()){const e=new Error("empty");e.empty=true;throw e}
+      state.lastAnswered={prov:cand.prov,model:cand.id};
+      const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
+      await qBump(cand.prov,cand.id,rem);
+      if(typeof r.promptTokens==="number"){
+        state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
+        const conv=state.convs.find(c=>c.id===state.convId);
+        if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
+      }
+      bumpUsage(cand.id,vision);
+      return r;
+    }catch(e){
+      if(e.aborted)throw e;
+      lastErr=e;
+      if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id);
+      continue;
+    }
+  }
+  throw lastErr||new Error("all failed");
+}
+async function aiStream(parts,sig,onChunk,sys){
+  const vision=hasImgParts(parts);
+  const chain=await buildChain(vision,autoHint(parts));
+  if(!chain.length){const e=new Error("nokey");e.nokey=true;throw e}
+  let lastErr=null,streamed=0;
+  for(const cand of chain){
+    try{
+      let r;
+      const wrapped=t=>{streamed++;onChunk(t)};
+      if(cand.prov==="google"){
+        /* جوجل: استخدم الستريم القديم عبر دالة مخصصة */
+        r=await geminiStreamParts(cand.id,parts,sig,wrapped,sys);
+      }else if(cand.prov==="cohere"){
+        /* Cohere v2: مفيش ستريم هنا — رد كامل وبعدين نبعته كقطعة واحدة */
+        r=await cohereCall(cand.id,parts,false,sig,sys);
+        if(r.text)wrapped(r.text);
+      }else{
+        r=await openaiCall(cand.prov,cand.id,parts,false,sig,sys,wrapped);
+      }
+      state.lastAnswered={prov:cand.prov,model:cand.id};
+      const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
+      await qBump(cand.prov,cand.id,rem);
+      if(typeof r.promptTokens==="number"){
+        state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
+        const conv=state.convs.find(c=>c.id===state.convId);
+        if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
+      }
+      bumpUsage(cand.id,vision);
+      return r.finish||"STOP";
+    }catch(e){
+      if(e.aborted)throw e;
+      if(e.nostream&&streamed>0)throw e;
+      if(streamed>0)throw e;
+      lastErr=e;
+      if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id);
+      continue;
+    }
+  }
+  throw lastErr||new Error("all failed");
+}
+/* ستريم جوجل مع إرجاع كائن كامل */
+async function geminiStreamParts(model,parts,sig,onChunk,sys){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
   const body={contents:parts,safetySettings:SAFETY,generationConfig:{temperature:state.curTemp!==undefined?state.curTemp:0.9}};
   if(sys)body.systemInstruction={parts:[{text:sys}]};
   let r;
   const wt=withTimeout(sig,REQ_TIMEOUT);
-  try{
-    r=await fetch(url,{method:"POST",signal:wt.signal,
-      headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
-      body:JSON.stringify(body)});
-  }catch(fe){
-    wt.cancel();
+  try{r=await fetch(url,{method:"POST",signal:wt.signal,
+    headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
+    body:JSON.stringify(body)})}
+  catch(fe){wt.cancel();
     if(fe&&fe.name==="AbortError"){
       if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
-      const e=new Error("aborted");e.aborted=true;throw e;
-    }
-    const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";
-    throw e;
-  }
-  if(!r.ok){
-    wt.cancel();
-    const e=new Error("HTTP "+r.status);e.status=r.status;
-    try{e.detail=(await r.json()).error?.message||""}catch(_){}
-    throw e;
-  }
+      const e=new Error("aborted");e.aborted=true;throw e}
+    const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";throw e}
+  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;
+    try{const j=await r.json();e.detail=j.error?.message||"";e.quota=JSON.stringify(j.error?.details||[])}catch(_){}
+    throw e}
   if(!r.body||!r.body.getReader){wt.cancel();const e=new Error("nostream");e.nostream=true;throw e}
-  const reader=r.body.getReader();const dec=new TextDecoder();let buf="",finish=null,got=0;
+  const reader=r.body.getReader();const dec=new TextDecoder();let buf="",finish=null,got=0,pt=null;
   try{
     while(true){
-      const rd=await reader.read();
-      if(rd.done)break;
+      const rd=await reader.read();if(rd.done)break;
       buf+=dec.decode(rd.value,{stream:true});
       let ix;
       while((ix=buf.indexOf("\n"))>=0){
         const line=buf.slice(0,ix).trim();buf=buf.slice(ix+1);
         if(!line.startsWith("data:"))continue;
-        const js=line.slice(5).trim();
-        if(!js||js==="[DONE]")continue;
-        try{
-          const d=JSON.parse(js);
+        const js=line.slice(5).trim();if(!js||js==="[DONE]")continue;
+        try{const d=JSON.parse(js);
+          if(d.usageMetadata&&typeof d.usageMetadata.promptTokenCount==="number")pt=d.usageMetadata.promptTokenCount;
           const cand=d.candidates&&d.candidates[0];
-          if(cand){
-            if(cand.finishReason)finish=cand.finishReason;
+          if(cand){if(cand.finishReason)finish=cand.finishReason;
             const t=(cand.content&&cand.content.parts||[]).map(x=>x.text||"").join("");
-            if(t){got++;onChunk(t)}
-          }
-        }catch(_){/* partial json line */}
+            if(t){got++;onChunk(t)}}
+        }catch(_){}
       }
     }
-  }catch(re){
-    wt.cancel();
+  }catch(re){wt.cancel();
     if(re&&re.name==="AbortError"){
       if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
-      const e=new Error("aborted");e.aborted=true;throw e;
-    }
-    if(got===0){const e=new Error("streamfail");e.net=true;e.detail=re&&re.message;throw e}
-  }
+      const e=new Error("aborted");e.aborted=true;throw e}
+    if(got===0){const e=new Error("streamfail");e.net=true;throw e}}
   wt.cancel();
   if(got===0&&finish===null){const e=new Error("nostream");e.nostream=true;throw e}
-  bumpUsage(model,hasImgParts(parts));
-  return finish;
+  return {finish,model,prov:"google",promptTokens:pt};
 }
-async function geminiStream(parts,sig,onChunk,sys){
-  try{return await geminiStreamCall(state.model,parts,sig,onChunk,sys)}
-  catch(e){
-    if(e.aborted||e.nostream)throw e;
-    if(e.status===404||e.status===429||e.status===503){
-      const other=state.model===MODEL_MAIN?MODEL_FALLBACK:MODEL_MAIN;
-      state.model=other;refreshSettings();
-      return await geminiStreamCall(other,parts,sig,onChunk,sys);
-    }
-    throw e;
-  }
-}
+async function gemini(parts,jsonMode,sig,sys){return aiCall(parts,{jsonMode,sig,sys})}
+async function geminiStream(parts,sig,onChunk,sys){return aiStream(parts,sig,onChunk,sys)}
 /* ================= context assembly ================= */
 const KEEP_TAIL=120;
 async function recallPass(conv,ms,userText,sig){
@@ -1847,18 +2120,47 @@ function visibleCounts(){
   els.forEach(e=>{const m=state.msgIndex[e.dataset.id];if(m&&m.role==="user")mine++});
   return{total:els.length,mine};
 }
+async function ctxLimitFor(prov,model){
+  const fm=findModel(model);const doc=fm?fm.ctx:1048576;
+  state.ctxLimits=state.ctxLimits||await kvGet("ctxLimitsV1")||{};
+  const k=prov+":"+model;
+  if(state.ctxLimits[k])return{limit:state.ctxLimits[k],live:true};
+  if(prov==="google"&&state.key){
+    try{const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model,{headers:{"x-goog-api-key":state.key}});
+      if(r.ok){const j=await r.json();if(j.inputTokenLimit){state.ctxLimits[k]=j.inputTokenLimit;await kvSet("ctxLimitsV1",state.ctxLimits);return{limit:j.inputTokenLimit,live:true}}}}catch(_){}
+  }
+  if(prov==="openrouter"&&state.provKeys.openrouter){
+    try{const r=await fetch("https://openrouter.ai/api/v1/models");
+      if(r.ok){const j=await r.json();const m=(j.data||[]).find(x=>x.id===model);
+        if(m&&m.context_length){state.ctxLimits[k]=m.context_length;await kvSet("ctxLimitsV1",state.ctxLimits);return{limit:m.context_length,live:true}}}}catch(_){}
+  }
+  if(prov==="groq"&&state.provKeys.groq){
+    try{const r=await fetch("https://api.groq.com/openai/v1/models/"+encodeURIComponent(model),{headers:{"Authorization":"Bearer "+state.provKeys.groq}});
+      if(r.ok){const j=await r.json();if(j.context_window){state.ctxLimits[k]=j.context_window;await kvSet("ctxLimitsV1",state.ctxLimits);return{limit:j.context_window,live:true}}}}catch(_){}
+  }
+  return{limit:doc,live:false};
+}
 async function renderMemBar(){
   const conv=state.convs.find(c=>c.id===state.convId);
   const _vc=visibleCounts();const total=_vc.total;const mine=_vc.mine;
-  let fillTxt="";
-  const _lc=(state.lastCtx&&state.lastCtx.model===state.model&&conv&&state.lastCtx.convId===conv.id)?state.lastCtx:(conv&&conv.ctxChars?{chars:conv.ctxChars,model:conv.ctxModel}:null);
-  if(_lc&&_lc.model===state.model){
-    const ctxLim=(MODELS.find(m=>m.id===state.model)||{}).ctx||1048576;
-    const est=Math.ceil(_lc.chars/2.5);
-    const pct=Math.min(999,Math.round(est/ctxLim*100));
-    if(isFinite(pct)){fillTxt=" · 🧠 "+arNum(pct)+"%";state.lastCtxPct=pct}
+  $("countTxt").textContent=total?(arNum(mine)+" رسالة"):"لسه مفيش رسايل";
+  const capTxt=$("capTxt"),capFill=$("capFill");
+  let pct=null,srcNote="";
+  const _lc=(state.lastCtx&&conv&&state.lastCtx.convId===conv.id)?state.lastCtx:(conv&&conv.ctxTokens?{tokens:conv.ctxTokens,model:conv.ctxModel,prov:conv.ctxProv,measured:true}:null);
+  if(_lc&&_lc.model){
+    const cl=await ctxLimitFor(_lc.prov||"google",_lc.model);
+    pct=Math.min(999,Math.round(_lc.tokens/cl.limit*100));
+    if(isFinite(pct)){
+      srcNote=cl.live?"مقاس":"مقاس/حد موثق";
+      capTxt.textContent="🧠 "+arNum(pct)+"%";
+      capTxt.title="آخر طلب: "+arNum(_lc.tokens)+" توكن من "+arNum(cl.limit)+" ("+srcNote+")";
+      state.lastCtxPct=pct;
+    }
   }
-  $("countTxt").textContent=(total?(arNum(mine)+" رسالة"):"لسه مفيش رسايل")+fillTxt;
+  if(pct===null){capTxt.textContent="🧠 —";capTxt.title="أول رد هيقيس السعة الحقيقية";state.lastCtxPct=0}
+  const p2=Math.min(100,pct||0);
+  capFill.style.width=Math.max(p2,pct>0?2:0)+"%";
+  capFill.style.background=pct>=90?"#e05656":pct>=50?"#e0a44e":"#5dbb7a";
   const w=$("memWarn");
   if(!conv||!total){w.classList.remove("open");return}
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
@@ -1870,11 +2172,11 @@ async function renderMemBar(){
   const danger=gap>0;
   const approaching=!danger&&total>KEEP_TAIL&&lag>KEEP_TAIL-every;
   const suppressed=hide>0&&lag<hide+every;
-  const handOver=!conv.handHide&&(state.lastCtxPct||0)>=70;
+  const handOver=!conv.handHide&&(state.lastCtxPct||0)>=90;
   $("mwSum").style.display=handOver?"none":"";
   $("mwHand").style.display=handOver?"":"none";
   if(handOver){
-    $("mwTxt").textContent="🧠 ذاكرة المحادثة عدّت "+arNum(state.lastCtxPct)+"% من سعة النموذج الفعلية في آخر طلب. الأفضل تنقل لمحادثة مكملة: هتاخد معاها الملخص الكامل ودفتر الأحداث وآخر الرسايل.";
+    $("mwTxt").textContent="🧠 ذاكرة المحادثة عدّت "+arNum(state.lastCtxPct)+"% من سعة النموذج الحقيقية المقاسة. الأفضل تنقل لمحادثة مكملة: هتاخد معاها الملخص الكامل ودفتر الأحداث وآخر الرسايل.";
     w.classList.add("open");
   }else if((danger||approaching)&&!suppressed){
     $("mwTxt").textContent=danger
@@ -1886,7 +2188,7 @@ async function renderMemBar(){
 $("mwHide").onclick=async()=>{
   const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
   conv.memWarnHide=visibleCounts().total-(conv.summarizedCount||0);
-  if((state.lastCtxPct||0)>=70)conv.handHide=true;
+  if((state.lastCtxPct||0)>=90)conv.handHide=true;
   await putItem("convs",conv);
   $("memWarn").classList.remove("open");
 };
@@ -1961,7 +2263,7 @@ async function send(){
   if(pendingImg){um.img=pendingImg.dataUrl;um.imgMime=pendingImg.mime;clearPendingImg()}
   await putItem("msgs",um);appendMsg(um,true);
   conv.updated=Date.now();conv.lastTs=um.ts;conv.lastTxt=text.slice(0,60)||"📷 صورة";await putItem("convs",conv);renderConvList();
-  if(rpConv(conv)&&conv.rpPhase==="live"&&/^(وقفه|قص|استنى المشهد|وقف المشهد)$/.test(normAr(text))){
+  if(rpConv(conv)&&conv.rpPhase==="live"&&/^(وقفه|قص|استنى المشهد|وقف المشهد|وقف لعب الدور|انهي لعب الدور|اخلص لعب الدور|خلص لعب الدور|وقف اللعب|خلص اللعب|وقف الرول|انهي المشهد|اخلص من المشهد)$/.test(normAr(text))){
     conv.rpPhase="paused";conv.pauseAt=(await msgsOf(conv.id)).length;
     await putItem("convs",conv);renderStoryBar();
     const pm={id:uid(),convId:conv.id,role:"model",text:"⏸ وقفة. المشهد متجمد عند النقطة دي بالظبط. احكيلي بره الدور: عايز تصلح إيه أو تفهم إيه؟ ولما تخلص قول «كمل» وهنرجع من نفس المكان على النسخة المصححة.",ts:Date.now()+1};
@@ -1997,6 +2299,13 @@ async function send(){
     }catch(e){}
     await putItem("convs",conv);renderStoryBar();
   }
+  if(!navigator.onLine){
+    um.pending=true;await putItem("msgs",um);
+    const _ob=await kvGet("outboxV1")||[];_ob.push({convId:conv.id,msgId:um.id,text:text||""});await kvSet("outboxV1",_ob);
+    const _row=document.querySelector(`.msg[data-id="${um.id}"]`);if(_row)_row.outerHTML=bubbleHTML(um);
+    toast("أنت أوفلاين 📶 — رسالتك اتسجلت وهتتبعت أول ما النت يرجع");
+    return;
+  }
   const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
   const am=await runReply(conv,ms,text||"عايزك تبص على الصورة دي وتقولي رأيك");
   if(am){
@@ -2010,6 +2319,33 @@ async function send(){
 }
 /* ================= input behavior: Enter = new line ================= */
 function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,150)+"px"}
+/* ================= أوفلاين: مؤشر + صندوق صادر ================= */
+function syncOffline(){const b=$("offBadge");if(b)b.classList.toggle("hidden",navigator.onLine)}
+window.addEventListener("offline",()=>{syncOffline();toast("النت قطع 📶 — وضع الأوفلاين شغال")});
+window.addEventListener("online",async()=>{syncOffline();toast("النت رجع ✦");processOutbox()});
+async function processOutbox(){
+  let ob;try{ob=await kvGet("outboxV1")||[]}catch(e){return}
+  if(!ob.length)return;
+  for(const item of ob){
+    try{
+      const conv=state.convs.find(c=>c.id===item.convId);if(!conv)continue;
+      const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
+      const um=ms.find(m=>m.id===item.msgId);
+      if(um&&um.pending){um.pending=false;await putItem("msgs",um);
+        if(state.convId===conv.id){const r=document.querySelector(`.msg[data-id="${um.id}"]`);if(r)r.outerHTML=bubbleHTML(um)}}
+      const am=await runReply(conv,ms,item.text||"عايزك تبص على الصورة دي وتقولي رأيك");
+      if(am){
+        const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
+        extractMemory(conv,{user:item.text||"",ai:am.text}).then(()=>{if(!conv.titled)titleConv(conv,item.text||"",am.text)});
+        maybeSummarize(conv,all).then(()=>renderMemBar());
+      }
+    }catch(e){/* فشل إرسال عنصر — نسيبه في الطابور */ continue}
+  }
+  await kvSet("outboxV1",[]);
+  renderConvList();
+}
+syncOffline();
+if(navigator.onLine)processOutbox();
 /* ================= v17: أزرار الأوامر السريعة ================= */
 function syncChipRow_once(){};function syncChipRow(){$("chipRow").style.display=prefs.hideChips?"none":"flex";$("chipsState").textContent=prefs.hideChips?"مخفية":"شغالة";$("jumpBtn").style.bottom=prefs.hideChips?"88px":"126px"}
 $("chipsToggle").onclick=async()=>{prefs.hideChips=!prefs.hideChips;await savePrefs();syncChipRow()};
@@ -2430,7 +2766,7 @@ function applyAppearance(){
   const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
 }
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
-function activeModel(){if(prefs.model&&MODELS.some(m=>m.id===prefs.model))return prefs.model;return MODEL_MAIN}
+function activeModel(){const raw=prefs.sel||(prefs.model?("google:"+prefs.model):null);if(raw&&raw.includes(":")){const m=raw.slice(raw.indexOf(":")+1);if(findModel(m))return m}return MODEL_MAIN}
 /* ================= persona composition ================= */
 const STYLE_T={sahib:"صاحب قريب وعفوي، زي صاحبك على القهوة",mukhtasar:"مختصر ومباشر: إجابات قصيرة على قد السؤال من غير حشو ولا مقدمات",rasmi:"مهذب وهادي: عامية محترمة متزنة من غير هزار زيادة",mufassal:"مفصّل وشارح: ردود وافية بأمثلة وتفصيل لما الموضوع يستاهل",roleplay:"ممثل أدوار: بتتقمّص الشخصية اللي المستخدم يحددها وتفضل في الدور طول المشهد",adaptive:"متكيف: بتقرأ جو المحادثة وبتتأقلم معاه لوحدك — جاد لما الموضوع جاد، ولعوب وهزار لما الكلام هزار"};
 const WARM_T=["جاف ومباشر تمامًا، من غير أي مجاملات","مائل للجفاف والاختصار","طبيعي ومتوازن","ودود ودافئ","دافئ جدًا وحنون، زي أقرب صاحب"];
@@ -2453,6 +2789,11 @@ function effPersona(conv){
 function syncWaMode(){const c=state.convs.find(x=>x.id===state.convId)||null;document.body.classList.toggle("wa",effPersona(c).char==="whatsapp")}
 function personaBlock(conv){
   let s=PERSONA;
+  try{
+    const _h=parseInt(new Intl.DateTimeFormat("en-GB",{timeZone:"Africa/Cairo",hour:"2-digit",hour12:false}).format(new Date()),10);
+    const _tod=_h>=5&&_h<12?"الصبح":_h>=12&&_h<17?"الضهر":_h>=17&&_h<21?"المساء":"بالليل";
+    s+="\n- الوقت عند المستخدم دلوقتي: "+_tod+" (بتوقيت القاهرة). لو السياق مناسب لتحية، رحّب بما يليق بالوقت (صباح الخير/مساء الخير...) بشكل طبيعي مش ميكانيكي.";
+  }catch(_){}
   if(prefs.name)s+='\n- اسم المستخدم المفضل: "'+prefs.name+'". ناديه بيه وقتما يكون طبيعي.';
   const p=effPersona(conv);
   s+="\n\nتفضيلات أسلوب المستخدم (التزم بيها في كل رد):";
@@ -2690,18 +3031,19 @@ function openQMenu(btn,m){
   $("msgs").addEventListener("scroll",closeQMenu,{once:true});
 }
 async function runReply(conv,histMsgs,userText){
-  /* local quota estimate: stop early with a clear message instead of hitting a 429 */
-  const lim=modelLimits(state.model);const us=await usageState(state.model);
-  const mname=(MODELS.find(x=>x.id===state.model)||{}).name||state.model;
-  if(us.dayUsed>=lim.rpd||us.minUsed>=lim.rpm){
-    const txt=us.dayUsed>=lim.rpd
-      ?`وصلت للحد اليومي التقديري لنموذج ${mname} (~${lim.rpd} طلب في اليوم). جرّب نموذج تاني من الإعدادات، أو استنى لما العدّاد يصفر حوالي الساعة ١٠ الصبح. الرقم الرسمي لمشروعك في AI Studio.`
-      :`طلباتك على ${mname} وصلت للحد التقديري في الدقيقة (~${lim.rpm} طلب/دقيقة). استنى أقل من دقيقة وجرّب تاني، أو بدّل لنموذج تاني من الإعدادات.`;
-    const em={id:uid(),convId:conv.id,role:"model",text:txt,err:true,ts:Date.now()};
-    await putItem("msgs",em);
-    conv.updated=Date.now();conv.lastTs=Date.now();conv.preview="⚠️ "+txt.slice(0,60);await putItem("convs",conv);
-    appendMsg(em);
-    renderConvList();return;
+  /* لو كل نماذج السلسلة متعلم عليها «مستنفدة» محليًا، بلّغ بوضوح بدل ما نضرب 429 ورا بعض */
+  const _ch=await buildChain(false);
+  if(_ch.length){
+    let _allOut=true;
+    for(const c of _ch){const st=await qState(c.prov,c.id);if(!st.out){_allOut=false;break}}
+    if(_allOut){
+      const txt="كل النماذج المتاحة عندك وصلت لحد حصتها المجانية النهارده. أقرب تصفير حوالي ٢ بالليل (Groq/OpenRouter) أو ١٠ الصبح (Gemini) بتوقيت القاهرة، أو ضيف مفتاح مزود تاني من الإعدادات ← النماذج.";
+      const em={id:uid(),convId:conv.id,role:"model",text:txt,err:true,ts:Date.now()};
+      await putItem("msgs",em);
+      conv.updated=Date.now();conv.lastTs=Date.now();conv.preview="⚠️ "+txt.slice(0,60);await putItem("convs",conv);
+      appendMsg(em);
+      renderConvList();return;
+    }
   }
   state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
   const am={id:uid(),convId:conv.id,role:"model",text:"",ts:Date.now()};
@@ -2725,7 +3067,7 @@ async function runReply(conv,histMsgs,userText){
     if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)){
       setTyping(true,"🧠 بيسترجع اللي فات…");
       const t0=Date.now();
-      try{recallText=rpConv(conv)?"":await recallPass(conv,histMsgs,userText,abortCtl.signal)}
+      try{recallText=rpConv(conv)?"":await recallPass(conv,histMsgs,userText,abortCtl.signal);if(recallText&&recallText.trim())am.recalled=true}
       catch(re){if(re&&re.aborted)throw re}
       const dt=Date.now()-t0;
       if(dt<RECALL_MIN_MS)await new Promise(r=>setTimeout(r,RECALL_MIN_MS-dt));
@@ -2735,10 +3077,25 @@ async function runReply(conv,histMsgs,userText){
     const CREAT_T=[0.2,0.5,0.9,1.2,1.6];
     const _cv=getPV("creativity");
     state.curTemp=CREAT_T[typeof _cv==="number"?_cv:2];
+    /* قنوات المصادر: لينكات المستخدم + نص ملصوق + بحث اكتشاف */
+    let _srcText="";
+    if(/https?:\/\//.test(userText||"")){
+      setTyping(true,"🔗 بيقرا اللينك…");
+      try{const _lnks=await readLinksFromText(userText);if(_lnks.length)_srcText=_lnks.join("\n\n")}catch(_){}
+      setTyping(true);
+    }
+    if(pendingSource){_srcText+=(_srcText?"\n\n":"")+"نص لصقه المستخدم كمصدر:\n"+pendingSource.slice(0,4000);pendingSource=null;$("srcBar").style.display="none"}
+    if(prefs.webOn){
+      setTyping(true,"🔎 بيدوّر على النت…");
+      const _ws=await webSearch(userText);
+      if(_ws)_srcText+=(_srcText?"\n\n":"")+"نتايج بحث من النت عن سؤال المستخدم:\n"+_ws;
+      else if(!(state.searchKeys&&(state.searchKeys.tavily||state.searchKeys.jina)))toast("مفيش مفتاح بحث متسجل — ضيف Tavily أو Jina من الإعدادات ← النماذج");
+      setTyping(true);
+    }
     const _built=await buildChatParts(conv,histMsgs,userText,recallText);
-    const parts=_built.parts,sysText=_built.sys;
-    state.lastCtx={chars:(sysText||"").length+parts.reduce((a,p)=>a+(p.parts||[]).reduce((x,pp)=>x+(pp.text||"").length,0),0),model:state.model,ts:Date.now(),convId:conv.id};
-    conv.ctxChars=state.lastCtx.chars;conv.ctxModel=state.model;
+    const parts=_built.parts;
+    let sysText=_built.sys;
+    if(_srcText)sysText=(sysText||"")+"\n\nمصادر متاحة للرد (اعتمد عليها في إجابتك واذكر إن المعلومة من مصدر المستخدم أو من النت):\n"+_srcText;
     let finish=null;
     let _retried=false;
     while(true){
@@ -2770,6 +3127,15 @@ async function runReply(conv,histMsgs,userText){
     am.text=am.text.trim();
     if(finish==="MAX_TOKENS")am.incomplete=true;
     am.text=await sanitizeReply(am.text,sysText);
+    /* منقّي تقليد السقالة: سطور قالب الحقن الحرفي + تكرارات [N] و[[N]] */
+    am.text=am.text.replace(/^\s*\[[^\]\n]*بيرد بالاقتباس على رسالة[^\]\n]*\]\s*/gm,"");
+    am.text=am.text.replace(/\[\[\s*[0-9٠-٩]{1,3}\s*\]\]/g,"");
+    {let _guard=0;
+     while(_guard++<8){
+       const _lead=am.text.match(/^\s*\[\s*[0-9٠-٩]{1,3}\s*\]\s*(?=\[)/);
+       if(!_lead)break;
+       am.text=am.text.slice(_lead[0].length);
+     }}
     let _qm=am.text.match(/^\s*\[+\s*q\s*:\s*([0-9٠-٩]+)\s*\]*\s*/i);
     if(!_qm){
       /* اقتباس مشوّه: رقم رسالة بين قوسين واحد بس، زي [٤] — بنفس معنى [[q:N]] */
@@ -3092,16 +3458,9 @@ async function renderUsage(){
     </div>`;
 }
 /* ================= suggestions ================= */
-const SUGG=["اعملي خطة ليومي بكرة","احكيلي نكتة مصرية","لخصلي ثورة ١٩١٩ في ٥ أسطر","اكتبلي رسالة تهنئة لصاحبي","راجعلي فكرة مشروع صغير","علمني ٣ كلمات إنجليزي بتتقال كتير","اعملي قائمة تسوق للأسبوع","اسألني ٥ أسئلة تعرفني بيهم أكتر"];
 function renderEmpty(){
   const box=$("msgs");
   box.innerHTML=`<div class="dayempty">ابدأ محادثة جديدة…<br>عنان بيفتكر اللي بيتقال في كل المحادثات.</div>`;
-  if(prefs.suggestions){
-    const pool=[...SUGG].sort(()=>Math.random()-.5).slice(0,4);
-    const w=document.createElement("div");w.id="sugg";
-    for(const s of pool){const b=document.createElement("button");b.className="suggchip";b.textContent=s;b.onclick=()=>{$("input").value=s;autoGrow();send()};w.appendChild(b)}
-    box.appendChild(w);
-  }
 }
 /* ================= memory page ================= */
 function renderMemPage(){
@@ -3292,7 +3651,7 @@ function buildSw(id,map,cur,cb){
     b.onclick=()=>{el.querySelectorAll(".sw").forEach(x=>x.classList.remove("on"));b.classList.add("on");cb(k)};
     el.appendChild(b)}
 }
-function fillSettings(){
+async function fillSettings(){
   $("nameInput").value=prefs.name||"";
   $("instrBox").value=prefs.instructions||"";
     $("gmailAddr").value=prefs.gmailAddr||"ahmedhmada4556@gmail.com";
@@ -3306,18 +3665,35 @@ function fillSettings(){
   $("segFont").querySelectorAll("button").forEach(b=>{b.style.fontSize=_fg[b.dataset.v]+"px";b.title=_ft[b.dataset.v]})}
   buildSeg("segFontFam",[["default","الافتراضي"],["naskh","نسخ"],["kufi","كوفي"],["tahoma","تاهوما"]],FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",v=>{prefs.fontFam=v;savePrefs();applyAppearance()});
   const mp=$("modelPick");mp.innerHTML="";
-  for(const m of MODELS){const o=document.createElement("option");o.value=m.id;o.textContent=m.name+" — "+m.desc;if(m.id===state.model)o.selected=true;mp.appendChild(o)}
-  mp.onchange=()=>{prefs.model=mp.value;savePrefs();state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+mp.value+" ✦")};
-  const _cur=(MODELS.find(m=>m.id===state.model)||{}).name||state.model;
-  $("modelCur").textContent=_cur+" ‹";
-  $("openModel").onclick=()=>{
+  const _sel=await selGet();
+  for(const am of allModels()){const o=document.createElement("option");o.value=am.prov+":"+am.id;o.textContent=am.id;if(_sel.prov===am.prov&&_sel.model===am.id)o.selected=true;mp.appendChild(o)}
+  mp.onchange=async()=>{const v=mp.value;const p=v.slice(0,v.indexOf(":")),m=v.slice(v.indexOf(":")+1);await selSet(p,m);state.model=activeModel();refreshSettings();toast("النموذج اتحوّل ✦")};
+  const _curM=findModel(_sel.model);
+  $("modelCur").textContent=(PROVIDERS[_sel.prov].name.split(" ")[0]+" · "+_sel.model)+" ‹";
+  $("openModel").onclick=async()=>{
     const list=$("modelList");list.innerHTML="";
-    for(const m of MODELS){
-      const b=document.createElement("button");b.className="mdlrow"+(m.id===state.model?" sel":"");
-      b.innerHTML='<span class="dot"></span><span class="mt"><span class="mn">'+m.name+'</span><br><span class="md">'+m.desc+'</span></span>';
-      b.onclick=()=>{$("modelModal").classList.add("hidden");if(m.id!==state.model){mp.value=m.id;mp.dispatchEvent(new Event("change"))}};
-      list.appendChild(b);
+    const cur=await selGet();
+    for(const p of CHAIN_ORDER){
+      const hasKey=p==="google"?!!state.key:!!state.provKeys[p];
+      const P=PROVIDERS[p];
+      const hdr=document.createElement("div");hdr.className="sect";hdr.style.padding="14px 4px 6px";
+      hdr.textContent=P.name+(hasKey?"":" — محتاج مفتاح (من تاب النماذج)");
+      list.appendChild(hdr);
+      for(const m of P.models){
+        const b=document.createElement("button");b.className="mdlrow"+((cur.prov===p&&cur.model===m.id)?" sel":"");
+        if(!hasKey)b.style.opacity=".45";
+        b.innerHTML='<span class="dot"></span><span class="mt"><span class="mn">'+m.id+'</span><br><span class="md">'+m.desc+'</span></span>';
+        b.onclick=async()=>{
+          if(!hasKey){toast("ضيف مفتاح "+P.name+" الأول من الإعدادات ← النماذج");return}
+          $("modelModal").classList.add("hidden");
+          await selSet(p,m);state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+m.id+" ✦");
+        };
+        list.appendChild(b);
+      }
     }
+    const note=document.createElement("div");note.className="small";note.style.padding="8px 6px";
+    note.textContent="اختيارك اليدوي ثابت دايمًا. لو نموذج خلص حصته أو فشل، عنان بيكمّل على اللي بعده في السلسلة تلقائي ويوريك مين رد.";
+    list.appendChild(note);
     $("modelModal").classList.remove("hidden");
   };
   $("modelModal").onclick=e=>{if(e.target===$("modelModal"))$("modelModal").classList.add("hidden")};
@@ -3332,8 +3708,6 @@ function fillSettings(){
   _autoB.onclick=()=>{_sbA.querySelectorAll(".sw").forEach(x=>x.classList.remove("on"));_autoB.classList.add("on");prefs.bubbleAI="auto";savePrefs();applyAppearance()};
   _sbA.prepend(_autoB);
   buildSeg("segBubShape",[["round","مدوّر"],["sharp","حاد"],["flat","بسيط"]],prefs.bubShape||"round",v=>{prefs.bubShape=v;savePrefs();applyAppearance()});
-  const tg=$("tglSugg");tg.classList.toggle("on",!!prefs.suggestions);
-  tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
   const tcb=$("tglCallbacks");tcb.classList.toggle("on",prefs.callbacks!==false);
   tcb.onclick=()=>{prefs.callbacks=!(prefs.callbacks!==false);tcb.classList.toggle("on",prefs.callbacks);savePrefs();toast(prefs.callbacks?"عنان هيفتتح الكلام أحيانًا 🙋":"اتقفلت — عنان مش هيفتتح الكلام")};
   $("bannedBox").value=prefs.bannedWords||"";
@@ -3948,14 +4322,228 @@ $("menuBtn").onclick=()=>{renderConvList();$("drawer").classList.add("open");$("
 $("closeDrawer").onclick=()=>{closeDrawerFn();navClose("drawer")};
 $("scrim").onclick=()=>{closeDrawerFn();closeSheet();navClose("drawer");navClose("sheet")};
 $("newBtn").onclick=()=>{newConv()};
-$("settingsBtn").onclick=()=>{fillSettings();refreshSettings();openPage("settingsPage")};
+/* ================= v26: تبويبات الإعدادات (item 18) ================= */
+const SET_TABS=[["models","🤖 النماذج"],["usage","📊 الاستهلاك"],["anan","✦ عنان"],["look","🎨 المظهر"],["mem","🧠 الذاكرة"],["priv","🔒 الخصوصية"],["acc","🔑 الحساب"],["gmail","☁️ جيميل"],["wa","💬 واتساب"],["data","💾 البيانات"]];
+const SET_SECT_MAP={"الحساب":"acc","المظهر":"look","عنان":"anan","الخصوصية":"priv","الذاكرة والتعليمات":"mem","البيانات":"data","ربط الجيميل":"gmail","محادثة واتساب":"wa"};
+let setTabsReady=false;
+function initSetTabs(){
+  if(setTabsReady)return;setTabsReady=true;
+  const body=$("settingsPage").querySelector(".pgbody");
+  const panes={};
+  for(const [id]of SET_TABS){const d=document.createElement("div");d.className="tabpane";d.id="pane-"+id;panes[id]=d}
+  panes.models.innerHTML=
+    '<div class="sect">النموذج 🤖</div><div class="pgroup" id="modelsPickGroup">'
+    +'<div class="prow"><span>عنان يختار النموذج حسب السياق<br><span class="small" style="color:var(--muted);font-weight:400">(Gemini بس، واختيارك اليدوي بيغلّب دايمًا)</span></span><button class="tgl" id="tglAutoPick"></button></div>'
+    +'</div>'
+    +'<div class="sect">مفاتيح المزودين الاحتياطيين 🔑</div>'
+    +'<div class="pgroup" id="provKeysGroup" style="padding:6px 0"></div>'
+    +'<div class="small" style="padding:4px 16px 8px;color:var(--muted)">كل مزود مجاني وبمفتاحه الخاص (بيتحفظ على جهازك بس). لو الأساسي خلص أو فشل، عنان بيكمّل على اللي بعده في السلسلة تلقائي. المزود اللي مالهوش مفتاح بيتخطى.</div>'
+    +'<div class="sect">مفاتيح البحث 🔎 (اختياري)</div>'
+    +'<div class="pgroup" id="searchKeysGroup" style="padding:6px 0"></div>'
+    +'<div class="small" style="padding:4px 16px 8px;color:var(--muted)">من غير مفاتيح بحث، قراية اللينكات بتشتغل ببلاش (Jina Reader) ولصق النص كمصدر شغال دايمًا. البحث الاستكشافي محتاج مفتاح Tavily أو Jina (الاتنين ليهم خطط مجانية).</div>';
+  panes.usage.innerHTML='<div id="usageTabBody"></div>';
+  let cur=null;
+  for(const el of [...body.children]){
+    if(el.classList&&el.classList.contains("sect")){cur=SET_SECT_MAP[el.textContent.trim()]||"anan";panes[cur].appendChild(el);continue}
+    if(cur)panes[cur].appendChild(el);
+  }
+  for(const [id]of SET_TABS)body.appendChild(panes[id]);
+  /* نقل منتقي النموذج من تاب «عنان» لتاب «النماذج» */
+  const mg=$("modelsPickGroup");
+  const om=$("openModel"),mp=$("modelPick");
+  if(mg){
+    if(mp)mg.insertBefore(mp,mg.firstChild);
+    if(om)mg.insertBefore(om,mg.querySelector(".prow"));
+    for(const sm of panes.anan.querySelectorAll(".small")){
+      if(sm.textContent.includes("لو النموذج المختار خلص")){mg.appendChild(sm);break}
+    }
+  }
+  const bar=$("setTabs");
+  for(const [id,label]of SET_TABS){
+    const b=document.createElement("button");b.className="settab";b.type="button";b.textContent=label;b.dataset.tab=id;
+    b.onclick=()=>selectSetTab(id);
+    bar.appendChild(b);
+  }
+  fillModelsTab();
+}
+function selectSetTab(id){
+  document.querySelectorAll("#setTabs .settab").forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
+  document.querySelectorAll("#settingsPage .tabpane").forEach(p=>p.classList.toggle("on",p.id==="pane-"+id));
+  if(id==="usage")renderUsageTab();
+}
+const PROV_KEY_HINTS={groq:"console.groq.com ← مجاني بلا بطاقة",nvidia:"build.nvidia.com ← مجاني بلا بطاقة",openrouter:"openrouter.ai/keys ← مجاني بلا بطاقة",cohere:"dashboard.cohere.com ← Trial مجاني",zai:"z.ai ← مجاني بلا بطاقة",sambanova:"cloud.sambanova.ai ← مجاني"};
+async function fillModelsTab(){
+  const g=$("provKeysGroup");if(!g)return;
+  g.innerHTML="";
+  for(const p of CHAIN_ORDER){
+    if(p==="google")continue;
+    const P=PROVIDERS[p];
+    const row=document.createElement("div");row.style.cssText="padding:8px 14px;border-bottom:1px solid var(--border)";
+    row.innerHTML='<div style="font-size:13.5px;margin-bottom:6px">'+P.name+' <span class="small" style="color:var(--muted)">'+esc(PROV_KEY_HINTS[p]||"")+'</span></div>'
+      +'<div class="keyrow" style="margin-top:0"><input type="password" class="fld" id="pk_'+p+'" placeholder="'+(state.provKeys[p]?"محفوظ ✓ — الصق مفتاح جديد للتغيير":"الصق المفتاح")+'" autocomplete="off"><button class="bigbtn" style="width:auto;padding:8px 14px;margin:0" data-p="'+p+'">حفظ</button></div>';
+    row.querySelector("button").onclick=async ev=>{
+      const v=row.querySelector("input").value.trim();if(!v){toast("الصق المفتاح الأول");return}
+      await kvSet(P.keyName,v);state.provKeys[p]=v;row.querySelector("input").value="";
+      toast("اتحفظ مفتاح "+P.name+" ✦");fillModelsTab();
+    };
+    g.appendChild(row);
+  }
+  const sg=$("searchKeysGroup");sg.innerHTML="";
+  state.searchKeys=state.searchKeys||await kvGet("searchKeysV1")||{};
+  state.proxyUrl=state.proxyUrl!==undefined?state.proxyUrl:((await kvGet("proxyUrlV1"))||"");
+  const SK=[["tavily","Tavily","tavily.com ← 1000 بحث/شهر مجانًا"],["jina","Jina","jina.ai ← منحة 10 مليون توكن"],["serper","Serper","serper.dev ← 2500 بحث مرة واحدة"]];
+  for(const [k,label,hint]of SK){
+    const row=document.createElement("div");row.style.cssText="padding:8px 14px;border-bottom:1px solid var(--border)";
+    row.innerHTML='<div style="font-size:13.5px;margin-bottom:6px">'+label+' <span class="small" style="color:var(--muted)">'+hint+'</span></div>'
+      +'<div class="keyrow" style="margin-top:0"><input type="password" class="fld" placeholder="'+(state.searchKeys[k]?"محفوظ ✓":"الصق المفتاح")+'" autocomplete="off"><button class="bigbtn" style="width:auto;padding:8px 14px;margin:0">حفظ</button></div>';
+    row.querySelector("button").onclick=async()=>{
+      const v=row.querySelector("input").value.trim();if(!v){toast("الصق المفتاح الأول");return}
+      state.searchKeys[k]=v;await kvSet("searchKeysV1",state.searchKeys);toast("اتحفظ مفتاح "+label+" ✦");fillModelsTab();
+    };
+    sg.appendChild(row);
+  }
+  const prow=document.createElement("div");prow.style.cssText="padding:8px 14px";
+  prow.innerHTML='<div style="font-size:13.5px;margin-bottom:6px">رابط بروكسي Cloudflare (اختياري)</div>'
+    +'<div class="keyrow" style="margin-top:0"><input type="text" class="fld ltr" placeholder="'+(state.proxyUrl?esc(state.proxyUrl):"https://your-worker.workers.dev")+'" autocomplete="off"><button class="bigbtn" style="width:auto;padding:8px 14px;margin:0">حفظ</button></div>';
+  prow.querySelector("button").onclick=async()=>{
+    const v=prow.querySelector("input").value.trim();
+    state.proxyUrl=v;await kvSet("proxyUrlV1",v);toast(v?"اتحفظ رابط البروكسي ✦":"اتمسح رابط البروكسي");fillModelsTab();
+  };
+  sg.appendChild(prow);
+  const tgl=$("tglAutoPick");
+  if(tgl){tgl.classList.toggle("on",!!prefs.autoPick);
+    tgl.onclick=async()=>{prefs.autoPick=!prefs.autoPick;if(prefs.autoPick)prefs.selManual=false;await savePrefs();tgl.classList.toggle("on",prefs.autoPick);toast(prefs.autoPick?"الاختيار التلقائي شغال 🤖":"الاختيار التلقائي اتقفل")}}
+}
+/* ================= v26: تاب الاستهلاك (items 6+8) ================= */
+async function renderUsageTab(){
+  const el=$("usageTabBody");if(!el)return;
+  const q=await qGet();
+  let html='<div class="small" style="padding:14px 16px 4px;color:var(--muted)">العدّ بيحسب الطلبات اللي اتعملت من جوّه عنان بس. «مقاس» يعني الرقم جاي من المزود نفسه، و«محسوب» يعني متتبع محلي على الحد الموثق. لو استخدمت نفس المفتاح برّه عنان الرقم هيبقى متفائل.</div>';
+  let any=false;
+  for(const p of CHAIN_ORDER){
+    const P=PROVIDERS[p];
+    const hasKey=p==="google"?!!state.key:!!state.provKeys[p];
+    if(!hasKey)continue;
+    any=true;
+    html+='<div class="sect">'+esc(P.name)+'</div>';
+    for(const m of P.models){
+      const k=p+":"+m.id;const e=q[k]||{};
+      const used=e.per&&((e.per===quotaDayKey(p))||(m.monthly&&e.per===quotaMonthKey()))?(e.n||0):0;
+      const lim=m.monthly||m.rpd||null;
+      const reset=p==="google"?"التصفير ~١٠ الصبح":m.monthly?"التصفير أول كل شهر":(P.reset==="utc"?"التصفير ~٢ بالليل":"التصفير غير معلن");
+      const meas=(typeof e.rem==="number")?("مقاس: فاضل "+arNum(e.rem)):"محسوب";
+      const left=lim?Math.max(0,lim-used):null;
+      const st=e.out?"مستنفد ⛔":(lim&&used>=lim*0.85?"قارب يخلص ⚠️":"شغال ✅");
+      html+='<div class="ucard"><div class="utop"><span class="uname" style="direction:ltr;text-align:end">'+esc(m.id)+'</span><span class="unum"><b>'+arNum(used)+'</b>'+(lim?(" / ~"+arNum(lim)):"")+'</span></div>'
+        +'<div class="usub"><span>'+st+' · '+meas+(left!==null?(" · الباقي ~"+arNum(left)):"")+'</span><span>'+reset+'</span></div>'
+        +'<div style="margin-top:6px"><button class="sembtn qfix" data-k="'+esc(k)+'" style="padding:6px 10px;font-size:12px;width:auto;display:inline-block">✎ تصحيح يدوي</button></div></div>';
+    }
+  }
+  if(!any)html+='<div class="small" style="padding:14px 16px;color:var(--muted)">لسه مفيش استخدام. أول ما تبعت رسالة هتظهر الحصص هنا.</div>';
+  html+='<div class="sect">عداد البحث 🔎</div><div class="small" style="padding:0 16px 10px;color:var(--muted)">قراية اللينكات (Jina Reader): ببلاش من غير عداد مضبوط. لصق النص كمصدر: بلا حدود. البحث الاستكشافي بيعد هنا أول ما تضيف مفتاح بحث وتفعّل «دوّر على النت».</div>';
+  el.innerHTML=html;
+  el.querySelectorAll(".qfix").forEach(b=>b.onclick=async()=>{
+    const k=b.dataset.k;const qi=await qGet();const e=qi[k]||{};
+    const v=prompt("صحّح عدد الطلبات المستخدمة لـ "+k+":",String(e.n||0));
+    if(v===null)return;
+    const n=parseInt(v,10);if(!isFinite(n)||n<0){toast("رقم غير صحيح");return}
+    e.n=n;e.manual=true;qi[k]=e;state.quota=qi;await qSave();renderUsageTab();toast("اتصحح العداد ✦");
+  });
+}
+/* ================= v26: بحث وقراية مصادر (item 2) ================= */
+let pendingSource=null;
+function syncWebTgl(){$("webTgl").classList.toggle("on",!!prefs.webOn)}
+syncWebTgl();
+$("webTgl").onclick=async()=>{prefs.webOn=!prefs.webOn;await savePrefs();syncWebTgl();toast(prefs.webOn?"البحث على النت شغال للردود الجاية 🔎":"البحث على النت اتقفل")};
+$("chipPaste").onclick=async()=>{
+  let t="";
+  try{t=await navigator.clipboard.readText()||""}catch(_){}
+  if(!t)t=prompt("الصق النص اللي عايز تبعته كمصدر:")||"";
+  t=(t||"").trim();if(!t)return;
+  pendingSource=t;$("srcBar").style.display="flex";toast("المصدر اتجهز 📄 — ابعت رسالتك وهيتاخد كمرجع");
+};
+$("srcRemove").onclick=()=>{pendingSource=null;$("srcBar").style.display="none"};
+async function readLinksFromText(text){
+  const urls=((text||"").match(/https?:\/\/[^\s<>"']+/g)||[]).slice(0,2);
+  const out=[];
+  for(const u of urls){
+    try{
+      const r=await fetch("https://r.jina.ai/"+u,{signal:AbortSignal.timeout(20000)});
+      if(r.ok){const t=await r.text();if(t&&t.trim())out.push("محتوى اللينك ("+u+"):\n"+t.slice(0,4000))}
+    }catch(_){}
+  }
+  return out;
+}
+async function webSearch(q){
+  try{state.searchKeys=state.searchKeys||await kvGet("searchKeysV1")||{}}catch(_){state.searchKeys={}}
+  const keys=state.searchKeys;
+  if(keys.tavily){
+    try{
+      const r=await fetch("https://api.tavily.com/search",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({api_key:keys.tavily,query:q,max_results:5,search_depth:"basic"})});
+      if(r.ok){const j=await r.json();const t=(j.results||[]).map(x=>"• "+(x.title||"")+": "+(x.content||"")).join("\n");if(t.trim())return t.slice(0,3000)}
+    }catch(_){}
+  }
+  if(keys.jina){
+    try{
+      const r=await fetch("https://s.jina.ai/"+encodeURIComponent(q),{headers:{"Authorization":"Bearer "+keys.jina},signal:AbortSignal.timeout(20000)});
+      if(r.ok){const t=await r.text();if(t&&t.trim())return t.slice(0,3000)}
+    }catch(_){}
+  }
+  return null;
+}
+/* ================= v26: تاب الطقس والصلاة (item 17) — Open-Meteo + Aladhan، بلا مفاتيح ================= */
+$("closeWeather").onclick=()=>closePage("weatherPage");
+$("openWeather").onclick=()=>{closeDrawerFn();openPage("weatherPage");renderWeatherPage()};
+const WMO_AR={0:"صافي ☀️",1:"صافي غالبًا 🌤",2:"غيوم جزئية ⛅",3:"غائم ☁️",45:"ضباب 🌫",48:"ضباب متجمد 🌫",51:"رذاذ خفيف 🌦",53:"رذاذ 🌦",55:"رذاذ غزير 🌦",61:"مطر خفيف 🌧",63:"مطر 🌧",65:"مطر غزير 🌧",71:"ثلج خفيف 🌨",73:"ثلج 🌨",75:"ثلج غزير 🌨",80:"رشاش خفيف 🌦",81:"رشاش 🌦",82:"رشاش غزير 🌦",95:"عاصفة رعدية ⛈",96:"عاصفة مع بَرَد ⛈",99:"عاصفة عنيفة ⛈"};
+const PRAYER_AR=[["Fajr","الفجر"],["Sunrise","الشروق"],["Dhuhr","الظهر"],["Asr","العصر"],["Maghrib","المغرب"],["Isha","العشاء"]];
+async function renderWeatherPage(){
+  const body=$("weatherBody");
+  body.innerHTML='<div class="small" style="padding:24px 16px;text-align:center;color:var(--muted)">بيجيب البيانات…</div>';
+  let lat=30.0444,lon=31.2357,place="القاهرة";
+  try{
+    const pos=await new Promise((res,rej)=>{if(!navigator.geolocation)return rej(new Error("nogeo"));navigator.geolocation.getCurrentPosition(res,rej,{timeout:6000,maximumAge:600000})});
+    lat=pos.coords.latitude;lon=pos.coords.longitude;place="موقعك الحالي";
+  }catch(_){}
+  let w=null,p=null,wErr="",pErr="";
+  try{
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Africa%2FCairo&forecast_days=1");
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    w=await r.json();
+  }catch(e){wErr="معرفتش أجيب الطقس ("+(e.message||"شبكة")+")"}
+  try{
+    const r=await fetch("https://api.aladhan.com/v1/timings/"+Math.floor(Date.now()/1000)+"?latitude="+lat+"&longitude="+lon+"&method=5");
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const j=await r.json();p=j&&j.data&&j.data.timings;
+  }catch(e){pErr="معرفتش أجيب مواقيت الصلاة ("+(e.message||"شبكة")+")"}
+  let html="";
+  if(w&&w.current){
+    const c=w.current,d=w.daily||{};
+    html+='<div class="sect">الطقس الآن — '+esc(place)+'</div><div class="pgroup" style="padding:16px;text-align:center">'
+      +'<div style="font-size:42px;font-weight:600">'+arNum(Math.round(c.temperature_2m))+'°</div>'
+      +'<div style="font-size:15px;margin:4px 0">'+(WMO_AR[c.weather_code]||"—")+'</div>'
+      +'<div class="small" style="color:var(--muted)">الإحساس '+arNum(Math.round(c.apparent_temperature))+'° · الرطوبة '+arNum(c.relative_humidity_2m)+'% · الرياح '+arNum(Math.round(c.wind_speed_10m))+' كم/س</div>'
+      +(d.temperature_2m_max?'<div class="small" style="color:var(--muted);margin-top:6px">النهارده: العظمى '+arNum(Math.round(d.temperature_2m_max[0]))+'° · الصغرى '+arNum(Math.round(d.temperature_2m_min[0]))+'°</div>':"")
+      +'</div>';
+  }else html+='<div class="sect">الطقس</div><div class="pgroup" style="padding:14px;color:var(--muted)">'+esc(wErr||"مفيش بيانات")+'</div>';
+  if(p){
+    html+='<div class="sect">مواقيت الصلاة — '+esc(place)+' (الطريقة المصرية)</div><div class="pgroup">';
+    for(const [k,name]of PRAYER_AR){
+      const t=(p[k]||"").slice(0,5);
+      html+='<div class="prow"><span>'+name+'</span><span class="pval">'+esc(t)+'</span></div>';
+    }
+    html+='</div>';
+  }else html+='<div class="sect">مواقيت الصلاة</div><div class="pgroup" style="padding:14px;color:var(--muted)">'+esc(pErr||"مفيش بيانات")+'</div>';
+  html+='<div class="small" style="padding:8px 16px;color:var(--muted)">المصدر: Open-Meteo للطقس وAladhan للمواقيت — الاتنين مجانيين بلا مفتاح. لو رفضت تحديد الموقع، بيعرض القاهرة.</div>';
+  body.innerHTML=html;
+}
+$("settingsBtn").onclick=()=>{initSetTabs();fillSettings();refreshSettings();openPage("settingsPage");selectSetTab("models")};
 $("closeSettings").onclick=()=>closePage("settingsPage");
 $("closePersona").onclick=()=>closePage("personaPage");
 $("closeMem").onclick=()=>closePage("memPage");
 $("closeUsage").onclick=()=>closePage("usagePage");
 $("openPersona").onclick=()=>{personaScope="global";fillPersona();openPage("personaPage")};
 $("openMem").onclick=()=>{renderMemPage();openPage("memPage")};
-$("openUsage").onclick=()=>{renderUsage();openPage("usagePage")};
 $("nameInput").addEventListener("change",()=>{prefs.name=$("nameInput").value.trim();savePrefs();toast("اتحفظ ✦")});
 $("saveInstr").onclick=()=>{prefs.instructions=$("instrBox").value.trim();savePrefs();toast("التعليمات اتحفظت ✦")};
 $("saveBanned").onclick=()=>{prefs.bannedWords=$("bannedBox").value.trim();savePrefs();toast("قايمة الممنوعات اتحفظت ✦")};
@@ -4034,6 +4622,9 @@ $("saveKeyBtn").onclick=async()=>{
 (async function init(){
   await openDB();
   state.key=await kvGet("apiKey");
+  state.provKeys={};
+  for(const _p of CHAIN_ORDER){const _kn=PROVIDERS[_p].keyName;if(_kn!=="apiKey")state.provKeys[_p]=(await kvGet(_kn))||""}
+  state.searchKeys=(await kvGet("searchKeysV1"))||{};state.proxyUrl=(await kvGet("proxyUrlV1"))||"";
   state.convs=await allStore("convs");
   /* migration: existing roleplay convs with messages stay live (no retroactive gate) */
   for(const c of state.convs){

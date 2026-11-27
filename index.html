@@ -16,26 +16,6 @@
   --border:#3d4560; --radius:14px; --bubtail:4px;
 }
 /* v29: خطوط OFL مضمومة جوه التطبيق (شغالة أوفلاين) */
-@font-face{font-family:"AnanCairo";src:url(font-cairo-300_900.woff2) format("woff2");font-weight:300 900;font-display:swap}
-@font-face{font-family:"AnanTajawal";src:url(font-tajawal-400.woff2) format("woff2");font-weight:400 600;font-display:swap}
-@font-face{font-family:"AnanTajawal";src:url(font-tajawal-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
-@font-face{font-family:"AnanNotoSans";src:url(font-notosans-300_800.woff2) format("woff2");font-weight:300 800;font-display:swap}
-@font-face{font-family:"AnanAlmarai";src:url(font-almarai-400.woff2) format("woff2");font-weight:300 600;font-display:swap}
-@font-face{font-family:"AnanAlmarai";src:url(font-almarai-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
-@font-face{font-family:"AnanNaskh";src:url(font-naskh-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
-@font-face{font-family:"AnanKufi";src:url(font-kufi-300_800.woff2) format("woff2");font-weight:300 800;font-display:swap}
-@font-face{font-family:"AnanAmiri";src:url(font-amiri-400.woff2) format("woff2");font-weight:400 600;font-display:swap}
-@font-face{font-family:"AnanAmiri";src:url(font-amiri-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
-@font-face{font-family:"AnanReem";src:url(font-reem-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
-@font-face{font-family:"AnanMessiri";src:url(font-messiri-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
-.fontlist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.fontlist .fgrp{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:4px}
-.fontlist button{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 10px;text-align:start;color:var(--text);line-height:1.5}
-.fontlist button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
-.fontlist .fn{display:block;font-size:11.5px;color:var(--muted)}
-.fontlist .fs{display:block;font-size:16px}
-.bubble{line-height:var(--chatlh,1.7)}
-#msgs .bubble,#input{font-family:var(--chatfam,var(--fontfam))}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow-x:hidden}
 body{
@@ -164,7 +144,6 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
   max-height:150px;line-height:1.55;outline:none;
 }
 #input::placeholder{color:var(--muted)}
-body #input{font-family:var(--chatfam,var(--fontfam))}
 .cbtn{
   flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;
   background:none;border:none;border-radius:50%;color:var(--muted);margin-bottom:2px;
@@ -741,8 +720,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow"><span>لون فقاعات عنان</span><div class="swatches" id="swBubbleAI"></div></div>
       <div class="prow"><span>شكل الفقاعات</span><div class="seg" id="segBubShape"></div></div>
       <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
-      <div class="prow" style="display:block"><span>شكل خط التطبيق كله</span><div class="fontlist" id="fontList"></div></div>
-      <div class="prow" style="display:block"><span>خط المحادثة بس <span class="small" style="color:var(--muted);font-weight:400">(اختياري — الرسايل وخانة الكتابة)</span></span><div class="fontlist" id="fontChatList"></div></div>
+      <div class="prow"><span>شكل الخط</span><div class="seg" id="segFontFam"></div></div>
       <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
     </div>
     <div class="sect">عنان</div>
@@ -1353,7 +1331,7 @@ let REQ_TIMEOUT=90000;      /* مهلة الرد كله بعد ما أول تو�
 let FIRST_TOKEN_MS=8000;    /* مهلة أول توكن (تلقائي) */
 let PIN_FIRST_TOKEN_MS=25000; /* لما المزود مثبت مفيش بديل، فنصبر أكتر */
 let CHAIN_BUDGET_MS=60000;  /* ميزانية السلسلة كلها قبل أول توكن */
-let RECALL_TOTAL_MS=22000;  /* ميزانية الاسترجاع */
+let RECALL_TOTAL_MS=7000;  /* ميزانية الاسترجاع */
 let PLAIN_CALL_MS=45000;    /* مهلة المكالمات من غير ستريم */
 function withTimeout(sig,ms,first){
   const c=new AbortController();
@@ -1835,6 +1813,8 @@ async function gemini(parts,jsonMode,sig,sys){return aiCall(parts,{jsonMode,sig,
 async function geminiStream(parts,sig,onChunk,sys){return aiStream(parts,sig,onChunk,sys)}
 /* ================= context assembly ================= */
 const KEEP_TAIL=120;
+const CTX_HIST_TOK=6500,CTX_MIN_KEEP=10,CTX_CHARS_PER_TOK=2.5,CTX_MSG_CAP=2500;
+function ctxMsgText(m,recent){const t=(m&&m.text)||"";return(!recent&&t.length>CTX_MSG_CAP)?t.slice(0,CTX_MSG_CAP)+"…":t}
 async function recallPass(conv,ms,userText,sig){
   const rel=pickFacts(userText,12);
   const tailTxt=ms.slice(-40).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,220)).join("\n");
@@ -1862,7 +1842,7 @@ ${tailTxt}`;
     const t=(r.text||"").trim();
     if(!t||t.startsWith("مفيش"))return "";
     return t.slice(0,900);
-  }catch(e){if(e&&e.aborted)throw e;return ""}
+  }catch(e){if(e&&e.aborted)throw e;state.recallSkip=2;return ""}
 }
 async function buildChatParts(conv,ms,userText,recall){
   const sys=personaBlock(conv);
@@ -1873,7 +1853,7 @@ async function buildChatParts(conv,ms,userText,recall){
       relevant.map(f=>`- [${f.conf}] ${f.text}`).join("\n");
   }
   if(conv.summary){
-    sysFull+="\n\nملخص تراكمي لبداية المحادثة دي:\n"+conv.summary;
+    sysFull+="\n\nملخص تراكمي لبداية المحادثة دي:\n"+conv.summary.slice(-8000);
   }
   if(conv.loops&&conv.loops.some(l=>l.open)){
     sysFull+="\n\nدفتر الأحداث — حاجات لسه مفتوحة في المحادثة دي (خاصة بيها): ممنوع تنساها وممنوع تعدّيها مرور الكرام. لو حاجة مستنية رد من الشخص (زي إنه قال «هرد عليك في النقطة دي بعدين») فلمّا معناها ييجي في الكلام فكّره بيها بنفسك جوّه الحوار بشكل طبيعي (مثال: «انت كنت قايل كذا ولسه هترد عليّا فيها»). برقة وفي وقتها المناسب، مش كل الأحداث مرة واحدة ولا بالعافية:\n"+conv.loops.filter(l=>l.open).map(l=>"- "+l.text).join("\n");
@@ -1887,13 +1867,38 @@ async function buildChatParts(conv,ms,userText,recall){
   const parts=[];
   sysFull+="\n\nاقتباس الرسايل: كل تبادل في السياق مرقم [رقم]: رسالة المستخدم وردك اللي وراها ليهم نفس الرقم. تقدر ترد على تبادل أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم التبادل. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم. مهم جدًا: أرقام الرسايل دي للاستخدام الداخلي بتاعك بس، ممنوع تكتب رقم أي رسالة في ردك بأي شكل: لا [٤] ولا [[٤]] ولا (٤) ولا «رسالة رقم»، ولو مش بتستخدم الرمز متكتبش أرقام مرجعية خالص.";
   sysFull+="\n\nاستمارات الاختيارات: لو محتاج من المستخدم يختار من اختيارات محددة، ضمّن استمارة في ردك بالشكل ده بالظبط:\n[[form]]\nسؤالك هنا؟\n- اختيار أول\n- اختيار تاني\n[[/form]]\nولو الاختيار لازم يبقى واحد بس استخدم [[form:single]] بنفس الشكل. الاستمارة بتترسم ككارت أزرار تفاعلي: المستخدم بيحدد ويدوس تأكيد وإرسال، وإجابته بتوصلك كرسالة عادية فيها اختياره. استخدمها لما الاختيارات تسهّل عليه الرد، ومتعيدش كتابة الاختيارات كنص عادي بره الاستمارة. الاستمارة فيها خانة ملحوظات حرة بتوصلك مع اختياراته، فمتطلبش منه يكتب تفاصيل زيادة بره الاستمارة. افتراضيًا المستخدم يقدر يختار أكتر من إجابة لنفس السؤال، فماتستخدمش single إلا لو السؤال فعلًا ميستحملش غير اختيار واحد.";
-  const tail=ms.slice(-KEEP_TAIL);
+  /* v30: سقف الطلب بالتوكنز. بنمشي من الآخر لحد ميزانية CTX_HIST_TOK (تقدير: حروف ÷ 2.5)، وأقل حاجة آخر CTX_MIN_KEEP رسالة. اللي اتقص ولسه ماتلخصش بيروح كمقتطفات قصيرة. */
+  const _n=ms.length;
+  const _doneIdx=conv.summary?Math.max(0,Math.min(conv.summarizedCount||0,_n-CTX_MIN_KEEP)):0;
+  const _start=Math.max(0,_n-KEEP_TAIL);
+  let _first=_n,_used=0;
+  for(let i=_n-1;i>=_start;i--){
+    const _t=ctxMsgText(ms[i],i>=_n-4);
+    const _c=Math.ceil(_t.length/CTX_CHARS_PER_TOK)+8;
+    if(_n-i>CTX_MIN_KEEP&&_used+_c>CTX_HIST_TOK)break;
+    _used+=_c;_first=i;
+  }
+  if(_first>_start&&_first<_n&&ms[_first].role!=="user")_first--;
+  const tail=ms.slice(_first);
+  const _cutFrom=Math.max(0,_n-KEEP_TAIL,_doneIdx);
+  const _lost=ms.slice(_cutFrom,_first);
+  if(_lost.length){
+    let dg="";
+    for(let i=_lost.length-1;i>=0;i--){
+      const m=_lost[i];if(!m.text||m.err)continue;
+      const ln=(m.role==="user"?"المستخدم: ":"عنان: ")+m.text.replace(/\s+/g," ").slice(0,140)+"\n";
+      if(dg.length+ln.length>1800)break;
+      dg=ln+dg;
+    }
+    if(dg)sysFull+="\n\nمقتطفات قصيرة من رسايل أقدم لسه ماتلخصتش (اختصار آلي، التفاصيل الدقيقة مش معاك):\n"+dg;
+  }
+  state.lastCap={convId:conv.id,total:_n,sent:tail.length,summarized:_doneIdx,droppedUnsum:_lost.length,histTok:_used};
   state.ctxMsgs=state.ctxMsgs||{};state.ctxMsgs[conv.id]=tail;
   const _units={};let _un=0;
   let imgCount=0;
   for(let i=0;i<tail.length;i++){
     const m=tail[i];
-    let txt=m.text||" ";
+    let txt=ctxMsgText(m,i>=tail.length-4)||" ";
     if(m.role==="user"){_un++;_units[_un]=m}
     else if(!_units[_un])_units[_un]=m;
     if(m.rquote){
@@ -2048,9 +2053,10 @@ function summaryPrompt(conv,chunk){
   return `لخص الجزء ده من محادثة بالعامية المصرية في ملخص مركّز. دقة التفاصيل أهم من الاختصار: احتفظ بالأرقام والأسماء والتواريخ والقرارات والوعود والتفضيلات حرفيًا زي ما اتقالت. نظم الملخص سطر لكل موضوع بالشكل: الموضوع — أهم اللي اتقال واتفق عليه. الملخص السابق (لو موجود) ادمجه في الجديد من غير ما تضيّع منه أي تفصيلة لسه مهمة.
 الملخص السابق: ${conv.summary||"لا يوجد"}
 الجزء الجديد:
-${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+m.text).join("\n")}`;
+${chunk.map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,1500)).join("\n")}`;
 }
-async function maybeSummarize(conv,ms){
+async function maybeSummarize(conv,ms,depth){
+  depth=depth||0;
   const done=conv.summarizedCount||0;
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
   if(ms.length-done<every)return;
@@ -2061,6 +2067,7 @@ async function maybeSummarize(conv,ms){
     if(text){
       conv.summary=text;conv.summarizedCount=done+chunk.length;conv._sumFail=0;
       await putItem("convs",conv);
+      if(depth<8&&ms.length-conv.summarizedCount>=every)await maybeSummarize(conv,ms,depth+1);
     }
   }catch(e){
     conv._sumFail=(conv._sumFail||0)+1;
@@ -2428,7 +2435,7 @@ async function renderMemBar(){
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
   const done=conv.summarizedCount||0;
   const lag=total-done;
-  const gap=total-KEEP_TAIL-done;
+  const gap=Math.max(total-KEEP_TAIL-done,(state.lastCap&&state.lastCap.convId===conv.id)?state.lastCap.droppedUnsum:0);
   if(conv.memWarnHide&&lag<conv.memWarnHide)conv.memWarnHide=0;
   const hide=conv.memWarnHide||0;
   const danger=gap>0;
@@ -3014,13 +3021,7 @@ const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e
 const AIBUBBLES={ash:"#3d4460",olive:"#4a5340",plum:"#54425e",cocoa:"#5c4a3d",steel:"#3d4f5c"};
 const SHAPES={round:{r:"14px",tail:"4px"},sharp:{r:"7px",tail:"2px"},flat:{r:"14px",tail:"14px"}};
 const FONTS={xs:"13.5px",s:"15px",m:"16.5px",l:"18.5px",xl:"20px",xxl:"21.5px",xxxl:"23px",xxxxl:"25px"};
-const FONTFAMS={default:'"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif',tahoma:'Tahoma,"Segoe UI",sans-serif',
-  cairo:'"AnanCairo","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',tajawal:'"AnanTajawal","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',notosans:'"AnanNotoSans","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',almarai:'"AnanAlmarai","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',
-  naskh:'"AnanNaskh","Noto Naskh Arabic","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',kufi:'"AnanKufi","Noto Kufi Arabic","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',
-  amiri:'"AnanAmiri","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',reem:'"AnanReem","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',messiri:'"AnanMessiri","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif' };
-/* [id, الاسم, عيّنة, مجموعة] — «show» للعرض والطابع مش للقراية الطويلة */
-const FONT_LIST=[["default","افتراضي (النظام)","read"],["tahoma","تاهوما (النظام)","read"],["cairo","القاهرة · Cairo","read"],["tajawal","تجوّل · Tajawal","read"],["notosans","Noto Sans عربي","read"],["almarai","المراعي · Almarai","read"],["naskh","نسخ · Noto Naskh","read"],["kufi","كوفي · Noto Kufi","read"],["amiri","أميري · Amiri","show"],["reem","ريم كوفي · Reem Kufi","show"],["messiri","المسيري · El Messiri","show"]];
-const FONT_SHOW={amiri:2.05,reem:1.9,messiri:1.9};
+const FONTFAMS={default:'"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif',naskh:'"Noto Naskh Arabic","Amiri","Segoe UI",serif',kufi:'"Noto Kufi Arabic","Segoe UI",sans-serif',tahoma:'Tahoma,"Segoe UI",sans-serif'};
 function applyAppearance(){
   const r=document.documentElement.style;
   let t=prefs.theme;if(t==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"navy";
@@ -3034,8 +3035,6 @@ function applyAppearance(){
   r.setProperty("--radius",_sh.r);r.setProperty("--bubtail",_sh.tail);
   r.setProperty("--msgfont",FONTS[prefs.font]||FONTS.m);
   r.setProperty("--fontfam",FONTFAMS[prefs.fontFam]||FONTFAMS.default);
-  {const cf=(prefs.fontChat&&FONTFAMS[prefs.fontChat])?prefs.fontChat:(FONTFAMS[prefs.fontFam]?prefs.fontFam:"default");
-   r.setProperty("--chatfam",FONTFAMS[cf]);r.setProperty("--chatlh",String(FONT_SHOW[cf]||1.7))}
   const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
 }
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
@@ -3430,7 +3429,8 @@ async function runReply(conv,histMsgs,userText){
   try{
     /* v29: الاسترجاع بيشتغل بالتوازي مع باقي التجهيز، بميزانية 22ث، ومن غير انتظار إجباري */
     let recallP=null,recallCtl=null;
-    if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)&&!rpConv(conv)){
+    if(state.recallSkip>0){state.recallSkip--}
+    else if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)&&!rpConv(conv)){
       recallCtl=new AbortController();
       abortCtl.signal.addEventListener("abort",()=>recallCtl.abort());
       recallP=recallPass(conv,histMsgs,userText,recallCtl.signal).catch(()=>"");
@@ -3459,7 +3459,7 @@ async function runReply(conv,histMsgs,userText){
     if(recallP){
       setTyping(true,"🧠 بيسترجع اللي فات…");
       const _got=await Promise.race([recallP,new Promise(r=>setTimeout(()=>r(null),RECALL_TOTAL_MS))]);
-      if(_got===null&&recallCtl)recallCtl.abort();
+      if(_got===null&&recallCtl){recallCtl.abort();state.recallSkip=2}
       if(_got&&String(_got).trim()){recallText=String(_got);am.recalled=true}
       if(abortCtl.signal.aborted){const ae=new Error("aborted");ae.aborted=true;throw ae}
       setTyping(true);
@@ -4034,27 +4034,6 @@ $("importFile").addEventListener("change",async e=>{
 });
 /* ================= settings pages wiring ================= */
 function openPage(id){closeQMenu();$(id).classList.add("open");navOpen(id);if(id==="charsPage")renderChars()}
-function buildFontLists(){
-  const mk=(id,cur,isChat,cb)=>{
-    const el=$(id);el.innerHTML="";
-    const add=(v,name,grp)=>{
-      const b=document.createElement("button");b.dataset.v=v;
-      const fam=v==="same"?(FONTFAMS[prefs.fontFam]||FONTFAMS.default):(FONTFAMS[v]||FONTFAMS.default);
-      b.innerHTML='<span class="fn">'+esc(name)+'</span><span class="fs" style="font-family:'+fam.replace(/"/g,"'")+'">أهلاً يا عنان ١٢٣</span>';
-      if(v===cur)b.classList.add("on");
-      b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");cb(v)};
-      el.appendChild(b);
-    };
-    const g=t=>{const d=document.createElement("div");d.className="fgrp";d.textContent=t;el.appendChild(d)};
-    if(isChat)add("same","نفس خط التطبيق");
-    g("للقراية");
-    for(const [v,n,gr] of FONT_LIST)if(gr==="read")add(v,n);
-    g("عرض وطابع (مش للقراية الطويلة — تباعد السطور أكبر)");
-    for(const [v,n,gr] of FONT_LIST)if(gr==="show")add(v,n);
-  };
-  mk("fontList",FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",false,v=>{prefs.fontFam=v;savePrefs();applyAppearance();buildFontLists()});
-  mk("fontChatList",(prefs.fontChat&&FONTFAMS[prefs.fontChat])?prefs.fontChat:"same",true,v=>{prefs.fontChat=v==="same"?"":v;savePrefs();applyAppearance()});
-}
 function buildSeg(id,opts,cur,cb){
   const el=$(id);el.innerHTML="";
   for(const [v,l] of opts){const b=document.createElement("button");b.textContent=l;b.dataset.v=v;
@@ -4081,7 +4060,7 @@ async function fillSettings(){
   buildSeg("segFont",[["xs","أ"],["s","أ"],["m","أ"],["l","أ"],["xl","أ"],["xxl","أ"],["xxxl","أ"],["xxxxl","أ"]],FONTS[prefs.font]?prefs.font:"m",v=>{prefs.font=v;savePrefs();applyAppearance()});
   {const _fg={xs:11,s:13,m:15,l:17,xl:19,xxl:21,xxxl:23,xxxxl:25},_ft={xs:"صغير جدًا",s:"صغير",m:"وسط",l:"كبير",xl:"كبير جدًا",xxl:"ضخم",xxxl:"الأكبر",xxxxl:"الأضخم"};
   $("segFont").querySelectorAll("button").forEach(b=>{b.style.fontSize=_fg[b.dataset.v]+"px";b.title=_ft[b.dataset.v]})}
-  buildFontLists();
+  buildSeg("segFontFam",[["default","الافتراضي"],["naskh","نسخ"],["kufi","كوفي"],["tahoma","تاهوما"]],FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",v=>{prefs.fontFam=v;savePrefs();applyAppearance()});
   const mp=$("modelPick");mp.innerHTML="";
   const _sel=await selGet();
   for(const am of allModels()){const o=document.createElement("option");o.value=am.prov+":"+am.id;o.textContent=am.id;if(_sel.prov===am.prov&&_sel.model===am.id)o.selected=true;mp.appendChild(o)}

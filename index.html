@@ -195,8 +195,8 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 .swb.on{border-color:var(--text)}
 .swcustom{width:32px;height:30px;border:none;background:none;padding:0}
 .castprev{margin-top:8px;font-size:14px;background:var(--bubble-ai);border-radius:10px;padding:6px 10px}
-.spkblk{margin:2px 0}
-.spkblk p{margin:0 0 2px}
+.spkblk{margin:12px 0}
+.spkblk p{margin:0 0 4px}
 #storyCast{background:none;border:none;color:var(--muted);font-size:14px;padding:2px 6px;margin-inline-start:8px}
 #scopeAsk{z-index:80}
 .pcard{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;margin:10px 0 2px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--card2)),var(--card2));text-align:start}
@@ -836,6 +836,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <p class="small" style="text-align:center;margin-top:0">كل متحدث ليه لون. غيّر الاسم أو اللون في أي وقت وبيتطبق على المحادثة كلها.</p>
     <div id="castRows"></div>
     <button class="linkbtn" id="castAdd" style="display:block;margin:6px auto 0">+ شخصية (لحد ٤)</button>
+    <button class="linkbtn" id="castAddNarr" style="display:block;margin:6px auto 0">+ راوي (صوت السرد)</button>
     <button class="bigbtn" id="castSave" style="margin-top:12px;position:sticky;bottom:0">حفظ</button>
     <button class="linkbtn" id="castCancel" style="display:block;margin:8px auto 0">إلغاء</button>
   </div>
@@ -1328,10 +1329,11 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 const SELFHARM_RE=/(انتحار|انتحر|اقتل نفسي|أقتل نفسي|اموت نفسي|أموت نفسي|عايز اموت|عايش عبث|مش عايز اعيش|مش عايز أعيش|نهايه حياتي|نهاية حياتي|اعدي حياتي|ajeeb|ايذاء النفس|إيذاء النفس|باذي نفسي|بأذي نفسي)/;
 /* ================= Gemini API ================= */
 let REQ_TIMEOUT=90000;      /* مهلة الرد كله بعد ما أول توكن يوصل */
-let FIRST_TOKEN_MS=8000;    /* مهلة أول توكن (تلقائي) */
+let FIRST_TOKEN_MS=8000;const FIRST_CAND_FT_MS=15000;    /* مهلة أول توكن (تلقائي) */
 let PIN_FIRST_TOKEN_MS=25000; /* لما المزود مثبت مفيش بديل، فنصبر أكتر */
 let CHAIN_BUDGET_MS=60000;  /* ميزانية السلسلة كلها قبل أول توكن */
 let RECALL_TOTAL_MS=7000;  /* ميزانية الاسترجاع */
+let SIDE_CALL_MS=15000;const SIDE_MODELS=["gemini-3.5-flash-lite","gemini-3.1-flash-lite"];
 let PLAIN_CALL_MS=45000;    /* مهلة المكالمات من غير ستريم */
 function withTimeout(sig,ms,first){
   const c=new AbortController();
@@ -1622,6 +1624,7 @@ function errWhy(e){
   if(c===403)return "ممنوع/حد المفتاح خلص (403)";
   if(c===402)return "الرصيد خلص (402)";
   if(c===429)return "محدود مؤقتًا (429)";
+  if(c===413)return "الطلب أكبر من الحد المسموح عند المزود (413)";
   if(c===400)return "الطلب اترفض (400)";
   if(c===404)return "النموذج مش متاح على المفتاح ده (404)";
   if(c&&c>=500)return "عطل عند المزود ("+c+")";
@@ -1654,7 +1657,18 @@ function sysWithModel(sys,cand){
   if(!sys)return sys;
   return sys+"\n\n[معلومة من التطبيق — مش من المستخدم] النموذج اللي بيولّد ردك دلوقتي فعليًا: "+cand.id+" (مزود: "+PROVIDERS[cand.prov].name+"). لو اتسألت عن الموديل اللي شغال قول الاسم ده بالظبط. لو الموديل اتغيّر في رد لاحق، الاسم هيتحدّث هنا.";
 }
+state.cool=state.cool||{};
+/* v31: تبريد قصير لموديل رجّع 5xx أو مردّش في الوقت أو 413 — عشان مانضيعش ثواني عليه كل رسالة */
+function coolMark(prov,id,e){
+  if(!e)return;let ms=0;
+  if(e.status>=500)ms=120e3;else if(e.status===413)ms=300e3;else if(e.timeout&&e.firstToken)ms=90e3;else if(e.timeout)ms=60e3;
+  if(ms)state.cool[prov+":"+id]=Date.now()+ms;
+}
+const GROQ_REQ_TOK=5000;
+function estReqTok(parts,sys){try{return Math.round((JSON.stringify(parts).length+String(sys||"").length)/2.2)}catch(_){return 0}}
 async function candBlocked(cand){
+  const cu=state.cool[cand.prov+":"+cand.id];
+  if(cu&&cu>Date.now())return{out:true,cool:true,untilAt:cu};
   const st=await qState(cand.prov,cand.id);
   return st.out?st:null;
 }
@@ -1662,20 +1676,28 @@ async function candBlocked(cand){
 async function aiCall(parts,opts){
   opts=opts||{};
   const vision=hasImgParts(parts);
-  const chain=await buildChain(vision,autoHint(parts));
+  let chain=await buildChain(vision,autoHint(parts));
+  /* v31: المكالمات الجانبية (ذاكرة/ملخص/عنوان/افتتاحية) بتبدأ بنموذج جوجل الخفيف الثابت مش بالنموذج المختار، إلا لو التثبيت شغال */
+  if(opts.side&&!(prefs.pin&&!state.oneShot)){
+    const lt=SIDE_MODELS.map(id=>chain.find(c=>c.prov==="google"&&c.id===id)).filter(Boolean);
+    if(lt.length)chain=lt.concat(chain.filter(c=>!lt.includes(c)));
+  }
   if(!chain.length){const e=new Error("nokey");e.nokey=true;e.pin=!!(prefs.pin&&!state.oneShot);throw e}
   let lastErr=null;const t0=Date.now();let tried=0;const toCnt={},authBad={};
+  let _allB=true;for(const c of chain){if(!(await candBlocked(c))){_allB=false;break}}
+  const _rq=estReqTok(parts,opts.sys);
   for(const cand of chain){
+    if(cand.prov==="groq"&&_rq>GROQ_REQ_TOK&&!(prefs.pin&&!state.oneShot)){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: الطلب (~"+_rq+" توكن) أكبر من حد Groq المجاني",skipped:true});continue}
     if(tried>0&&Date.now()-t0>CHAIN_BUDGET_MS)break;
     if(authBad[cand.prov]){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المفتاح مرفوض",skipped:true});continue}
     if(!(prefs.pin&&!state.oneShot)&&toCnt[cand.prov]>=2){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المزود مردّش مرتين",skipped:true});continue}
     const blk=await candBlocked(cand);
-    if(blk&&!(prefs.pin&&!state.oneShot)){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
+    if(blk&&!_allB&&!(prefs.pin&&!state.oneShot)){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
     tried++;
-    let think=!opts.noThink&&thinkFor(cand.prov,cand.id);
+    let think=!opts.noThink&&!opts.side&&thinkFor(cand.prov,cand.id);
     for(let pass=0;pass<2;pass++){
       try{
-        const xo={think:think,ms:opts.ms};
+        const xo={think:think,ms:opts.ms||(opts.side?SIDE_CALL_MS:undefined)};
         const sysC=sysWithModel(opts.sys,cand);
         let r;
         if(cand.prov==="google")r=await geminiCall(cand.id,parts,opts.jsonMode,opts.sig,sysC,xo);
@@ -1698,8 +1720,8 @@ async function aiCall(parts,opts){
         if(think&&e.status===400){state.noThink[cand.prov+":"+cand.id]=true;think=false;continue}
         lastErr=e;if(e.timeout)toCnt[cand.prov]=(toCnt[cand.prov]||0)+1;if(e.status===401)authBad[cand.prov]=true;
         await provNote(cand.prov,cand.id,false,e);
-        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e)});
-        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);
+        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e),detail:String((e&&e.detail)||"").replace(/\s+/g," ").slice(0,90)});
+        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);else coolMark(cand.prov,cand.id,e);
         break;
       }
     }
@@ -1712,19 +1734,22 @@ async function aiStream(parts,sig,onChunk,sys){
   if(!chain.length){const e=new Error("nokey");e.nokey=true;e.pin=!!(prefs.pin&&!state.oneShot);throw e}
   const pinned=!!(prefs.pin&&!state.oneShot);
   let lastErr=null,streamed=0;const t0=Date.now();let tried=0;const toCnt={},authBad={};
+  let _allB=true;for(const c of chain){if(!(await candBlocked(c))){_allB=false;break}}
+  const _rq=estReqTok(parts,sys);
   for(const cand of chain){
+    if(cand.prov==="groq"&&_rq>GROQ_REQ_TOK&&!pinned){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: الطلب (~"+_rq+" توكن) أكبر من حد Groq المجاني",skipped:true});continue}
     if(tried>0&&Date.now()-t0>CHAIN_BUDGET_MS)break;
     if(authBad[cand.prov]){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المفتاح مرفوض",skipped:true});continue}
     if(!pinned&&toCnt[cand.prov]>=2){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المزود مردّش مرتين",skipped:true});continue}
     const blk=await candBlocked(cand);
-    if(blk&&!pinned){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
+    if(blk&&!_allB&&!pinned){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
     tried++;
     let think=thinkFor(cand.prov,cand.id);
     for(let pass=0;pass<2;pass++){
       try{
         let r;
         const wrapped=t=>{streamed++;onChunk(t)};
-        const xo={think:think,ft:pinned?PIN_FIRST_TOKEN_MS:FIRST_TOKEN_MS};
+        const xo={think:think,ft:pinned?PIN_FIRST_TOKEN_MS:(tried===1?FIRST_CAND_FT_MS:FIRST_TOKEN_MS)};
         const sysC=sysWithModel(sys,cand);
         if(cand.prov==="google"){
           r=await geminiStreamParts(cand.id,parts,sig,wrapped,sysC,xo);
@@ -1752,8 +1777,8 @@ async function aiStream(parts,sig,onChunk,sys){
         if(streamed>0){await provNote(cand.prov,cand.id,false,e);throw e}
         lastErr=e;if(e.timeout)toCnt[cand.prov]=(toCnt[cand.prov]||0)+1;if(e.status===401)authBad[cand.prov]=true;
         await provNote(cand.prov,cand.id,false,e);
-        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e)});
-        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);
+        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e),detail:String((e&&e.detail)||"").replace(/\s+/g," ").slice(0,90)});
+        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);else coolMark(cand.prov,cand.id,e);
         break;
       }
     }
@@ -1809,7 +1834,7 @@ async function geminiStreamParts(model,parts,sig,onChunk,sys,xo){
   if(got===0&&finish===null){const e=new Error("nostream");e.nostream=true;throw e}
   return {finish,model,prov:"google",promptTokens:pt,think:!!(xo&&xo.think),thoughtTokens:thoughts};
 }
-async function gemini(parts,jsonMode,sig,sys){return aiCall(parts,{jsonMode,sig,sys})}
+async function gemini(parts,jsonMode,sig,sys,side){return aiCall(parts,{jsonMode,sig,sys,side})}
 async function geminiStream(parts,sig,onChunk,sys){return aiStream(parts,sig,onChunk,sys)}
 /* ================= context assembly ================= */
 const KEEP_TAIL=120;
@@ -1817,7 +1842,7 @@ const CTX_HIST_TOK=6500,CTX_MIN_KEEP=10,CTX_CHARS_PER_TOK=2.5,CTX_MSG_CAP=2500;
 function ctxMsgText(m,recent){const t=(m&&m.text)||"";return(!recent&&t.length>CTX_MSG_CAP)?t.slice(0,CTX_MSG_CAP)+"…":t}
 async function recallPass(conv,ms,userText,sig){
   const rel=pickFacts(userText,12);
-  const tailTxt=ms.slice(-40).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,220)).join("\n");
+  const tailTxt=ms.slice(-8).map(m=>(m.role==="user"?"المستخدم: ":"عنان: ")+(m.text||"").slice(0,200)).join("\n");
   const prompt=`انت وحدة استرجاع ذاكرة داخلية. تحت ملخص المحادثة (لو موجود)، حقائق محفوظة مرتبطة، وآخر الرسايل. استخرج في نقط قصيرة (٦ كحد أقصى) كل حاجة مرتبطة بسؤال المستخدم الأخير: أحداث، أرقام، أسماء، قرارات، وعود، تفاصيل اتقالت قبل كده. لو مفيش حاجة مرتبطة اكتب "مفيش". متجاوبش على السؤال نفسه.
 سؤال المستخدم الأخير: ${userText}
 ملخص المحادثة: ${conv.summary||"لا يوجد"}
@@ -1961,7 +1986,7 @@ async function maybeCallbackOpener(conv){
     const ms=await msgsOf(conv.id);if(ms.length)return;
     if(($("input").value||"").trim())return;
     const facts=state.facts.slice(-12).map(f=>"- "+f.text).join("\n");
-    const {text}=await gemini([{role:"user",parts:[{text:"المستخدم فتح محادثة جديدة فاضية. افتتح الكلام بجملة أو اتنين قصار وودودين بالعامية المصرية، بتشير بشكل طبيعي لأجدد حاجة تستاهل متابعة من الحقائق دي اللي هو قالها قبل كده (متعرضهاش كلها). من غير أرقام ولا تنسيق ولا رموز:\n"+facts}]}],false,null,personaBlock(conv));
+    const {text}=await gemini([{role:"user",parts:[{text:"المستخدم فتح محادثة جديدة فاضية. افتتح الكلام بجملة أو اتنين قصار وودودين بالعامية المصرية، بتشير بشكل طبيعي لأجدد حاجة تستاهل متابعة من الحقائق دي اللي هو قالها قبل كده (متعرضهاش كلها). من غير أرقام ولا تنسيق ولا رموز:\n"+facts}]}],false,null,personaBlock(conv),true);
     const t=(text||"").trim();
     if(!t||state.convId!==conv.id)return;
     const ms2=await msgsOf(conv.id);if(ms2.length)return;
@@ -1972,6 +1997,23 @@ async function maybeCallbackOpener(conv){
   }catch(e){}
 }
 /* ================= memory extraction ================= */
+/* v31: استخراج الذاكرة على دفعات: كل 3 ردود (مرة واحدة بكل الحوار)، أو فورًا لو الرسالة فيها إشارة معلومة شخصية/رقم/خطة، أو لو المحادثة لسه من غير عنوان، ولعب الأدوار (دفتر الأحداث) دايمًا فوري */
+const XQ_SIGNAL=/[0-9٠-٩]|اسمي|اسمى|بحب|مبحبش|بكره|بكرة|هسافر|شغلي|شغلى|بشتغل|عندي|عندى|جوزي|مراتي|خطيب|هتجوز|ميلاد|ميعاد|موعد|فاكر|افتكر|احفظ|متنساش|ماتنساش|مهم|أنا |انا /;
+async function queueExtract(conv,user,ai){
+  const q=conv._xq=conv._xq||[];
+  q.push({u:String(user||"").slice(0,1500),a:String(ai||"").slice(0,1500)});
+  const due=!conv.titled||rpConv(conv)||q.length>=3||XQ_SIGNAL.test(String(user||""));
+  if(!due){try{await putItem("convs",conv)}catch(_){}return}
+  return flushExtract(conv);
+}
+async function flushExtract(conv){
+  const q=conv&&conv._xq;if(!q||!q.length)return;
+  const items=q.splice(0,q.length);conv._xq=[];
+  try{await putItem("convs",conv)}catch(_){}
+  let u=items[0].u;
+  for(let i=1;i<items.length;i++)u+="\nعنان: "+items[i-1].a+"\nالمستخدم: "+items[i].u;
+  return extractMemory(conv,{user:u,ai:items[items.length-1].a});
+}
 async function extractMemory(conv,exchange){
   if(conv.hidden)return;
   try{
@@ -2009,7 +2051,7 @@ op=add لحدث جديد مفتوح، op=close لحدث من القايمة تح
 المستخدم: ${exchange.user}
 عنان: ${exchange.ai}`;
     }
-    const {text}=await gemini([{role:"user",parts:[{text:prompt}]}],true);
+    const {text}=await gemini([{role:"user",parts:[{text:prompt}]}],true,undefined,undefined,true);
     const clean=text.replace(/```json|```/g,"").trim();
     const parsed=JSON.parse(clean);
     let changed=0;
@@ -2060,14 +2102,15 @@ async function maybeSummarize(conv,ms,depth){
   const done=conv.summarizedCount||0;
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
   if(ms.length-done<every)return;
-  const chunk=ms.slice(done,done+every);
+  const _lag=ms.length-done;
+  const chunk=ms.slice(done,done+(_lag>=every*2?Math.min(_lag,40):every));
   if(!chunk.length)return;
   try{
-    const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}]);
+    const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}],false,undefined,undefined,true);
     if(text){
       conv.summary=text;conv.summarizedCount=done+chunk.length;conv._sumFail=0;
       await putItem("convs",conv);
-      if(depth<8&&ms.length-conv.summarizedCount>=every)await maybeSummarize(conv,ms,depth+1);
+      if(depth<1&&ms.length-conv.summarizedCount>=every)await maybeSummarize(conv,ms,depth+1);
     }
   }catch(e){
     conv._sumFail=(conv._sumFail||0)+1;
@@ -2086,7 +2129,7 @@ async function forceSummary(conv){
   const done=conv.summarizedCount||0;
   const chunk=ms.slice(done);
   if(!chunk.length)return false;
-  const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}]);
+  const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}],false,undefined,undefined,true);
   if(text){conv.summary=text;conv.summarizedCount=ms.length;conv.memWarnHide=0;await putItem("convs",conv);return true}
   return false;
 }
@@ -2105,6 +2148,7 @@ function savePlace(){
 window.addEventListener("beforeunload",savePlace);
 async function openConv(id){
   savePlace();
+  {const _pc=state.convs.find(c=>c.id===state.convId);if(_pc&&_pc.id!==id)flushExtract(_pc)}
   state.convId=id;await kvSet("lastConv",id);
   const ms=await msgsOf(id);ms.sort((a,b)=>a.ts-b.ts);
   const conv=state.convs.find(c=>c.id===id);
@@ -2582,7 +2626,7 @@ async function send(){
   const am=await runReply(conv,ms,text||"عايزك تبص على الصورة دي وتقولي رأيك");
   if(am){
     const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
-    extractMemory(conv,{user:text,ai:am.text}).then(()=>{if(!conv.titled)titleConv(conv,text,am.text)});
+    queueExtract(conv,text,am.text).then(()=>{if(!conv.titled)titleConv(conv,text,am.text)});
     maybeSummarize(conv,all).then(()=>renderMemBar());
   }
   refreshRegenChip();
@@ -2608,7 +2652,7 @@ async function processOutbox(){
       const am=await runReply(conv,ms,item.text||"عايزك تبص على الصورة دي وتقولي رأيك");
       if(am){
         const all=await msgsOf(conv.id);all.sort((a,b)=>a.ts-b.ts);
-        extractMemory(conv,{user:item.text||"",ai:am.text}).then(()=>{if(!conv.titled)titleConv(conv,item.text||"",am.text)});
+        queueExtract(conv,item.text||"",am.text).then(()=>{if(!conv.titled)titleConv(conv,item.text||"",am.text)});
         maybeSummarize(conv,all).then(()=>renderMemBar());
       }
     }catch(e){/* فشل إرسال عنصر — نسيبه في الطابور */ continue}
@@ -3173,7 +3217,7 @@ function mdRender(src){
 /* ================= auto title + rename ================= */
 async function titleConv(conv,userText,aiText){
   try{
-    const {text}=await gemini([{role:"user",parts:[{text:"اكتب عنوانًا قصيرًا جدًا (٥ كلمات كحد أقصى، بالعامية المصرية) يلخص موضوع المحادثة دي. الرد يكون العنوان بس من غير تنصيص ولا مقدمات:\nالمستخدم: "+userText+"\nعنان: "+aiText}]}]);
+    const {text}=await gemini([{role:"user",parts:[{text:"اكتب عنوانًا قصيرًا جدًا (٥ كلمات كحد أقصى، بالعامية المصرية) يلخص موضوع المحادثة دي. الرد يكون العنوان بس من غير تنصيص ولا مقدمات:\nالمستخدم: "+userText+"\nعنان: "+aiText}]}],false,undefined,undefined,true);
     const t=(text||"").trim().replace(/^["«»"']+|["«»"']+$/g,"").slice(0,60);
     if(t&&!conv.titled){conv.title=t;conv.titled=true;await putItem("convs",conv);renderConvList()}
   }catch(e){}
@@ -3505,6 +3549,19 @@ async function runReply(conv,histMsgs,userText){
     if(state.attempts&&state.attempts.length)am.fb=state.attempts.slice(0,4).map(a=>({m:a.model,w:a.why}));
     if(finish==="MAX_TOKENS")am.incomplete=true;
     am.text=await sanitizeReply(am.text,sysText);
+    /* v31: فحص صيغة المشهد (إعداد الأدوار والألوان ملزم): تطبيع محلي، ولو لسه مخالفة تتعاد مرة واحدة بس */
+    if(rpConv(conv)&&conv.rpPhase==="live"&&castOn(conv)&&!am.err){
+      am.text=castNormalize(am.text,conv);
+      const _pr=castCheck(am.text,conv);
+      if(_pr.length){
+        try{
+          toast("بنظبط صيغة المشهد…");
+          const _r2=await gemini(parts,false,abortCtl.signal,sysText+"\n\n[تصحيح من التطبيق] ردك السابق خالف صيغة المشهد: "+_pr.join("؛ ")+". اكتب الرد من الأول بنفس الأحداث، وكل سطر يبدأ باسم متحدث من القايمة متبوعًا بنقطتين.");
+          const _t2=castNormalize((_r2.text||"").trim(),conv);
+          if(_t2&&castCheck(_t2,conv).length<_pr.length){am.text=_t2;am.castRetried=true}
+        }catch(_re){if(_re&&_re.aborted)throw _re}
+      }
+    }
     /* منقّي تقليد السقالة: سطور قالب الحقن الحرفي + تكرارات [N] و[[N]] */
     am.text=am.text.replace(/^\s*\[[^\]\n]*بيرد بالاقتباس على رسالة[^\]\n]*\]\s*/gm,"");
     am.text=am.text.replace(/\[\[\s*[0-9٠-٩]{1,3}\s*\]\]/g,"");
@@ -3579,6 +3636,8 @@ async function runReply(conv,histMsgs,userText){
       msg="مفتاح الـ API مش شغال أو اترفض. افتح الإعدادات وغيّره.";
     else if(e.status===429)
       msg="وصلت لحد الاستخدام المجاني (في الدقيقة أو اليوم). استنى شوية وجرّب تاني."+(e.detail?(". "+String(e.detail).slice(0,80)):"");
+    else if(e.status===413)
+      msg="الطلب كبير على حد المزود (413)"+(e.detail?(". "+String(e.detail).slice(0,100)):"")+". المحادثة طويلة — جرّب محادثة جديدة أو اختار موديل Gemini.";
     else if(e.status===404)
       msg="النموذج مش متاح على المفتاح ده حاليًا. جرّب بعد شوية.";
     const _pinned=!!(prefs.pin&&!state.oneShot);
@@ -3587,7 +3646,7 @@ async function runReply(conv,histMsgs,userText){
       msg="المزود المثبت ("+_pn+") مردّش: "+errWhy(e)+". التثبيت شغال فمحوّلتش لمزود تاني لوحدي — دوس «حوّل للاحتياط» فوق الكتابة أو غيّر المزود.";
     }
     if(state.attempts&&state.attempts.length){
-      msg+="\nاللي اتجرّب: "+state.attempts.filter(a=>!a.skipped).slice(0,5).map(a=>a.model+" ← "+a.why).join("، ");
+      msg+="\nاللي اتجرّب: "+state.attempts.filter(a=>!a.skipped).slice(0,5).map(a=>a.model+" ← "+a.why+(a.detail&&/413|400|5\d\d|خطأ غير معروف/.test(a.why)?" ["+a.detail+"]":"")).join("، ");
     }
     const em={id:uid(),convId:conv.id,role:"model",text:msg,err:true,ts:Date.now()};
     await safePut("msgs",em);if(state.convId===conv.id)appendMsg(em);
@@ -4424,7 +4483,43 @@ function legible(hex,bg){
 function castChars(conv){return ((conv&&conv.cast)||[]).filter(x=>!x.me&&x.name)}
 function castMe(conv){return ((conv&&conv.cast)||[]).find(x=>x.me)||null}
 function castOn(conv){return !!(conv&&rpConv(conv)&&castChars(conv).length)}
+/* v31: مُطبِّع محلي لصيغة المشهد: بيصلّح أشكال الأسماء الشايعة (**اسم**: / [اسم] / اسم - / اسم (حركة): / الاسم الأول بس) من غير ما يغيّر الكلام */
+function castIndex(conv){
+  return ((conv&&conv.cast)||[]).filter(x=>x.name).map(c=>({n:normAr(c.name),c}));
+}
+function castMatch(idx,raw){
+  const n=normAr(raw);if(!n)return null;
+  let h=idx.find(x=>x.n===n);if(h)return h;
+  const pre=idx.filter(x=>x.n.split(" ")[0]===n);
+  return pre.length===1?pre[0]:null;
+}
+const CAST_LN=/^\s*(?:[-–—•>]\s*)?[*_\[\(«"]{0,3}\s*([^:：\n*_\]\)»\(\["]{1,24}?)\s*[*_\]\)»"]{0,3}\s*(?:[(（]([^)）\n]{0,40})[)）])?\s*[*_]{0,2}\s*(?:[:：]|\s[-–—]\s)\s*(.*)$/;
+function castNormalize(text,conv){
+  const idx=castIndex(conv);if(!idx.length)return text;
+  return String(text||"").split("\n").map(ln=>{
+    const m=ln.match(CAST_LN);if(!m)return ln;
+    const h=castMatch(idx,m[1]);if(!h)return ln;
+    const act=m[2]&&m[2].trim()?("*"+m[2].trim()+"* "):"";
+    return h.c.name+": "+act+m[3].replace(/^\*{1,2}\s*(?=\S)/,m3=>m3);
+  }).join("\n");
+}
+function castCheck(text,conv){
+  const idx=castIndex(conv);const pr=[];if(!idx.length)return pr;
+  const hasNar=idx.some(x=>x.c.narr);
+  let seen=0,pre=false;
+  for(const ln of String(text||"").split("\n")){
+    if(!ln.trim())continue;
+    const m=ln.match(CAST_LN);
+    const h=m?castMatch(idx,m[1]):null;
+    if(h){seen++;if(h.c.me&&!pr.includes("كتب كلام على لسان المستخدم"))pr.push("كتب كلام على لسان المستخدم")}
+    else if(m&&m[1].trim().split(/\s+/).length<=2&&!/^(ملحوظة|ملاحظة|تنبيه|مثال)/.test(m[1].trim())&&seen===0&&!pr.some(x=>x.startsWith("اسم متحدث")))pr.push("اسم متحدث مش في القايمة: "+m[1].trim());
+    else if(seen===0&&!pre){pre=true;if(!hasNar)pr.push("سطور من غير اسم متحدث")}
+  }
+  if(!seen)pr.push("مفيش ولا سطر بيبدأ باسم متحدث من القايمة");
+  return pr;
+}
 function castRender(text,conv){
+  text=castNormalize(text,conv);
   const chars=castChars(conv);
   const bg=cssHex("--bubble-ai");
   const idx=chars.map(c=>({n:normAr(c.name),c}));
@@ -4451,9 +4546,11 @@ function castUserStyle(conv){
 function castPrompt(conv){
   const chars=castChars(conv);if(!chars.length)return "";
   const me=castMe(conv);
-  let s="\n\nالمتحدثين في المشهد (المستخدم حددهم بنفسه وبيلوّن كل واحد): "+chars.map(c=>c.name).join("، ")+".";
+  const nar=chars.filter(c=>c.narr),act=chars.filter(c=>!c.narr);
+  let s="\n\nالمتحدثين في المشهد (المستخدم حددهم بنفسه وبيلوّن كل واحد، والإعداد ده ملزم لكل رسالة ومشهد لحد ما هو بنفسه يغيّره): "+act.map(c=>c.name).join("، ")+".";
+  if(nar.length)s+=" وفيه راوي اسمه «"+nar[0].name+"»: ده صوت السرد بس، بيوصف المشهد والأحداث والمشاعر بسطور تبدأ بـ«"+nar[0].name+": » وعمره ما بيتكلم كشخصية.";
   if(me)s+=" والمستخدم نفسه اسمه «"+me.name+"» — ممنوع تتكلم بلسانه أو تكتب سطور باسمه أبدًا.";
-  s+="\nصيغة الرد إلزامية في المشهد: كل متحدث في سطر أو سطور منفصلة، وكل سطر بيبدأ باسم المتحدث بالظبط زي المكتوب فوق متبوعًا بنقطتين، بالشكل «الاسم: كلامه». الحركات والوصف بين نجمتين *كده* بعد اسم المتحدث في نفس السطر. ممنوع تستخدم اسم متحدث مش في القايمة. لو شخصية واحدة بس بتتكلم اكتب اسمها برضه قبل كلامها.";
+  s+="\nصيغة الرد إلزامية في المشهد: كل متحدث في سطر أو سطور منفصلة، وكل سطر بيبدأ باسم المتحدث بالظبط زي المكتوب فوق متبوعًا بنقطتين، بالشكل «الاسم: كلامه». الحركات والوصف بين نجمتين *كده* بعد اسم المتحدث في نفس السطر. ممنوع تستخدم اسم متحدث مش في القايمة. لو شخصية واحدة بس بتتكلم اكتب اسمها برضه قبل كلامها. كل سطر لازم يبدأ باسم من القايمة، ومفيش سطر من غير اسم.";
   return s;
 }
 let castCtx=null;
@@ -4478,7 +4575,7 @@ function drawCastRows(){
   castCtx.rows.forEach((r,i)=>{
     const d=document.createElement("div");d.className="castrow";
     d.innerHTML='<div class="castnm"><input class="fld" maxlength="24" value="'+esc(r.name)+'" placeholder="'+(r.me?"اسمك":"اسم الشخصية")+'">'
-      +'<span class="castwho">'+(r.me?"أنت":"شخصية")+'</span>'+(r.me?"":'<button class="castdel" aria-label="شيل">✕</button>')+'</div>'
+      +'<span class="castwho">'+(r.me?"أنت":(r.narr?"راوي":"شخصية"))+'</span>'+(r.me?"":'<button class="castdel" aria-label="شيل">✕</button>')+'</div>'
       +'<div class="castsw"></div>'
       +'<div class="castprev" style="color:'+legible(r.color,bg)+'">'+esc(r.name||"…")+': أهلًا، ده شكل كلامي</div>';
     const sw=d.querySelector(".castsw");
@@ -4495,6 +4592,7 @@ function drawCastRows(){
   });
   const nch=castCtx.rows.filter(r=>!r.me).length;
   $("castAdd").style.display=nch>=4?"none":"block";
+  $("castAddNarr").style.display=(nch>=4||castCtx.rows.some(r=>r.narr))?"none":"block";
 }
 $("castAdd").onclick=()=>{
   const used=new Set(castCtx.rows.map(r=>r.color.toLowerCase()));
@@ -4503,9 +4601,16 @@ $("castAdd").onclick=()=>{
   castCtx.rows.splice(meIdx<0?castCtx.rows.length:meIdx,0,{id:uid(),name:"شخصية "+(castCtx.rows.filter(r=>!r.me).length+1),color:col});
   drawCastRows();
 };
+$("castAddNarr").onclick=()=>{
+  const used=new Set(castCtx.rows.map(r=>r.color.toLowerCase()));
+  const col=CAST_PALETTE.find(c=>!used.has(c))||CAST_PALETTE[2];
+  const meIdx=castCtx.rows.findIndex(r=>r.me);
+  castCtx.rows.splice(meIdx<0?castCtx.rows.length:meIdx,0,{id:uid(),name:"الراوي",color:col,narr:true});
+  drawCastRows();
+};
 $("castCancel").onclick=()=>closeCast();
 $("castSave").onclick=async()=>{
-  const rows=castCtx.rows.map(r=>({id:r.id,name:(r.name||"").trim(),color:r.color,me:!!r.me}));
+  const rows=castCtx.rows.map(r=>({id:r.id,name:(r.name||"").trim(),color:r.color,me:!!r.me,narr:!!r.narr}));
   const chars=rows.filter(r=>!r.me);
   if(chars.some(r=>!r.name)){toast("كل شخصية لازم يبقى ليها اسم");return}
   const names=rows.map(r=>normAr(r.name)).filter(Boolean);
@@ -5028,9 +5133,9 @@ function nextResetTxt(provId,monthly){
     const fmt=d=>d.toLocaleTimeString("ar-EG",{hour:"numeric",minute:"2-digit",timeZone:"Africa/Cairo"});
     if(monthly)return "بيتجدد أول كل شهر";
     if(provId==="google"){
-      const key=t=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(t));
-      const k0=key(Date.now());let t=Date.now();
-      for(let i=0;i<1500;i++){t+=60e3;if(key(t)!==k0)break}
+      /* v31: حساب مباشر من ساعة لوس أنجلوس الحالية (استدعاء Intl واحد) بدل لف 1500 مرة */
+      const _p=new Intl.DateTimeFormat("en-GB",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).reduce((o,x)=>{o[x.type]=+x.value;return o},{});
+      const t=Date.now()+(86400-(_p.hour*3600+_p.minute*60+_p.second))*1000;
       return "بيتجدد حوالي "+fmt(new Date(t))+" بتوقيت القاهرة";
     }
     const P=PROVIDERS[provId];
@@ -5418,6 +5523,7 @@ $("saveKeyBtn").onclick=async()=>{
   if((prefs.gmailAddr||"").trim()){
     setTimeout(()=>{gmailGetToken(false).then(()=>{const gs=$("gmailState");if(gs)gs.textContent="متصل ✓"}).catch(()=>{})},4000);
   }
+  setTimeout(async()=>{let n=0;for(const c of state.convs){if(c._xq&&c._xq.length&&n++<3){try{await flushExtract(c)}catch(_){}}}},15000);
   setTimeout(checkAutoBackup,12000);
   setInterval(checkAutoBackup,30*60*1000);
   if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});

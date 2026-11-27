@@ -19,7 +19,7 @@
 html,body{height:100%}
 body{
   background:var(--bg);color:var(--text);
-  font-family:"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif;
+  font-family:var(--fontfam,"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif);
   font-size:17px;line-height:1.7;overflow:hidden;
 }
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -464,6 +464,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
   <div id="replyBar"><div class="rinf"><div class="rwho" id="replyWho"></div><div class="rsnip" id="replySnip"></div></div><button id="cancelReply" aria-label="إلغاء الرد">✕</button></div>
   <div id="chipRow">
+    <button class="cmdchip" id="chipSumAll">🧠 لخّص المحادثة</button>
     <button class="cmdchip" data-cmd="summ">لخّص</button>
     <button class="cmdchip" data-cmd="cont">كمّل</button>
     <button class="cmdchip" data-cmd="tone">غيّر النبرة</button>
@@ -626,6 +627,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow"><span>لون فقاعات عنان</span><div class="swatches" id="swBubbleAI"></div></div>
       <div class="prow"><span>شكل الفقاعات</span><div class="seg" id="segBubShape"></div></div>
       <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
+      <div class="prow"><span>شكل الخط</span><div class="seg" id="segFontFam"></div></div>
       <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
     </div>
     <div class="sect">عنان</div>
@@ -636,6 +638,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <button class="prow linkrow" id="openModel"><span>النموذج <span class="small" style="color:var(--muted);font-weight:400">(كلهم مجانيين على نفس المفتاح)</span></span><span class="pval" id="modelCur" style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">-</span></button>
       <div class="small" style="color:var(--muted)">لو النموذج المختار وصل لحدّه أو حصل فيه خطأ، التطبيق بيحوّل مؤقتًا لنموذج احتياطي وبيعرض تنبيه واضح. توفر كل نموذج على الخطة المجانية ممكن يختلف حسب مشروعك في AI Studio.</div>
       <div class="prow"><span>الاقتراحات في المحادثات الجديدة</span><button class="tgl" id="tglSugg"></button></div>
+      <div class="prow"><span>عنان يفتتح الكلام أحيانًا 🙋</span><button class="tgl" id="tglCallbacks"></button></div>
     </div>
     <div class="sect">الخصوصية</div>
     <div class="pgroup">
@@ -657,6 +660,11 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
         <textarea class="fld" id="instrBox" rows="3" placeholder="قواعد ثابتة تحب عنان يلتزم بيها في كل رد…"></textarea>
         <button class="bigbtn" id="saveInstr" style="margin-top:2px">حفظ التعليمات</button>
       </div>
+      <div class="prow" style="flex-direction:column;align-items:stretch;gap:8px">
+        <span>كلمات ممنوعة 🚫 <span class="small" style="color:var(--muted);font-weight:400">كلمة في كل سطر أو مفصولة بفاصلة — عنان مش هيستخدمها أبدًا</span></span>
+        <textarea class="fld" id="bannedBox" rows="2" placeholder="كلمات طلعت غلط أو ملهاش معنى…"></textarea>
+        <button class="bigbtn" id="saveBanned" style="margin-top:2px">حفظ القايمة</button>
+      </div>
     </div>
     <div class="sect">البيانات</div>
     <div class="pgroup">
@@ -676,6 +684,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       </div>
       <button class="prow linkrow" id="gmailLinkBtn"><span>ربط الجيميل</span><span class="pval" id="gmailState">غير مربوط</span></button>
       <button class="prow linkrow" id="gmailSendBtn"><span>إرسال نسخة احتياطية لإيميلي</span><span class="chev">‹</span></button>
+      <div class="prow"><span>نسخة احتياطية تلقائية ☁️</span><button class="tgl" id="tglAutoBackup"></button></div>
+      <div class="prow" id="autoBackupFreqRow" style="display:none"><span>تتبعت كل</span><div class="seg" id="segBackupFreq"></div></div>
     </div>
     <div class="small" style="padding:0 16px">الإرسال بيتم من حسابك لنفسك مباشرة، صلاحية «إرسال فقط» من غير أي قراءة لإيميلاتك، ومفيش أي استهلاك لطلبات المحرك. أول ربط جوجل هتعرض تنبيه إن التطبيق في وضع تجريبي، اختار Advanced وكمّل، وده طبيعي. ممكن جوجل تطلب تأكيد سريع كل فترة بضغطة واحدة من غير باسورد.</div>
     <div class="sect">محادثة واتساب</div>
@@ -962,6 +972,7 @@ async function renderConvList(){
   const sorted=[...state.convs].sort((a,b)=>((b.pinned?1:0)-(a.pinned?1:0))||(b.updated-a.updated));
   let base=sorted;
   if(drawerMode==="arch")base=sorted.filter(c=>c.archived);
+  else if(drawerMode==="rp")base=sorted.filter(c=>!c.archived&&rpConv(c));
   else if(drawerMode.startsWith("grp:"))base=sorted.filter(c=>!c.archived&&c.group===drawerMode.slice(4));
   else base=sorted.filter(c=>!c.archived);
   if(!state.secretOn)base=base.filter(c=>!c.hidden);
@@ -1102,6 +1113,7 @@ function renderMsgs(ms,restore){
   refreshRegenChip();renderMemBar();renderStoryBar();
 }
 function appendMsg(m,force){
+  if(state.lazy&&state.lazy.convId===m.convId){state.lazy.total++;if(m.role==="user")state.lazy.units++;if(!state.lazy.ms.some(x=>x.id===m.id))state.lazy.ms.push(m)}
   const box=$("msgs");box.querySelectorAll(".dayempty,#sugg").forEach(e=>e.remove());
   const all=box.querySelectorAll(".msg");const last=all.length?all[all.length-1]:null;
   const lm=last&&state.msgIndex[last.dataset.id];
@@ -1110,6 +1122,37 @@ function appendMsg(m,force){
   box.insertAdjacentHTML("beforeend",bubbleHTML(m));
   scrollDown(!!force);renderMemBar();renderStoryBar();
 }
+let lazyLoading=false;
+$("msgs").addEventListener("scroll",async()=>{
+  if(lazyLoading||!state.lazy||state.lazy.convId!==state.convId)return;
+  const box=$("msgs");
+  if(box.scrollTop>90||state.lazy.shown>=state.lazy.total)return;
+  lazyLoading=true;
+  try{
+    const L=state.lazy;
+    const end=L.total-L.shown;
+    const start=Math.max(0,end-20);
+    const older=L.ms.slice(start,end);
+    if(!older.length){lazyLoading=false;return}
+    const oldH=box.scrollHeight,oldT=box.scrollTop;
+    let html="",lastDay=start>0?new Date(L.ms[start-1].ts).toDateString():null;
+    for(const m of older){
+      const day=new Date(m.ts).toDateString();
+      if(day!==lastDay){html+=`<div class="daysep">${fmtDayFull(m.ts)}</div>`;lastDay=day}
+      html+=bubbleHTML(m);
+    }
+    const rc=box.querySelector(".recapcard");
+    box.insertAdjacentHTML("afterbegin",html);
+    if(rc)box.insertBefore(rc,box.firstChild);
+    let seenDay=null;
+    for(const k of [...box.children]){
+      if(k.classList.contains("daysep")){if(k.textContent===seenDay)k.remove();else seenDay=k.textContent}
+    }
+    L.shown+=older.length;
+    box.scrollTop=oldT+(box.scrollHeight-oldH);
+  }catch(e){}
+  lazyLoading=false;
+});
 function setTyping(on,txt){
   const box=$("msgs");const old=$("typingRow");if(old)old.remove();
   if(on){box.insertAdjacentHTML("beforeend",`<div class="typing" id="typingRow">${esc(txt||"عنان بيكتب…")}</div>`);scrollDown()}
@@ -1135,7 +1178,7 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 - الذاكرة: هتستلم أحيانًا حقائق محفوظة عن المستخدم من محادثات قديمة. استخدمها بشكل طبيعي، ومتعرضهاش كلها، ومتقولش "حسب ذاكرتي" بشكل آلي. لو الحقائق قديمة أو متعارضة مع كلامه الحالي، صدّق كلامه الحالي.`;
 const SELFHARM_RE=/(انتحار|انتحر|اقتل نفسي|أقتل نفسي|اموت نفسي|أموت نفسي|عايز اموت|عايش عبث|مش عايز اعيش|مش عايز أعيش|نهايه حياتي|نهاية حياتي|اعدي حياتي|ajeeb|ايذاء النفس|إيذاء النفس|باذي نفسي|بأذي نفسي)/;
 /* ================= Gemini API ================= */
-let REQ_TIMEOUT=60000;
+let REQ_TIMEOUT=90000;
 let RECALL_MIN_MS=1800;
 function withTimeout(sig,ms){
   const c=new AbortController();let timedOut=false;
@@ -1313,27 +1356,86 @@ async function buildChatParts(conv,ms,userText,recall){
     sysFull+="\n\nتنبيه: رسالة المستخدم الأخيرة فيها إشارة محتملة لأفكار انتحارية أو إيذاء نفس. طبّق قاعدة الاستثناء الوحيد فورًا.";
   }
   const parts=[];
-  sysFull+="\n\nاقتباس الرسايل: كل رسالة في السياق مرقمة [رقم]. تقدر ترد على رسالة أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم الرسالة. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم. مهم جدًا: أرقام الرسايل دي للاستخدام الداخلي بتاعك بس، ممنوع تكتب رقم أي رسالة في ردك بأي شكل: لا [٤] ولا [[٤]] ولا (٤) ولا «رسالة رقم»، ولو مش بتستخدم الرمز متكتبش أرقام مرجعية خالص.";
+  sysFull+="\n\nاقتباس الرسايل: كل تبادل في السياق مرقم [رقم]: رسالة المستخدم وردك اللي وراها ليهم نفس الرقم. تقدر ترد على تبادل أقدم بالاقتباس (زي واتساب): ابدأ ردك بالرمز [[q:N]] حيث N رقم التبادل. الرمز مش بيتعرض للمستخدم، بيتحول لاقتباس فوق ردك. استخدمه بس لما ردك موجه لرسالة محددة مش آخر واحدة، ومتشرحش الرمز ده للمستخدم. مهم جدًا: أرقام الرسايل دي للاستخدام الداخلي بتاعك بس، ممنوع تكتب رقم أي رسالة في ردك بأي شكل: لا [٤] ولا [[٤]] ولا (٤) ولا «رسالة رقم»، ولو مش بتستخدم الرمز متكتبش أرقام مرجعية خالص.";
   sysFull+="\n\nاستمارات الاختيارات: لو محتاج من المستخدم يختار من اختيارات محددة، ضمّن استمارة في ردك بالشكل ده بالظبط:\n[[form]]\nسؤالك هنا؟\n- اختيار أول\n- اختيار تاني\n[[/form]]\nولو الاختيار لازم يبقى واحد بس استخدم [[form:single]] بنفس الشكل. الاستمارة بتترسم ككارت أزرار تفاعلي: المستخدم بيحدد ويدوس تأكيد وإرسال، وإجابته بتوصلك كرسالة عادية فيها اختياره. استخدمها لما الاختيارات تسهّل عليه الرد، ومتعيدش كتابة الاختيارات كنص عادي بره الاستمارة. الاستمارة فيها خانة ملحوظات حرة بتوصلك مع اختياراته، فمتطلبش منه يكتب تفاصيل زيادة بره الاستمارة. افتراضيًا المستخدم يقدر يختار أكتر من إجابة لنفس السؤال، فماتستخدمش single إلا لو السؤال فعلًا ميستحملش غير اختيار واحد.";
   const tail=ms.slice(-KEEP_TAIL);
   state.ctxMsgs=state.ctxMsgs||{};state.ctxMsgs[conv.id]=tail;
+  const _units={};let _un=0;
   let imgCount=0;
   for(let i=0;i<tail.length;i++){
     const m=tail[i];
     let txt=m.text||" ";
+    if(m.role==="user"){_un++;_units[_un]=m}
+    else if(!_units[_un])_units[_un]=m;
     if(m.rquote){
       const qwho=m.rquote.r==="user"?"المستخدم":"عنان";
       const actor=m.role==="user"?"المستخدم":"عنان";
       txt=`[${actor} بيرد بالاقتباس على رسالة ${qwho}: "${m.rquote.t}"]\n`+txt;
     }
-    const pp=[{text:"["+(i+1)+"] "+txt}];
+    const _lbl=_un===0?"":("["+_un+(m.role==="user"?"] ":" رد] "));
+    const pp=[{text:_lbl+txt}];
     if(m.img&&imgCount<3&&i>=tail.length-6){
       pp.push({inline_data:{mime_type:m.imgMime||"image/jpeg",data:m.img.split(",")[1]}});
       imgCount++;
     }
     parts.push({role:m.role==="user"?"user":"model",parts:pp});
   }
+  state.ctxUnits=state.ctxUnits||{};state.ctxUnits[conv.id]=_units;
   return {parts:parts,sys:sysFull};
+}
+/* ================= v25: فلتر الحروف غير العربية (item16) ================= */
+const NONAR_RE=/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uac00-\ud7af\u1100-\u11ff\u0400-\u04ff\u0370-\u03ff\u0e00-\u0e7f\u0900-\u097f]/;
+const EN_WORD_RE=/[A-Za-z][A-Za-z'\u2019-]{2,}/g;
+const EN_OK=new Set(["ok","okay","api","json","html","css","js","pdf","app","email","e-mail","gmail","whatsapp","google","youtube","ai","link","wifi","gps","sms","usb","pc","tv","id","pin","bug","chat","bot","web","net","file","files","post","story","online","offline","update","login","logout","iphone","android","windows","mac","linux","mp3","mp4","vpn","sim","url","ui","ux","cv","hr","pr","no","vip","pubg","emoji"]);
+function replyDirty(t){
+  if(NONAR_RE.test(t))return true;
+  const w=(t.match(EN_WORD_RE)||[]).filter(x=>!EN_OK.has(x.toLowerCase().replace(/['\u2019]/g,"")));
+  return w.length>=3;
+}
+async function sanitizeReply(t,sysText){
+  if(!t||!replyDirty(t))return t;
+  try{
+    const fix=await gemini([{role:"user",parts:[{text:"الرد تحت طلع فيه حروف أو كلمات مش عربية مصرية (حروف أجنبية أو إنجليزي شارد). اكتب نفس الرد بالظبط عربي مصري خالص ١٠٠٪ من غير أي حرف أجنبي (إلا اسم تقني معروف لازمه السياق)، ومن غير ما تضيف أو تشيل أي معنى:\n\n"+t}]}],false,null,sysText);
+    const ft=fix.text&&fix.text.trim();
+    if(ft&&!replyDirty(ft))return ft;
+    if(ft&&!NONAR_RE.test(ft)&&ft.length>t.length*0.5)return ft;
+  }catch(e){}
+  return t.replace(new RegExp(NONAR_RE.source,"g"),"");
+}
+/* ================= v25: نسخة احتياطية تلقائية (item22) ================= */
+async function checkAutoBackup(){
+  try{
+    if(!prefs.autoBackup||!(prefs.gmailAddr||"").trim())return;
+    const freq=prefs.autoBackupFreq==="week"?7*864e5:864e5;
+    if(Date.now()-(prefs.lastAutoBackup||0)<freq)return;
+    const tok=await gmailGetToken(false).catch(()=>null);
+    if(!tok)return;
+    await gmailSendBackup();
+    prefs.lastAutoBackup=Date.now();await savePrefs();
+    toast("☁️ نسخة احتياطية تلقائية اتبعتت لإيميلك ✓");
+  }catch(e){}
+}
+/* ================= v25: عنان يفتتح الكلام (item24) ================= */
+async function maybeCallbackOpener(conv){
+  try{
+    if(prefs.callbacks===false)return;
+    if(!state.facts||!state.facts.length)return;
+    if(Date.now()-(prefs.lastCallback||0)<12*3600*1000)return;
+    if(Math.random()<0.4)return;
+    await new Promise(r=>setTimeout(r,1200));
+    if(state.convId!==conv.id||state.busy)return;
+    const ms=await msgsOf(conv.id);if(ms.length)return;
+    if(($("input").value||"").trim())return;
+    const facts=state.facts.slice(-12).map(f=>"- "+f.text).join("\n");
+    const {text}=await gemini([{role:"user",parts:[{text:"المستخدم فتح محادثة جديدة فاضية. افتتح الكلام بجملة أو اتنين قصار وودودين بالعامية المصرية، بتشير بشكل طبيعي لأجدد حاجة تستاهل متابعة من الحقائق دي اللي هو قالها قبل كده (متعرضهاش كلها). من غير أرقام ولا تنسيق ولا رموز:\n"+facts}]}],false,null,personaBlock(conv));
+    const t=(text||"").trim();
+    if(!t||state.convId!==conv.id)return;
+    const ms2=await msgsOf(conv.id);if(ms2.length)return;
+    prefs.lastCallback=Date.now();await savePrefs();
+    const am={id:uid(),convId:conv.id,role:"model",text:t,ts:Date.now()};
+    await putItem("msgs",am);appendMsg(am);
+    conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=t.slice(0,60);await putItem("convs",conv);renderConvList();
+  }catch(e){}
 }
 /* ================= memory extraction ================= */
 async function extractMemory(conv,exchange){
@@ -1428,10 +1530,20 @@ async function maybeSummarize(conv,ms){
   try{
     const {text}=await gemini([{role:"user",parts:[{text:summaryPrompt(conv,chunk)}]}]);
     if(text){
-      conv.summary=text;conv.summarizedCount=done+chunk.length;
+      conv.summary=text;conv.summarizedCount=done+chunk.length;conv._sumFail=0;
       await putItem("convs",conv);
     }
-  }catch(e){}
+  }catch(e){
+    conv._sumFail=(conv._sumFail||0)+1;
+    if(conv._sumFail<3){
+      setTimeout(async()=>{
+        try{
+          const ms2=await msgsOf(conv.id);ms2.sort((a,b)=>a.ts-b.ts);
+          await maybeSummarize(conv,ms2);
+        }catch(_){}
+      },8000);
+    }
+  }
 }
 async function forceSummary(conv){
   const ms=await msgsOf(conv.id);ms.sort((a,b)=>a.ts-b.ts);
@@ -1443,10 +1555,11 @@ async function forceSummary(conv){
   return false;
 }
 /* ================= conversations ================= */
-async function newConv(){
+async function newConv(opts){
   const c={id:uid(),title:"محادثة جديدة",titled:false,created:Date.now(),updated:Date.now(),summary:"",summarizedCount:0,ws:state.ws||"main"};
   state.convs.push(c);await putItem("convs",c);
   await openConv(c.id);renderConvList();
+  if(!(opts&&opts.noCallback))maybeCallbackOpener(c);
 }
 function savePlace(){
   const c=state.convs.find(x=>x.id===state.convId);if(!c)return;
@@ -1459,7 +1572,14 @@ async function openConv(id){
   state.convId=id;await kvSet("lastConv",id);
   const ms=await msgsOf(id);ms.sort((a,b)=>a.ts-b.ts);
   const conv=state.convs.find(c=>c.id===id);
-  renderMsgs(ms,conv&&typeof conv.scroll==="number"?conv.scroll:null);
+  state.lazy=null;
+  if(ms.length>60){
+    state.lazy={convId:id,ms:ms,shown:40,total:ms.length,units:ms.filter(m=>m.role==="user").length};
+    renderMsgs(ms.slice(-40),conv&&typeof conv.scroll==="number"?conv.scroll:null);
+  }else renderMsgs(ms,conv&&typeof conv.scroll==="number"?conv.scroll:null);
+  if(conv&&ms.length-(conv.summarizedCount||0)>=Math.max(6,Math.min(40,prefs.sumEvery||12))){
+    maybeSummarize(conv,ms).then(()=>renderMemBar()).catch(()=>{});
+  }
   maybeRecap(conv);
   closeSearch();pinIdx=0;renderPinBar();cancelReply();
   if(conv&&conv.draft){$("input").value=conv.draft;autoGrow()}else{$("input").value="";autoGrow()}
@@ -1500,15 +1620,19 @@ function cancelEditMode(){
 $("cancelEdit").onclick=cancelEditMode;
 async function deleteMsg(m){
   closeSheet();
-  if(!await confirm2("تمسح الرسالة دي نهائيًا؟"))return;
-  await delItem("msgs",m.id);
-  delete state.msgIndex[m.id];
-  const el=document.querySelector(`.msg[data-id="${m.id}"]`);
-  if(el)el.remove();
+  if(!await confirm2("المسح بيشيل الرسالة دي وكل الرسايل اللي تحتها في المحادثة. نكمل؟"))return;
+  const all=(await msgsOf(m.convId)).sort((a,b)=>a.ts-b.ts);
+  const ix=all.findIndex(x=>x.id===m.id);
+  const doomed=ix>=0?all.slice(ix):[m];
+  for(const d of doomed){await delItem("msgs",d.id);delete state.msgIndex[d.id]}
+  const box=$("msgs");
+  for(const d of doomed){const el=box.querySelector(`.msg[data-id="${d.id}"]`);if(el)el.remove()}
+  if(state.lazy&&state.lazy.convId===m.convId){state.lazy.ms=state.lazy.ms.filter(x=>!doomed.some(d=>d.id===x.id));state.lazy.total=state.lazy.ms.length;state.lazy.units=state.lazy.ms.filter(x=>x.role==="user").length;state.lazy.shown=Math.min(state.lazy.shown,state.lazy.total)}
   const _dc=state.convs.find(c=>c.id===m.convId);
-  if(_dc&&_dc.pins&&_dc.pins.includes(m.id)){_dc.pins=_dc.pins.filter(x=>x!==m.id);await putItem("convs",_dc);if(_dc.id===state.convId)renderPinBar()}
+  if(_dc&&_dc.pins&&_dc.pins.length){const np=_dc.pins.filter(x=>!doomed.some(d=>d.id===x));if(np.length!==_dc.pins.length){_dc.pins=np;if(_dc.id===state.convId)renderPinBar()}}
+  if(_dc){const rem=(await msgsOf(_dc.id)).sort((a,b)=>a.ts-b.ts);_dc.lastTxt=rem.length?(rem[rem.length-1].text||"").slice(0,60):"";await putItem("convs",_dc);renderConvList()}
   refreshRegenChip();renderMemBar();
-  toast("اتمسحت");
+  toast(doomed.length>1?("اتمسحت "+doomed.length+" رسايل"):"اتمسحت");
 }
 $("msCopy").onclick=()=>{if(sheetMsg)copyText(sheetMsg.text);closeSheet()};
 $("msReply").onclick=()=>{const m=sheetMsg;closeSheet();if(m)setReply(m)};
@@ -1710,22 +1834,31 @@ function refreshRegenChip(){
   const last=rows[rows.length-1];
   const m=state.msgIndex[last.dataset.id];
   if(m&&m.role==="model"&&!m.err&&!state.busy){
-    last.insertAdjacentHTML("afterend",`<div class="regenrow"><button class="regenchip" id="regenChip">↺ إعادة توليد الرد</button></div>`);
+    last.insertAdjacentHTML("afterend",`<div class="regenrow">${m.incomplete?'<button class="regenchip" id="contChip">▶ كمّل الرد</button>':""}<button class="regenchip" id="regenChip">↺ إعادة توليد الرد</button></div>`);
     $("regenChip").onclick=()=>regenerate(m);
+    const cc=$("contChip");
+    if(cc)cc.onclick=()=>{$("input").value="كمّل من حيث وقفت بالظبط: أكمل آخر جملة لو اتقطعت وكمّل الفكرة لآخرها، من غير ما تعيد أي جزء من اللي فات.";autoGrow();send()};
   }
 }
 /* ================= v16.2: عداد الرسايل + تنبيه ضغط الذاكرة ================= */
+function visibleCounts(){
+  if(state.lazy&&state.lazy.convId===state.convId)return{total:state.lazy.total,mine:state.lazy.units};
+  const els=document.querySelectorAll("#msgs .msg");let mine=0;
+  els.forEach(e=>{const m=state.msgIndex[e.dataset.id];if(m&&m.role==="user")mine++});
+  return{total:els.length,mine};
+}
 async function renderMemBar(){
   const conv=state.convs.find(c=>c.id===state.convId);
-  const total=document.querySelectorAll("#msgs .msg").length;
+  const _vc=visibleCounts();const total=_vc.total;const mine=_vc.mine;
   let fillTxt="";
-  if(state.lastCtx&&state.lastCtx.model===state.model){
+  const _lc=(state.lastCtx&&state.lastCtx.model===state.model&&conv&&state.lastCtx.convId===conv.id)?state.lastCtx:(conv&&conv.ctxChars?{chars:conv.ctxChars,model:conv.ctxModel}:null);
+  if(_lc&&_lc.model===state.model){
     const ctxLim=(MODELS.find(m=>m.id===state.model)||{}).ctx||1048576;
-    const est=Math.ceil(state.lastCtx.chars/2.5);
+    const est=Math.ceil(_lc.chars/2.5);
     const pct=Math.min(999,Math.round(est/ctxLim*100));
     if(isFinite(pct)){fillTxt=" · 🧠 "+arNum(pct)+"%";state.lastCtxPct=pct}
   }
-  $("countTxt").textContent=(total?(arNum(total)+" رسالة"):"لسه مفيش رسايل")+fillTxt;
+  $("countTxt").textContent=(total?(arNum(mine)+" رسالة"):"لسه مفيش رسايل")+fillTxt;
   const w=$("memWarn");
   if(!conv||!total){w.classList.remove("open");return}
   const every=Math.max(6,Math.min(40,prefs.sumEvery||12));
@@ -1752,7 +1885,7 @@ async function renderMemBar(){
 }
 $("mwHide").onclick=async()=>{
   const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
-  conv.memWarnHide=document.querySelectorAll("#msgs .msg").length-(conv.summarizedCount||0);
+  conv.memWarnHide=visibleCounts().total-(conv.summarizedCount||0);
   if((state.lastCtxPct||0)>=70)conv.handHide=true;
   await putItem("convs",conv);
   $("memWarn").classList.remove("open");
@@ -1881,6 +2014,18 @@ function autoGrow(){const ta=$("input");ta.style.height="auto";ta.style.height=M
 function syncChipRow_once(){};function syncChipRow(){$("chipRow").style.display=prefs.hideChips?"none":"flex";$("chipsState").textContent=prefs.hideChips?"مخفية":"شغالة";$("jumpBtn").style.bottom=prefs.hideChips?"88px":"126px"}
 $("chipsToggle").onclick=async()=>{prefs.hideChips=!prefs.hideChips;await savePrefs();syncChipRow()};
 $("chipHide").onclick=async()=>{prefs.hideChips=true;await savePrefs();syncChipRow()};
+$("chipSumAll").onclick=async()=>{
+  if(state.busy){toast("استنى لما الرد يخلص الأول");return}
+  const conv=state.convs.find(c=>c.id===state.convId);if(!conv)return;
+  state.busy=true;showStop(true);
+  try{
+    toast("🧠 بنلخص المحادثة كلها…");
+    const ok=await forceSummary(conv);
+    toast(ok?"الملخص اتحدث ✓ تقدر تشوفه من منيو المحادثة":"مفيش رسايل جديدة تتلخص");
+    renderMemBar();
+  }catch(e){toast("التلخيص منجحش دلوقتي — جرب تاني")}
+  state.busy=false;showStop(false);
+};
 document.querySelectorAll(".cmdchip[data-cmd]").forEach(b=>b.onclick=async()=>{
   if(state.busy)return;
   let cmd=b.dataset.cmd,txt="";
@@ -2251,12 +2396,13 @@ $("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abo
 /* ================= preferences & appearance ================= */
 const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
   persona:{style:"sahib",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
-  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round",groups:[]};
+  nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round",groups:[],fontFam:"default",bannedWords:"",callbacks:true,autoBackup:false,autoBackupFreq:"day",lastAutoBackup:0,lastCallback:0};
 let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
 async function savePrefs(){await kvSet("prefs",prefs)}
 const THEMES={
   navy:{bg:"#232839",bg2:"#2b3148",card:"#313952",card2:"#39415c",text:"#e9ebf4",muted:"#9aa1b8",border:"#3d4560","bubble-ai":"#2d3349"},
   oled:{bg:"#0e0f13",bg2:"#15171d",card:"#1c1f27",card2:"#242834",text:"#e8eaf0",muted:"#8f95a6",border:"#2b303c","bubble-ai":"#181b22"},
+  black:{bg:"#000000",bg2:"#0a0a0c",card:"#121215",card2:"#1a1a1f",text:"#ececf1",muted:"#8b8b96",border:"#232329","bubble-ai":"#0f0f12"},
   forest:{bg:"#1f2a26",bg2:"#26332e",card:"#2e3f38",card2:"#374a42",text:"#e6efe9",muted:"#93a89d",border:"#3d5247","bubble-ai":"#2a3833"},
   violet:{bg:"#292637",bg2:"#322e44",card:"#3b3652",card2:"#453f60",text:"#eceaf6",muted:"#a49fc2",border:"#4b4668","bubble-ai":"#343049"},
   grey:{bg:"#26272c",bg2:"#2e2f36",card:"#373943",card2:"#414453",text:"#eceef3",muted:"#a2a6b3",border:"#474a58","bubble-ai":"#343642"},
@@ -2266,7 +2412,8 @@ const ACCENTS={gold:"#c9a86a",teal:"#7fd1c0",sky:"#7ea8e0",rose:"#d9909e",lilac:
 const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e",bronze:"#7a5f3a"};
 const AIBUBBLES={ash:"#3d4460",olive:"#4a5340",plum:"#54425e",cocoa:"#5c4a3d",steel:"#3d4f5c"};
 const SHAPES={round:{r:"14px",tail:"4px"},sharp:{r:"7px",tail:"2px"},flat:{r:"14px",tail:"14px"}};
-const FONTS={xs:"13.5px",s:"15px",m:"16.5px",l:"18.5px",xl:"20px",xxl:"21.5px",xxxl:"23px"};
+const FONTS={xs:"13.5px",s:"15px",m:"16.5px",l:"18.5px",xl:"20px",xxl:"21.5px",xxxl:"23px",xxxxl:"25px"};
+const FONTFAMS={default:'"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif',naskh:'"Noto Naskh Arabic","Amiri","Segoe UI",serif',kufi:'"Noto Kufi Arabic","Segoe UI",sans-serif',tahoma:'Tahoma,"Segoe UI",sans-serif'};
 function applyAppearance(){
   const r=document.documentElement.style;
   let t=prefs.theme;if(t==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"navy";
@@ -2279,6 +2426,7 @@ function applyAppearance(){
   const _sh=SHAPES[prefs.bubShape]||SHAPES.round;
   r.setProperty("--radius",_sh.r);r.setProperty("--bubtail",_sh.tail);
   r.setProperty("--msgfont",FONTS[prefs.font]||FONTS.m);
+  r.setProperty("--fontfam",FONTFAMS[prefs.fontFam]||FONTFAMS.default);
   const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
 }
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
@@ -2316,7 +2464,7 @@ function personaBlock(conv){
   s+="\n- القوائم: "+LIST_T[p.fmtL];
   s+="\n- تنسيق النص: "+TEXT_T[p.fmtT];
   s+="\n- الإيموجي: "+EMOJI_T[p.emoji];
-  s+="\nالقواعد دي ملزمة في كل رد مهما كان شكل السؤال، مش تفضيلات شكلية: أي رد بيخالفها يعتبر غلط حتى لو محتواه صح. لو السؤال نفسه بيوحي بتعداد أو هيكلة، جاوب بنفس المعلومات في صياغة طبيعية متصلة من غير ما تكسر القواعد دي.";
+  s+="\nالقواعد دي ملزمة في كل رد مهما كان شكل السؤال، مش تفضيلات شكلية: أي رد بيخالفها يعتبر غلط حتى لو محتواه صح. قيمها بيحددها المستخدم بإيده بس وهي ثابتة: ممنوع تتغير أو تتبدل لوحدها تحت أي ظرف، مهما كان جو المحادثة أو نوع الموضوع. لو السؤال نفسه بيوحي بتعداد أو هيكلة، جاوب بنفس المعلومات في صياغة طبيعية متصلة من غير ما تكسر القواعد دي.";
   if(conv&&conv.persona)s+="\n- ملاحظة: الإعدادات دي مخصوصة للمحادثة الحالية تحديدًا، وممكن تكون مختلفة عن باقي محادثات المستخدم.";
   if(p.style==="adaptive")s+="\n\nالوضع المتكيف مفعّل 🔄:\n- اقرأ سياق المحادثة وموضوعها في كل رسالة، واضبط طول ردك وعمقه وترتيبه حسب الموضوع من غير ما المستخدم يطلب: السؤال القصير ياخد رد على قده، والموضوع اللي يستاهل تفصيل ياخد وقته.\n- ممنوع منعًا باتًا تغيّر أو تتجاوز أي قيمة من تفضيلات الأسلوب المحددة فوق (الدفء، الحماس، مستوى الجدل، الإبداع، الإيموجي، العناوين، القوائم، تنسيق النص): دي ثوابت بيتحكم فيها المستخدم لوحده، بتتطبق بالظبط في كل رد مهما كان جو الكلام. التكيف بس في الطول والعمق والتنظيم، مش في الطباع ولا التنسيق.";
   const _char=CHAR_PERSONAS.find(x=>x.id===p.char);
@@ -2334,7 +2482,7 @@ function personaBlock(conv){
       if(_cs.era)s+="\n- الحقبة الزمنية (حددها المستخدم بنفسه — التزم بيها): "+_cs.era;
     }
   }
-  if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
+  if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد. ممنوع تتدخل بره الدور من عندك: لا كلام في الهامش، ولا تعليق على الأحداث، ولا ملاحظات مخرج، ولا أرقام رسايل أو أي إشارات مرجعية. الكلام بره الدور بيتم بس لما المستخدم يوقف المشهد بنفسه صراحة.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
   const _rpActive=!!_char||p.style==="roleplay";
   if(conv&&_rpActive){
     if(conv.rpPhase==="paused"){
@@ -2342,7 +2490,7 @@ function personaBlock(conv){
       s+="\n\nوقفة مؤقتة ⏸: المستخدم جمّد المشهد دلوقتي (اليوم "+sc.day+"، الساعة "+Math.floor(sc.mins/60)+":"+String(sc.mins%60).padStart(2,"0")+"). هو بيكلمك بره الدور تمامًا: ممنوع ترد بالشخصية أو تكمّل أي حدث في المشهد. اتكلم معاه كمخرج ومساعد: اسمع الملاحظة أو التصحيح، ناقشه، واقترح التعديل بوضوح، وأكّدله إن التصحيح هيتسجل وهيتطبق من لحظة الاستئناف. لما يقول «كمل» المشهد يرجع من نفس النقطة المجمدة بالظبط على النسخة المصححة.";
     }else if(conv.rpPhase==="live"){
       const sc=conv.storyClock||{day:1,mins:780,era:""};
-      s+="\n\nساعة القصة 🕰: المشهد شغال دلوقتي. الوقت القصصي الحالي: اليوم "+sc.day+"، الساعة "+Math.floor(sc.mins/60)+":"+String(sc.mins%60).padStart(2,"0")+(sc.era?("، الحقبة الزمنية: "+sc.era+" — المستخدم هو اللي حددها بنفسه، فالتزم بيها بدقة في كل تفاصيل المشهد (الملابس، التكنولوجيا، الأحداث، الأسعار) وممنوع تغيرها أو تخترع حقبة تانية."):("، الحقبة الزمنية: المستخدم لسه محددهاش — لو المشهد احتاجها اسأله عنها، وممنوع تخترعها من عندك."))+" الوقت القصصي بيتقدم مع تقدم الحوار، فخلي أحداث المشهد متسقة معاه.";
+      s+="\n\nساعة القصة 🕰: المشهد شغال دلوقتي. الوقت القصصي الحالي: اليوم "+sc.day+"، الساعة "+Math.floor(sc.mins/60)+":"+String(sc.mins%60).padStart(2,"0")+(sc.era?("، الحقبة الزمنية: "+sc.era+" — المستخدم هو اللي حددها بنفسه، فالتزم بيها بدقة في كل تفاصيل المشهد (الملابس، التكنولوجيا، الأحداث، الأسعار) وممنوع تغيرها أو تخترع حقبة تانية."):("، الحقبة الزمنية: المستخدم لسه محددهاش — لو المشهد احتاجها اسأله عنها، وممنوع تخترعها من عندك."))+" الوقت القصصي بيتقدم مع تقدم الحوار، فخلي أحداث المشهد متسقة معاه. وطالما المشهد شغال: ممنوع أي كلمة بره الدور — لا تعليق هامشي ولا أرقام ولا كلام ميتا — اللي يوقف المشهد هو المستخدم بس.";
       if(conv.sceneBrief)s+="\nسياق التجهيز المتفق عليه (إيه اللي الشخصية متجهزاله — عارفه كويس وجاهز تجاوب عليه لو المستخدم سأل):\n"+conv.sceneBrief;
       if(conv.storyFixes&&conv.storyFixes.length)s+="\nتصحيحات المستخدم أثناء وقفات سابقة (ملزمة للمشهد من هنا ورايح):\n"+conv.storyFixes.map(f=>"- "+f).join("\n");
     }else{
@@ -2350,6 +2498,10 @@ function personaBlock(conv){
     }
   }
   if(prefs.nsfw)s+="\n\nنمط +١٨ مفعّل: المستخدم بالغ (٢٧ سنة) وطلب صراحة أكبر. اتكلم بحرية في المواضيع الجريئة والحساسة: النكت الصريحة، الشتائم والألفاظ الجارحة لو السياق هزار أو غضب، المواضيع الجنسية والعلاقات بانفتاح وصراحة، والمواضيع السياسية والدينية المثيرة للجدل من غير تهرب. ممنوع التلقّب والمواعظ والتحذيرات الزائدة. في نفس الوقت: التزم بأي رفض بيصدر من النظام نفسه من غير محاولة التفاف عليه.";
+  if(prefs.bannedWords&&prefs.bannedWords.trim()){
+    const _bw=prefs.bannedWords.split(/[\n،,]+/).map(w=>w.trim()).filter(Boolean);
+    if(_bw.length)s+="\n\nكلمات ممنوع تستخدمها نهائيًا في أي رد (المستخدم بلّغ إنها غلط أو ملهاش معنى — ولو جات على بالك استبدلها بكلمة عربية صحيحة):\n"+_bw.map(w=>"- "+w).join("\n");
+  }
   if(prefs.instructions&&prefs.instructions.trim())s+="\n\nتعليمات دائمة من المستخدم (قواعد ملزمة منه شخصيًا، طبّقها في كل رد):\n"+prefs.instructions.trim();
   return s;
 }
@@ -2457,6 +2609,17 @@ function openConvMenu(btn,c){
         for(const k of KEYS)delete c.persona[k];
         await putItem("convs",c);fillPersona();renderConvList();
         toast("المحادثة دي رجعت تتبع إعداداتك العامة ✦")}}]:[]})(),
+    ...(rpConv(c)?[
+      {t:"🔖 حفظ نقطة رجوع",fn:async()=>{
+        const ms=await msgsOf(c.id);
+        const label=prompt("اسم النقطة دي (زي: قبل ما نسافر):","");
+        if(label===null)return;
+        c.savePts=c.savePts||[];
+        c.savePts.push({id:uid(),label:(label||"").trim().slice(0,40)||("نقطة "+(c.savePts.length+1)),msgCount:ms.length,ts:Date.now()});
+        await putItem("convs",c);toast("اتحفظت النقطة 🔖 تلاقيها في قايمة المحادثة")
+      }},
+      {t:"↩ رجوع لنقطة محفوظة",fn:()=>openSavePts(c)}
+    ]:[]),
     {t:"📝 ملخص المحادثة",fn:()=>showInfo(c.summary?("ملخص أحداث المحادثة لحد دلوقتي:\n\n"+c.summary):"لسه مفيش ملخص للمحادثة دي. بيتعمل تلقائيًا كل "+(prefs.sumEvery||12)+" رسالة، وتقدر تغيّر العدد من الإعدادات.")},
     {t:"📒 دفتر الأحداث",fn:()=>openLoops(c)},
     {t:"🚀 نقل لمحادثة مكملة",fn:()=>handoverConv(c)},
@@ -2483,6 +2646,30 @@ function openConvMenu(btn,c){
   qmenuEl.style.left=x+"px";qmenuEl.style.top=y+"px";
   setTimeout(()=>{document.addEventListener("pointerdown",function h(ev){if(qmenuEl&&!qmenuEl.contains(ev.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
   $("convList").addEventListener("scroll",closeQMenu,{once:true});
+}
+function openSavePts(c){
+  const pts=(c.savePts||[]).slice().reverse();
+  if(!pts.length){toast("مفيش نقاط محفوظة في المحادثة دي لسه");return}
+  closeQMenu();qmenuEl=document.createElement("div");qmenuEl.id="qmenu";
+  for(const p of pts){
+    const b=document.createElement("button");
+    b.textContent="🔖 "+(p.label||"نقطة")+" · "+fmtDay(p.ts)+" "+fmtTime(p.ts);
+    b.onclick=async()=>{closeQMenu();
+      if(!await confirm2("الرجوع لنقطة «"+(p.label||"نقطة")+"» هيشيل كل الرسايل اللي اتكتبت بعدها. نكمل؟"))return;
+      const ms=(await msgsOf(c.id)).sort((a,b)=>a.ts-b.ts);
+      const doomed=ms.slice(p.msgCount);
+      for(const d of doomed)await delItem("msgs",d.id);
+      if((c.summarizedCount||0)>p.msgCount)c.summarizedCount=p.msgCount;
+      await putItem("convs",c);
+      if(state.convId===c.id)openConv(c.id);
+      renderConvList();
+      toast("رجعنا لنقطة «"+(p.label||"نقطة")+"» ↩");
+    };
+    qmenuEl.appendChild(b);
+  }
+  document.body.appendChild(qmenuEl);qmenuEl.style.display="block";
+  qmenuEl.style.left="50%";qmenuEl.style.transform="translateX(-50%)";qmenuEl.style.bottom="80px";qmenuEl.style.top="auto";
+  setTimeout(()=>{document.addEventListener("pointerdown",function h(ev){if(qmenuEl&&!qmenuEl.contains(ev.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
 }
 function openQMenu(btn,m){
   closeQMenu();
@@ -2522,12 +2709,12 @@ async function runReply(conv,histMsgs,userText){
   const paint=force=>{
     if(!started){started=true;appendMsg(am);bubbleEl=document.querySelector(`.msg[data-id="${am.id}"] .bubble`)}
     const now=Date.now();
-    if(!force&&now-lastPaint<90){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},95);return}
+    if(!force&&now-lastPaint<250){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},255);return}
     lastPaint=now;
-    if(bubbleEl)bubbleEl.innerHTML=mdRender(am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"")
+    if(bubbleEl)bubbleEl.textContent=am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"")
       .replace(/^\s*\[\s*[0-9٠-٩]{1,3}\s*\]\s+/,"")
       .replace(/^\s*\[+\s*q\s*:?\s*[0-9٠-٩]*\s*\]*\s*/i,"")
-      .replace(/^\s*\[+$/,""));
+      .replace(/^\s*\[+$/,"");
     const b=$("msgs");
     if(b.scrollHeight-b.scrollTop-b.clientHeight>140){$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ آخر الرسايل";nearBottom=false}
   };
@@ -2550,39 +2737,52 @@ async function runReply(conv,histMsgs,userText){
     state.curTemp=CREAT_T[typeof _cv==="number"?_cv:2];
     const _built=await buildChatParts(conv,histMsgs,userText,recallText);
     const parts=_built.parts,sysText=_built.sys;
-    state.lastCtx={chars:(sysText||"").length+parts.reduce((a,p)=>a+(p.parts||[]).reduce((x,pp)=>x+(pp.text||"").length,0),0),model:state.model,ts:Date.now()};
+    state.lastCtx={chars:(sysText||"").length+parts.reduce((a,p)=>a+(p.parts||[]).reduce((x,pp)=>x+(pp.text||"").length,0),0),model:state.model,ts:Date.now(),convId:conv.id};
+    conv.ctxChars=state.lastCtx.chars;conv.ctxModel=state.model;
     let finish=null;
-    try{
-      finish=await geminiStream(parts,abortCtl.signal,chunk=>{
-        if(!am.text)setTyping(false);
-        am.text+=chunk;paint(false);
-      },sysText);
-    }catch(se){
-      if(se.aborted)throw se;
-      if(am.text||se.timeout)throw se;
-      const r=await gemini(parts,false,abortCtl.signal,sysText);
-      setTyping(false);
-      am.text=r.text&&r.text.trim()?r.text.trim():"";finish=r.finish;
+    let _retried=false;
+    while(true){
+      try{
+        finish=await geminiStream(parts,abortCtl.signal,chunk=>{
+          if(!am.text)setTyping(false);
+          am.text+=chunk;paint(false);
+        },sysText);
+        break;
+      }catch(se){
+        if(se.aborted)throw se;
+        if(am.text||se.timeout)throw se;
+        if(!_retried&&!se.status){
+          _retried=true;
+          toast("الشبكة لخبطت — بنحاول تاني تلقائيًا…");
+          await new Promise(r=>setTimeout(r,1800));
+          continue;
+        }
+        const r=await gemini(parts,false,abortCtl.signal,sysText);
+        setTyping(false);
+        am.text=r.text&&r.text.trim()?r.text.trim():"";finish=r.finish;
+        break;
+      }
     }
     setTyping(false);
     if(!am.text.trim()){
       am.text=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
     }
     am.text=am.text.trim();
+    if(finish==="MAX_TOKENS")am.incomplete=true;
+    am.text=await sanitizeReply(am.text,sysText);
     let _qm=am.text.match(/^\s*\[+\s*q\s*:\s*([0-9٠-٩]+)\s*\]*\s*/i);
     if(!_qm){
       /* اقتباس مشوّه: رقم رسالة بين قوسين واحد بس، زي [٤] — بنفس معنى [[q:N]] */
       const _bare=am.text.match(/^\s*\[\s*([0-9٠-٩]{1,3})\s*\]\s+/);
       if(_bare){
         const _bn=parseInt(_bare[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
-        const _blen=((state.ctxMsgs||{})[conv.id]||[]).length;
+        const _blen=Object.keys((state.ctxUnits||{})[conv.id]||{}).length;
         if(_bn>=1&&_bn<=_blen)_qm=_bare;
       }
     }
     if(_qm){
       const _qn=parseInt(_qm[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
-      const _ctx=(state.ctxMsgs||{})[conv.id]||[];
-      const _orig=_qn>=1&&_qn<=_ctx.length?_ctx[_qn-1]:null;
+      const _orig=((state.ctxUnits||{})[conv.id]||{})[_qn]||null;
       am.text=am.text.slice(_qm[0].length).replace(/^\s+/,"");
       if(_orig&&_orig.id!==am.id){am.rid=_orig.id;am.rquote={r:_orig.role,t:(_orig.text||"").slice(0,90)}}
     }
@@ -2603,9 +2803,16 @@ async function runReply(conv,histMsgs,userText){
     return am;
   }catch(e){
     setTyping(false);
+    if(e.timeout&&am.text&&am.text.trim()){
+      am.text=am.text.trim();am.incomplete=true;
+      await putItem("msgs",am);finalRow();
+      conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
+      toast("الرد وقف في النص — دوس «▶ كمّل الرد» تحته");
+      return am;
+    }
     if(e.aborted){
       if(am.text&&am.text.trim()){
-        am.text=am.text.trim();await putItem("msgs",am);finalRow();
+        am.text=am.text.trim();am.incomplete=true;await putItem("msgs",am);finalRow();
         conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
       }else cleanupPartial();
       toast("اتوقف الرد");
@@ -3093,10 +3300,11 @@ function fillSettings(){
   $("waSetStatus").value=prefs.waStatus===undefined?"متصل الآن":prefs.waStatus;
   buildSeg("segWaTicks",[["1","شغالة"],["0","مخفية"]],prefs.waTicks===false?"0":"1",v=>{prefs.waTicks=v==="1";savePrefs()});
   buildSeg("segWaWall",[["1","شغالة"],["0","مخفية"]],prefs.waWall===false?"0":"1",v=>{prefs.waWall=v==="1";savePrefs()});
-  buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["oled","أسود"],["forest","زيتي"],["violet","بنفسجي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
-  buildSeg("segFont",[["xs","أ"],["s","أ"],["m","أ"],["l","أ"],["xl","أ"],["xxl","أ"],["xxxl","أ"]],FONTS[prefs.font]?prefs.font:"m",v=>{prefs.font=v;savePrefs();applyAppearance()});
-  {const _fg={xs:11,s:13,m:15,l:17,xl:19,xxl:21,xxxl:23},_ft={xs:"صغير جدًا",s:"صغير",m:"وسط",l:"كبير",xl:"كبير جدًا",xxl:"ضخم",xxxl:"الأكبر"};
+  buildSeg("segTheme",[["system","النظام"],["navy","كحلي"],["oled","أسود"],["black","أسود خالص"],["forest","زيتي"],["violet","بنفسجي"],["grey","رمادي"],["light","فاتح"]],prefs.theme,v=>{prefs.theme=v;savePrefs();applyAppearance()});
+  buildSeg("segFont",[["xs","أ"],["s","أ"],["m","أ"],["l","أ"],["xl","أ"],["xxl","أ"],["xxxl","أ"],["xxxxl","أ"]],FONTS[prefs.font]?prefs.font:"m",v=>{prefs.font=v;savePrefs();applyAppearance()});
+  {const _fg={xs:11,s:13,m:15,l:17,xl:19,xxl:21,xxxl:23,xxxxl:25},_ft={xs:"صغير جدًا",s:"صغير",m:"وسط",l:"كبير",xl:"كبير جدًا",xxl:"ضخم",xxxl:"الأكبر",xxxxl:"الأضخم"};
   $("segFont").querySelectorAll("button").forEach(b=>{b.style.fontSize=_fg[b.dataset.v]+"px";b.title=_ft[b.dataset.v]})}
+  buildSeg("segFontFam",[["default","الافتراضي"],["naskh","نسخ"],["kufi","كوفي"],["tahoma","تاهوما"]],FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",v=>{prefs.fontFam=v;savePrefs();applyAppearance()});
   const mp=$("modelPick");mp.innerHTML="";
   for(const m of MODELS){const o=document.createElement("option");o.value=m.id;o.textContent=m.name+" — "+m.desc;if(m.id===state.model)o.selected=true;mp.appendChild(o)}
   mp.onchange=()=>{prefs.model=mp.value;savePrefs();state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+mp.value+" ✦")};
@@ -3126,6 +3334,23 @@ function fillSettings(){
   buildSeg("segBubShape",[["round","مدوّر"],["sharp","حاد"],["flat","بسيط"]],prefs.bubShape||"round",v=>{prefs.bubShape=v;savePrefs();applyAppearance()});
   const tg=$("tglSugg");tg.classList.toggle("on",!!prefs.suggestions);
   tg.onclick=()=>{prefs.suggestions=!prefs.suggestions;tg.classList.toggle("on",prefs.suggestions);savePrefs()};
+  const tcb=$("tglCallbacks");tcb.classList.toggle("on",prefs.callbacks!==false);
+  tcb.onclick=()=>{prefs.callbacks=!(prefs.callbacks!==false);tcb.classList.toggle("on",prefs.callbacks);savePrefs();toast(prefs.callbacks?"عنان هيفتتح الكلام أحيانًا 🙋":"اتقفلت — عنان مش هيفتتح الكلام")};
+  $("bannedBox").value=prefs.bannedWords||"";
+  if(prefs.gmailAddr){
+    if(gmailTok&&Date.now()<gmailTokExp)$("gmailState").textContent="متصل ✓";
+    else{$("gmailState").textContent="بيحاول يتصل…";gmailGetToken(false).then(()=>{$("gmailState").textContent="متصل ✓"}).catch(()=>{$("gmailState").textContent="محتاج تأكيد — دوس ربط الجيميل"})}
+  }
+  const tab=$("tglAutoBackup");tab.classList.toggle("on",!!prefs.autoBackup);
+  $("autoBackupFreqRow").style.display=prefs.autoBackup?"":"none";
+  tab.onclick=()=>{
+    if(!prefs.autoBackup&&!(prefs.gmailAddr||"").trim()){toast("اكتب إيميل الجيميل الأول فوق");return}
+    prefs.autoBackup=!prefs.autoBackup;tab.classList.toggle("on",prefs.autoBackup);
+    $("autoBackupFreqRow").style.display=prefs.autoBackup?"":"none";
+    savePrefs();
+    if(prefs.autoBackup){toast("النسخة التلقائية شغالة ☁️ — أول نسخة هتتبعت قريب");setTimeout(checkAutoBackup,4000)}
+  };
+  buildSeg("segBackupFreq",[["day","يوم"],["week","أسبوع"]],prefs.autoBackupFreq||"day",v=>{prefs.autoBackupFreq=v;savePrefs()});
   const trc=$("tglRecall");trc.classList.toggle("on",prefs.recall!==false);
   trc.onclick=()=>{prefs.recall=!(prefs.recall!==false);trc.classList.toggle("on",prefs.recall);savePrefs()};
   const tri=$("tglRpInterview");tri.classList.toggle("on",prefs.rpInterview!==false);
@@ -3406,7 +3631,7 @@ function closeCharSet(){$("charSetModal").classList.add("hidden");navClose("char
 async function enterCharConv(pr,setup){
   let conv=state.convs.find(c=>c.id===state.convId);
   const hasMsgs=conv?(await msgsOf(conv.id)).length>0:false;
-  if(!conv||hasMsgs){await newConv();conv=state.convs.find(c=>c.id===state.convId)}
+  if(!conv||hasMsgs){await newConv({noCallback:true});conv=state.convs.find(c=>c.id===state.convId)}
   conv.persona=conv.persona||{};
   for(const k of Object.keys(pr.vals||{}))conv.persona[k]=pr.vals[k];
   conv.persona.char=pr.id;
@@ -3415,6 +3640,20 @@ async function enterCharConv(pr,setup){
   conv.title=pr.name+(_setupName?" — "+_setupName:"");
   conv.titled=true;
   await putItem("convs",conv);
+  if(setup){
+    const _lines=[];
+    if(setup.name)_lines.push("الاسم: "+setup.name);
+    if(setup.age)_lines.push("السن: "+setup.age);
+    if(setup.traits&&setup.traits.length)_lines.push("الصفات: "+setup.traits.join("، "));
+    if(setup.desc)_lines.push("الوصف والطباع: "+setup.desc);
+    if(setup.rel)_lines.push("العلاقة/الخلفية: "+setup.rel);
+    if(setup.era)_lines.push("الحقبة الزمنية: "+setup.era);
+    if(_lines.length){
+      const _sm={id:uid(),convId:conv.id,role:"user",text:"📋 تفاصيل الشخصية اللي سجلتها:\n"+_lines.join("\n"),ts:Date.now()};
+      await putItem("msgs",_sm);
+      conv.lastTxt=_sm.text.slice(0,60);conv.lastTs=_sm.ts;await putItem("convs",conv);
+    }
+  }
   if(state._gSnap){prefs.persona=state._gSnap;state._gSnap=null}
   let _purged=false;
   const _isRp=c=>{if(!c)return false;if(c==="custom")return true;const x=CHAR_PERSONAS.find(y=>y.id===c);return !!(x&&x.interview)};
@@ -3623,7 +3862,8 @@ function prependRecap(conv,openL){
   const box=$("msgs");if(!box)return;
   const old=box.querySelector(".recapcard");if(old)old.remove();
   const d=document.createElement("div");d.className="recapcard";
-  let h='<b>🧠 فاكر؟</b><button class="recapx" aria-label="إخفاء">✕</button>';
+  const _rpC=rpConv(conv);
+  let h='<b>'+(_rpC?'🎬 في الحلقة اللي فاتت':'🧠 فاكر؟')+'</b><button class="recapx" aria-label="إخفاء">✕</button>';
   if(conv.summary)h+='<div class="recapsec">آخر الأحداث: '+esc(conv.summary.split("\n").slice(-3).join(" ").slice(0,220))+"</div>";
   if(openL&&openL.length)h+='<div class="recapsec">حاجات لسه مفتوحة:<br>'+openL.slice(0,3).map(l=>"• "+esc(l.text)).join("<br>")+(openL.length>3?"<br>• وغيرهم…":"")+"</div>";
   d.innerHTML=h;
@@ -3665,6 +3905,7 @@ function renderChips(){
   const mk=(id,label)=>{const b=document.createElement("button");b.className="dchip"+(drawerMode===id?" on":"");b.textContent=label;
     b.onclick=()=>{drawerMode=id;renderChips();renderConvList()};el.appendChild(b)};
   mk("all","الكل");
+  mk("rp","🎭 لعب الأدوار");
   const plus=document.createElement("button");plus.className="dchip";plus.textContent="+ مجموعة";
   plus.onclick=()=>openGrpModal(null);el.appendChild(plus);
   for(const g of (prefs.groups||[]))mk("grp:"+g,"📁 "+g);
@@ -3717,6 +3958,7 @@ $("openMem").onclick=()=>{renderMemPage();openPage("memPage")};
 $("openUsage").onclick=()=>{renderUsage();openPage("usagePage")};
 $("nameInput").addEventListener("change",()=>{prefs.name=$("nameInput").value.trim();savePrefs();toast("اتحفظ ✦")});
 $("saveInstr").onclick=()=>{prefs.instructions=$("instrBox").value.trim();savePrefs();toast("التعليمات اتحفظت ✦")};
+$("saveBanned").onclick=()=>{prefs.bannedWords=$("bannedBox").value.trim();savePrefs();toast("قايمة الممنوعات اتحفظت ✦")};
 $("showNewKey").onclick=()=>{const i=$("newKeyInput");i.type=i.type==="password"?"text":"password"};
 $("saveNewKey").onclick=async()=>{
   const k=$("newKeyInput").value.trim();const ke=$("newKeyError");
@@ -3838,6 +4080,12 @@ $("saveKeyBtn").onclick=async()=>{
   // cold start: always open on a fresh chat screen (not the last open conversation)
   state.convId=null;renderMsgs([]);
   renderConvList();refreshSettings();syncWaMode();
+  /* v25 item18: ربط صامت للجيميل عند فتح التطبيق */
+  if((prefs.gmailAddr||"").trim()){
+    setTimeout(()=>{gmailGetToken(false).then(()=>{const gs=$("gmailState");if(gs)gs.textContent="متصل ✓"}).catch(()=>{})},4000);
+  }
+  setTimeout(checkAutoBackup,12000);
+  setInterval(checkAutoBackup,30*60*1000);
   if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>

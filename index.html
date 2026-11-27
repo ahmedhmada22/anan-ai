@@ -15,6 +15,27 @@
   --danger:#e07856; --bubble-me:#46528c; --bubble-ai:#2d3349;
   --border:#3d4560; --radius:14px; --bubtail:4px;
 }
+/* v29: خطوط OFL مضمومة جوه التطبيق (شغالة أوفلاين) */
+@font-face{font-family:"AnanCairo";src:url(font-cairo-300_900.woff2) format("woff2");font-weight:300 900;font-display:swap}
+@font-face{font-family:"AnanTajawal";src:url(font-tajawal-400.woff2) format("woff2");font-weight:400 600;font-display:swap}
+@font-face{font-family:"AnanTajawal";src:url(font-tajawal-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
+@font-face{font-family:"AnanNotoSans";src:url(font-notosans-300_800.woff2) format("woff2");font-weight:300 800;font-display:swap}
+@font-face{font-family:"AnanAlmarai";src:url(font-almarai-400.woff2) format("woff2");font-weight:300 600;font-display:swap}
+@font-face{font-family:"AnanAlmarai";src:url(font-almarai-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
+@font-face{font-family:"AnanNaskh";src:url(font-naskh-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"AnanKufi";src:url(font-kufi-300_800.woff2) format("woff2");font-weight:300 800;font-display:swap}
+@font-face{font-family:"AnanAmiri";src:url(font-amiri-400.woff2) format("woff2");font-weight:400 600;font-display:swap}
+@font-face{font-family:"AnanAmiri";src:url(font-amiri-700.woff2) format("woff2");font-weight:700 900;font-display:swap}
+@font-face{font-family:"AnanReem";src:url(font-reem-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:"AnanMessiri";src:url(font-messiri-400_700.woff2) format("woff2");font-weight:400 700;font-display:swap}
+.fontlist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.fontlist .fgrp{grid-column:1/-1;font-size:12px;color:var(--muted);margin-top:4px}
+.fontlist button{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 10px;text-align:start;color:var(--text);line-height:1.5}
+.fontlist button.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.fontlist .fn{display:block;font-size:11.5px;color:var(--muted)}
+.fontlist .fs{display:block;font-size:16px}
+.bubble{line-height:var(--chatlh,1.7)}
+#msgs .bubble,#input{font-family:var(--chatfam,var(--fontfam))}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow-x:hidden}
 body{
@@ -143,6 +164,7 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
   max-height:150px;line-height:1.55;outline:none;
 }
 #input::placeholder{color:var(--muted)}
+body #input{font-family:var(--chatfam,var(--fontfam))}
 .cbtn{
   flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;
   background:none;border:none;border-radius:50%;color:var(--muted);margin-bottom:2px;
@@ -183,6 +205,20 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 .cmpcard .cmptext{white-space:pre-wrap;font-size:15px;max-height:38vh;overflow-y:auto;line-height:1.7}
 .sembtn{display:block;width:100%;text-align:center;padding:10px;color:var(--accent2);font-size:14.5px;background:var(--card);border:1px dashed var(--border);border-radius:12px;margin:6px 0}
 #charSetModal{z-index:75}
+#castModal{z-index:78}
+.castrow{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px;margin-top:10px}
+.castnm{display:flex;align-items:center;gap:8px}
+.castnm .fld{flex:1;margin:0}
+.castwho{font-size:11.5px;color:var(--muted)}
+.castdel{color:var(--muted);padding:4px 8px}
+.castsw{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;align-items:center}
+.swb{width:28px;height:28px;border-radius:50%;border:2px solid transparent}
+.swb.on{border-color:var(--text)}
+.swcustom{width:32px;height:30px;border:none;background:none;padding:0}
+.castprev{margin-top:8px;font-size:14px;background:var(--bubble-ai);border-radius:10px;padding:6px 10px}
+.spkblk{margin:2px 0}
+.spkblk p{margin:0 0 2px}
+#storyCast{background:none;border:none;color:var(--muted);font-size:14px;padding:2px 6px;margin-inline-start:8px}
 #scopeAsk{z-index:80}
 .pcard{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;margin:10px 0 2px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--card2)),var(--card2));text-align:start}
 .pcard .pcIcon{flex:none;width:34px;height:34px;border-radius:10px;background:var(--accent);color:#1c2030;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
@@ -299,6 +335,11 @@ body.wa .daysep{background:#1f2c34;color:#8696a0;border-radius:8px}
 #sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 22px 10px}
 .suggchip{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:13.5px;color:var(--text)}
 .suggchip:active{background:var(--card2);border-color:var(--accent)}
+#topBtn{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12.5px;z-index:25;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35);color:var(--text)}
+#railThumb{position:fixed;right:0;width:30px;height:56px;z-index:24;display:none;touch-action:none;opacity:.28;transition:opacity .25s}
+#railThumb::after{content:"";position:absolute;right:3px;top:0;bottom:0;width:5px;border-radius:3px;background:var(--muted)}
+#railThumb.act{opacity:1}#railThumb.act::after{width:8px;background:var(--accent,#7aa2ff)}
+#railTip{position:fixed;right:42px;z-index:26;display:none;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--text);box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:none;max-width:60vw;text-align:center}
 #jumpBtn{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;z-index:25;display:none;box-shadow:0 4px 14px rgba(0,0,0,.35);color:var(--text)}
 #sendBtn.stopping{background:var(--danger);color:#fff}
 .bubble.md{white-space:normal}
@@ -410,10 +451,15 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 #webTgl.on .wtrack{background:var(--accent)}
 #webTgl.on .wknob{left:13px;background:#fff8ec}
 #webTgl.on .wglobe{color:var(--accent)}
+#pinWarn{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--bg2);border-top:1px solid var(--border);font-size:12.5px;color:var(--text);line-height:1.5}
+#pinWarn button{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:5px 11px;font-size:12.5px;color:var(--text)}
+#pinWarn #pwHide{border:none;background:none;color:var(--muted);padding:4px 6px}
 #srcBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg2);border-top:1px solid var(--border)}
 #offBadge{flex:none;font-size:11px;color:#e0a44e;border:1px solid #e0a44e;border-radius:10px;padding:1px 8px;white-space:nowrap}
 .pendmark{font-size:11px;opacity:.8}
 .bymodel{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px;opacity:.9;margin:3px 2px 0;direction:ltr;justify-content:flex-start}
+.fbhint{color:var(--muted);font-size:11px;margin:2px 2px 0;line-height:1.5}
+.medit{color:var(--muted);font-size:10.5px;opacity:.75}
 .bymodel::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8;flex:none}
 #storyBar{display:none;justify-content:center;align-items:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none;cursor:pointer}
 #storyTxt{color:var(--accent2);font-size:11.5px}
@@ -514,13 +560,14 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   </div>
   <div id="pinBar"><div class="pinf"><div class="pttl" id="pinTtl">📌 رسالة مثبتة</div><div class="psnip" id="pinSnip"></div></div></div>
   <div id="countBar"><span id="offBadge" class="hidden">أوفلاين 📶</span><span id="countTxt"></span><span id="capWrap"><i id="capFill"></i></span><span id="capTxt">🧠 —</span></div>
-  <div id="storyBar"><span id="storyTxt"></span></div>
+  <div id="storyBar"><span id="storyTxt"></span><button id="storyCast" aria-label="المتحدثين والألوان">🎨</button></div>
   <div id="memWarn"><span id="mwTxt"></span><button id="mwSum">لخّص دلوقتي</button><button id="mwHand" style="display:none">🚀 نقل مكمل</button><button id="mwHide" aria-label="إخفاء التنبيه">✕</button></div>
   <div id="msgs"></div>
   <div id="editBar"><span>بتعدّل رسالة</span><button id="cancelEdit" aria-label="إلغاء">✕</button></div>
   <div id="imgBar"><img id="imgThumb" alt=""><span style="flex:1;color:var(--muted);font-size:12.5px">صورة جاهزة للإرسال</span><button id="imgRemove" aria-label="شيل الصورة">✕</button></div>
   <div id="srcBar" style="display:none"><span style="flex:1;color:var(--muted);font-size:12.5px">📄 نص مصدر جاهز — هيتبعت كمرجع مع رسالتك الجاية</span><button id="srcRemove" aria-label="شيل المصدر">✕</button></div>
   <div id="replyBar"><div class="rinf"><div class="rwho" id="replyWho"></div><div class="rsnip" id="replySnip"></div></div><button id="cancelReply" aria-label="إلغاء الرد">✕</button></div>
+  <div id="pinWarn" style="display:none"><span id="pwTxt" style="flex:1"></span><button id="pwFb">حوّل للاحتياط</button><button id="pwPick">مزود تاني</button><button id="pwHide" aria-label="إخفاء">✕</button></div>
   <div id="chipRow">
     <button class="cmdchip" id="chipSumAll">🧠 لخّص المحادثة</button>
     <button class="cmdchip" data-cmd="summ">لخّص</button>
@@ -550,6 +597,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   </div>
 </div>
 <button id="jumpBtn"></button>
+<button id="topBtn">⬆ أول المحادثة</button>
+<div id="railThumb" aria-label="مؤشر الموضع، اسحبه للتنقل"></div><div id="railTip"></div>
 <input type="file" id="imgInput" accept="image/*" style="display:none">
 <div id="scrim"></div>
 <div id="drawer">
@@ -561,6 +610,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
   <div id="drawerFoot"><button class="prow linkrow" id="openWeather"><span>🌤 الطقس والصلاة</span><span class="chev">‹</span></button><button class="prow linkrow" id="openSaved"><span>⭐ المحفوظات</span><span class="pval" id="savedCount"></span></button></div>
 </div>
 <div id="msgSheet">
+  <div id="msInfo" class="small" style="padding:4px 10px 8px;color:var(--muted);line-height:1.8"></div>
   <button class="msbtn" id="msReply">↩ رد على الرسالة</button>
   <button class="msbtn" id="msCopy">نسخ النص</button>
   <button class="msbtn" id="msPin">📌 تثبيت الرسالة</button>
@@ -691,7 +741,8 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
       <div class="prow"><span>لون فقاعات عنان</span><div class="swatches" id="swBubbleAI"></div></div>
       <div class="prow"><span>شكل الفقاعات</span><div class="seg" id="segBubShape"></div></div>
       <div class="prow"><span>حجم الخط</span><div class="seg" id="segFont"></div></div>
-      <div class="prow"><span>شكل الخط</span><div class="seg" id="segFontFam"></div></div>
+      <div class="prow" style="display:block"><span>شكل خط التطبيق كله</span><div class="fontlist" id="fontList"></div></div>
+      <div class="prow" style="display:block"><span>خط المحادثة بس <span class="small" style="color:var(--muted);font-weight:400">(اختياري — الرسايل وخانة الكتابة)</span></span><div class="fontlist" id="fontChatList"></div></div>
       <button class="prow linkrow" id="chipsToggle"><span>أزرار الأوامر السريعة</span><span class="pval" id="chipsState">شغالة</span></button>
     </div>
     <div class="sect">عنان</div>
@@ -801,6 +852,16 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     <div style="height:30px"></div>
   </div>
 </div>
+<div class="overlay hidden" id="castModal">
+  <div class="box" style="padding:20px;max-height:88vh;overflow-y:auto">
+    <h1 style="margin-top:0">المتحدثين والألوان 🎨</h1>
+    <p class="small" style="text-align:center;margin-top:0">كل متحدث ليه لون. غيّر الاسم أو اللون في أي وقت وبيتطبق على المحادثة كلها.</p>
+    <div id="castRows"></div>
+    <button class="linkbtn" id="castAdd" style="display:block;margin:6px auto 0">+ شخصية (لحد ٤)</button>
+    <button class="bigbtn" id="castSave" style="margin-top:12px;position:sticky;bottom:0">حفظ</button>
+    <button class="linkbtn" id="castCancel" style="display:block;margin:8px auto 0">إلغاء</button>
+  </div>
+</div>
 <div class="overlay hidden" id="charSetModal">
   <div class="box" style="padding:22px 20px">
     <h1 style="margin-top:0" id="csTitle">إعداد الشخصية</h1>
@@ -817,6 +878,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
     </div>
     <input id="csRel" class="fld" placeholder="علاقتكم/خلفيتكم — دوس هنا واكتب براحتك في صفحة كاملة 📖" autocomplete="off" style="margin-top:8px" readonly>
     <input id="csEra" class="fld" placeholder="الحقبة الزمنية للقصة (اختياري — مثال: التسعينات، ٢٠٢٤، المستقبل)" autocomplete="off" style="margin-top:8px">
+    <button class="linkbtn" id="csCast" style="display:block;margin:12px auto 0">🎨 المتحدثين والألوان (اختياري)</button>
     <button class="bigbtn" id="csSave" style="margin-top:14px">يلا نبدأ ✦</button>
     <button class="linkbtn" id="csSkip" style="display:block;margin:8px auto 0">تخطي — خليها على الجاهز</button>
   </div>
@@ -983,7 +1045,12 @@ async function kvDel(k){await reqP(db.transaction("kv","readwrite").objectStore(
 async function allStore(name){return reqP(db.transaction(name,"readonly").objectStore(name).getAll())}
 async function putItem(name,obj){await reqP(db.transaction(name,"readwrite").objectStore(name).put(obj))}
 async function delItem(name,id){await reqP(db.transaction(name,"readwrite").objectStore(name).delete(id))}
-async function msgsOf(convId){return reqP(db.transaction("msgs","readonly").objectStore("msgs").index("byConv").getAll(convId))}
+async function msgsOf(convId){
+  const ms=await reqP(db.transaction("msgs","readonly").objectStore("msgs").index("byConv").getAll(convId));
+  /* v29: رد اتحفظ تدريجيًا وبعدين الصفحة اتقفلت قبل ما يخلص → يتعلّم «ناقص» ويظهر زرار كمّل */
+  for(const m of ms){if(m&&m.partial&&state.streamId!==m.id){delete m.partial;m.incomplete=true;try{putItem("msgs",m)}catch(_){}}}
+  return ms;
+}
 /* ================= state & utils ================= */
 const $=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
@@ -1177,18 +1244,23 @@ function bubbleHTML(m){
       formsHtml+=`<div class="formcard" data-fid="${m.id}|:|${fi}" data-multi="${f.multi?1:0}"><div class="fq">${esc(f.q)}</div><div class="fopts">${opts}</div>${noteHtml}${foot}</div>`;
     });
   }
-  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${qt}${mdRender(m.text)}${formsHtml}</div>`:`<div class="bubble${m.err?" err":""}">${qt}${esc(m.text)}</div>`;
+  const _cvx=state.convs.find(c=>c.id===m.convId);
+  const _castOn=!!(_cvx&&castOn(_cvx));
+  const inner=m.role==="model"&&!m.err?`<div class="bubble md">${qt}${_castOn?castRender(stripMarkers(m.text,false),_cvx):mdRender(stripMarkers(m.text,false))}${formsHtml}</div>`:`<div class="bubble${m.err?" err":""}"${(m.role==="user"&&_cvx&&castOn(_cvx))?castUserStyle(_cvx):""}>${qt}${esc(m.text)}</div>`;
   const spk=m.role==="model"&&!m.err&&m.text?`<button class="spkbtn" data-spk="${m.id}" aria-label="اسمع الرد">🔊</button>`:"";
   const qbtn=m.role==="model"&&!m.err&&m.text?`<button class="qbtn" data-qm="${m.id}" aria-label="إجراءات على الرد">✨</button>`:"";
   const pcv=state.convs.find(c=>c.id===m.convId);
   const pinm=pcv&&pcv.pins&&pcv.pins.includes(m.id)?`<span class="pinind">📌</span>`:"";
-  const bym=m.role==="model"&&m.byModel&&!m.err?`<div class="bymodel" title="النموذج اللي رد">${esc(m.byModel)}</div>`:"";
+  const _tm=(m.role==="model"&&m.ttft)?(" · "+(m.ttft/1000).toFixed(1)+"s"+(m.think?" · low think":"")):"";
+  const bym=m.role==="model"&&m.byModel&&!m.err?`<div class="bymodel" title="النموذج اللي رد · الوقت لحد أول رد${m.think?" · مع تفكير خفيف":""}">${esc(m.byModel)}${_tm}</div>`:"";
+  const fbh=(m.role==="model"&&!m.err&&m.fb&&m.fb.length)?`<div class="fbhint">⚠ اتحوّل تلقائي: ${m.fb.map(x=>esc(x.m)+" ("+esc(x.w)+")").join("، ")}</div>`:"";
+  const edm=(m.role==="user"&&m.edited)?`<span class="medit" title="اتعدلت">اتعدلت ${fmtTime(m.edited)}</span>`:"";
   const pend=m.pending?'<span class="pendmark" title="هتتبعت لما النت يرجع">⏳</span>':"";
-  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${pend}${pinm}${spk}${qbtn}</div>`;
+  const meta=`<div class="mmeta"><span class="mtime">${fmtTime(m.ts)}</span>${edm}${pend}${pinm}${spk}${qbtn}</div>`;
   const retry=m.err?`<button class="retrybtn" data-rid="${m.id}">↻ إعادة المحاولة</button>`:"";
   const transb=m.translationShow&&m.translation?`<div class="transblock">🌐 ${esc(m.translation)}</div>`:"";
   const recl=m.role==="model"&&m.recalled&&!m.err?`<div class="recallline">🧠 فاكر إنك قلت قبل كده…</div>`:"";
-  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${recl}${inner}${img}${transb}${bym}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
+  return `<div class="msg ${m.role==="user"?"me":"ai"}" data-id="${m.id}"><div class="bcol">${recl}${inner}${img}${transb}${bym}${fbh}${meta}${retry}</div><button class="actbtn" aria-label="خيارات">⋮</button></div>`;
 }
 function renderMsgs(ms,restore){
   setTimeout(()=>{if(state.recap&&state.recap.convId===state.convId){const c=state.convs.find(x=>x.id===state.convId);if(c)prependRecap(c,(c.loops||[]).filter(l=>l.open))}},0);
@@ -1273,16 +1345,26 @@ const PERSONA=`انت "عنان": مساعد ذكاء اصطناعي شخصي ل
 - عندك شخصية ثابتة عبر كل المحادثات: طبيعي وعفوي، بتحب النقاش الجاد، وتقدر تغير النبرة حسب الموضوع من جد لهزار.
 - بتناقش أي موضوع بصراحة وتحليل: سياسة، تاريخ، دين، اقتصاد، علاقات، مواضيع شخصية وحساسة ومواضيع بالغين. مترفضش موضوع لمجرد إنه حساس، وتعامل معاه حسب سياقه.
 - استثناء وحيد ثابت: لو المستخدم عبّر عن أفكار انتحارية أو نية إيذاء النفس، وقف أي نقاش فورًا. رد عليه بجدية واهتمام حقيقي، بلطف ومن غير وعظ، شجعه يكلم حد قريب منه أو مختص، وفكره إن فيه ناس ممكن تساعده دلوقتي. الموضوع ده مش للنقاش ولا التحليل.
-- الذاكرة: هتستلم أحيانًا حقائق محفوظة عن المستخدم من محادثات قديمة. استخدمها بشكل طبيعي، ومتعرضهاش كلها، ومتقولش "حسب ذاكرتي" بشكل آلي. لو الحقائق قديمة أو متعارضة مع كلامه الحالي، صدّق كلامه الحالي.`;
+- الذاكرة: هتستلم أحيانًا حقائق محفوظة عن المستخدم من محادثات قديمة. استخدمها بشكل طبيعي، ومتعرضهاش كلها، ومتقولش "حسب ذاكرتي" بشكل آلي. لو الحقائق قديمة أو متعارضة مع كلامه الحالي، صدّق كلامه الحالي.
+- هويتك: انت "عنان" بس. لو اتسألت انت مين أو مين صنعك أو بتشتغل على أنهي موديل: قول إنك عنان، مساعده الشخصي جوه التطبيق ده. ممنوع تقول إنك ChatGPT أو GPT أو Gemini أو Claude أو Llama أو DeepSeek أو أي منتج جاهز باسمه، وممنوع تدّعي إنك من OpenAI أو Google أو Anthropic أو Meta أو أي شركة. اسم النموذج الشغال فعليًا بيتكتبلك في سطر «معلومة من التطبيق» في آخر التعليمات: لو سألك أي موديل شغال دلوقتي، جاوب بالاسم اللي هناك بالظبط من غير ما تضيف شركة أو معلومات من عندك عنه، ولو مش موجود قول إنك مش عارف بالظبط وإن التطبيق بيعرض اسمه تحت كل رد.`;
 const SELFHARM_RE=/(انتحار|انتحر|اقتل نفسي|أقتل نفسي|اموت نفسي|أموت نفسي|عايز اموت|عايش عبث|مش عايز اعيش|مش عايز أعيش|نهايه حياتي|نهاية حياتي|اعدي حياتي|ajeeb|ايذاء النفس|إيذاء النفس|باذي نفسي|بأذي نفسي)/;
 /* ================= Gemini API ================= */
-let REQ_TIMEOUT=90000;
-let RECALL_MIN_MS=1800;
-function withTimeout(sig,ms){
-  const c=new AbortController();let timedOut=false;
-  const t=setTimeout(()=>{timedOut=true;c.abort()},ms);
+let REQ_TIMEOUT=90000;      /* مهلة الرد كله بعد ما أول توكن يوصل */
+let FIRST_TOKEN_MS=8000;    /* مهلة أول توكن (تلقائي) */
+let PIN_FIRST_TOKEN_MS=25000; /* لما المزود مثبت مفيش بديل، فنصبر أكتر */
+let CHAIN_BUDGET_MS=60000;  /* ميزانية السلسلة كلها قبل أول توكن */
+let RECALL_TOTAL_MS=22000;  /* ميزانية الاسترجاع */
+let PLAIN_CALL_MS=45000;    /* مهلة المكالمات من غير ستريم */
+function withTimeout(sig,ms,first){
+  const c=new AbortController();
+  const o={first:!!first,wasFirst:false,timedOut:false,signal:c.signal};
+  let t=null;
+  const arm=m=>{clearTimeout(t);t=setTimeout(()=>{o.timedOut=true;o.wasFirst=o.first;c.abort()},m)};
+  arm(ms);
   if(sig){if(sig.aborted)c.abort();else sig.addEventListener("abort",()=>c.abort())}
-  return {signal:c.signal,cancel:()=>clearTimeout(t),get timedOut(){return timedOut}};
+  o.cancel=()=>clearTimeout(t);
+  o.gotFirst=()=>{if(o.first){o.first=false;arm(REQ_TIMEOUT)}};
+  return o;
 }
 const SAFETY=[
  {category:"HARM_CATEGORY_HATE_SPEECH",threshold:"BLOCK_NONE"},
@@ -1290,13 +1372,14 @@ const SAFETY=[
  {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
  {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
 ];
-async function geminiCall(model,parts,jsonMode,sig,sys){
+async function geminiCall(model,parts,jsonMode,sig,sys,xo){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const body={contents:parts,safetySettings:SAFETY,
     generationConfig:{temperature:state.curTemp!==undefined?state.curTemp:0.9,...(jsonMode?{responseMimeType:"application/json"}:{})}};
   if(sys)body.systemInstruction={parts:[{text:sys}]};
+  if(xo&&xo.think)body.generationConfig.thinkingConfig={thinkingLevel:"low"};
   let r;
-  const wt=withTimeout(sig,REQ_TIMEOUT);
+  const wt=withTimeout(sig,(xo&&xo.ms)||PLAIN_CALL_MS);
   try{
     r=await fetch(url,{method:"POST",signal:wt.signal,
       headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
@@ -1304,7 +1387,7 @@ async function geminiCall(model,parts,jsonMode,sig,sys){
   }catch(fe){
     wt.cancel();
     if(fe&&fe.name==="AbortError"){
-      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
       const e=new Error("aborted");e.aborted=true;throw e;
     }
     const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";
@@ -1312,7 +1395,7 @@ async function geminiCall(model,parts,jsonMode,sig,sys){
   }
   wt.cancel();
   if(!r.ok){
-    const e=new Error("HTTP "+r.status);e.status=r.status;
+    const e=new Error("HTTP "+r.status);e.status=r.status;e.retryAfter=r.headers.get("retry-after");
     try{const j=await r.json();e.detail=j.error?.message||"";e.quota=JSON.stringify(j.error?.details||[])}catch(_){}
     throw e;
   }
@@ -1320,7 +1403,7 @@ async function geminiCall(model,parts,jsonMode,sig,sys){
   const cand=data.candidates&&data.candidates[0];
   const txt=cand&&cand.content&&cand.content.parts?cand.content.parts.map(p=>p.text||"").join(""):"";
   const pt=data.usageMetadata&&data.usageMetadata.promptTokenCount;
-  return {text:txt,finish:cand?cand.finishReason:null,model:model,prov:"google",promptTokens:(typeof pt==="number")?pt:null};
+  return {text:txt,finish:cand?cand.finishReason:null,model:model,prov:"google",promptTokens:(typeof pt==="number")?pt:null,think:!!(xo&&xo.think)};
 }
 function hasImgParts(parts){return (parts||[]).some(c=>(c.parts||[]).some(p=>p.inline_data))}
 /* ---- تحويل صيغة Gemini لصيغة OpenAI/Cohere ---- */
@@ -1339,7 +1422,7 @@ function toOpenAIMessages(parts,sys,vision){
   }
   return ms;
 }
-async function openaiCall(provId,model,parts,jsonMode,sig,sys,onChunk){
+async function openaiCall(provId,model,parts,jsonMode,sig,sys,onChunk,xo){
   const P=PROVIDERS[provId];const vision=!!findModel(model).vision;
   const url=P.base+"/chat/completions";
   const body={model,messages:toOpenAIMessages(parts,sys,vision),
@@ -1347,17 +1430,18 @@ async function openaiCall(provId,model,parts,jsonMode,sig,sys,onChunk){
   if(jsonMode)body.response_format={type:"json_object"};
   const wantStream=typeof onChunk==="function";
   if(wantStream){body.stream=true;body.stream_options={include_usage:true}}
+  if(xo&&xo.think){if(provId==="groq")body.reasoning_effort="low";else if(provId==="openrouter")body.reasoning={effort:"low"}}
   const headers={"Content-Type":"application/json","Authorization":"Bearer "+(state.provKeys[provId]||"")};
   if(provId==="openrouter"){headers["HTTP-Referer"]="https://ahmedhmada22.github.io/anan-ai/";headers["X-Title"]="عنان"}
   let r;
-  const wt=withTimeout(sig,REQ_TIMEOUT);
+  const wt=withTimeout(sig,wantStream?((xo&&xo.ft)||FIRST_TOKEN_MS):((xo&&xo.ms)||PLAIN_CALL_MS),wantStream);
   try{r=await fetch(url,{method:"POST",signal:wt.signal,headers,body:JSON.stringify(body)})}
   catch(fe){wt.cancel();
     if(fe&&fe.name==="AbortError"){
-      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
       const e=new Error("aborted");e.aborted=true;throw e}
     const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";throw e}
-  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;
+  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;e.retryAfter=r.headers.get("retry-after");e.headers=r.headers;
     try{e.detail=(await r.json()).error?.message||""}catch(_){}
     throw e}
   let usage=null;
@@ -1377,26 +1461,27 @@ async function openaiCall(provId,model,parts,jsonMode,sig,sys,onChunk){
             const ch=d.choices&&d.choices[0];
             if(ch){if(ch.finish_reason)finish=ch.finish_reason;
               const t=ch.delta?(ch.delta.content||""):(ch.message?ch.message.content||"":"");
-              if(t){got++;text+=t;onChunk(t)}}
+              if(t){got++;text+=t;wt.gotFirst();onChunk(t)}}
           }catch(_){}
         }
       }
     }catch(re){wt.cancel();
       if(re&&re.name==="AbortError"){
-        if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+        if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
         const e=new Error("aborted");e.aborted=true;throw e}
       if(got===0){const e=new Error("streamfail");e.net=true;throw e}}
     wt.cancel();
     if(got===0){const e=new Error("nostream");e.nostream=true;throw e}
     return {text,finish:finish?String(finish).toUpperCase():null,model,prov:provId,
-      promptTokens:usage&&typeof usage.prompt_tokens==="number"?usage.prompt_tokens:null,headers:r.headers};
+      promptTokens:usage&&typeof usage.prompt_tokens==="number"?usage.prompt_tokens:null,headers:r.headers,think:!!(xo&&xo.think),
+      thoughtTokens:usage&&usage.completion_tokens_details&&typeof usage.completion_tokens_details.reasoning_tokens==="number"?usage.completion_tokens_details.reasoning_tokens:null};
   }
   const data=await r.json();wt.cancel();
   const ch=data.choices&&data.choices[0];
   const txt=ch&&ch.message?(typeof ch.message.content==="string"?ch.message.content:(ch.message.content||[]).map(x=>x.text||"").join("")):"";
   const pt=data.usage&&data.usage.prompt_tokens;
   return {text:txt,finish:ch?String(ch.finish_reason||"").toUpperCase()||null:null,model,prov:provId,
-    promptTokens:(typeof pt==="number")?pt:null,headers:r.headers};
+    promptTokens:(typeof pt==="number")?pt:null,headers:r.headers,think:!!(xo&&xo.think)};
 }
 async function cohereCall(model,parts,jsonMode,sig,sys){
   const vision=!!findModel(model).vision;
@@ -1409,17 +1494,17 @@ async function cohereCall(model,parts,jsonMode,sig,sys){
   const body={model,messages:ms,temperature:state.curTemp!==undefined?state.curTemp:0.9};
   if(jsonMode)body.response_format={type:"json_object"};
   let r;
-  const wt=withTimeout(sig,REQ_TIMEOUT);
+  const wt=withTimeout(sig,PLAIN_CALL_MS);
   try{r=await fetch("https://api.cohere.com/v2/chat",{method:"POST",signal:wt.signal,
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+(state.provKeys.cohere||"")},
     body:JSON.stringify(body)})}
   catch(fe){wt.cancel();
     if(fe&&fe.name==="AbortError"){
-      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
       const e=new Error("aborted");e.aborted=true;throw e}
     const e=new Error("network");e.net=true;throw e}
   wt.cancel();
-  if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;
+  if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;e.retryAfter=r.headers.get("retry-after");
     try{e.detail=(await r.json()).message||""}catch(_){}
     throw e}
   const data=await r.json();
@@ -1437,33 +1522,60 @@ function quotaDayKey(provId){
 function quotaMonthKey(){return new Date().toISOString().slice(0,7)}
 async function qGet(){state.quota=state.quota||await kvGet("quotaV1")||{};return state.quota}
 async function qSave(){await kvSet("quotaV1",state.quota||{})}
-async function qBump(provId,model,realRemaining){
+async function qBump(provId,model,realRemaining,realLimit,resetTxt){
   const q=await qGet();const k=provId+":"+model;
   const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
   const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
-  const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0;e.out=false}
-  e.n=(e.n||0)+1;e.at=Date.now();e.out=false;delete e.outAt;
+  const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0;e.out=false;delete e.rem;delete e.remAt;delete e.lim}
+  e.n=(e.n||0)+1;e.at=Date.now();e.out=false;delete e.outAt;delete e.until;delete e.code;delete e.hard;
   if(typeof realRemaining==="number"){e.rem=realRemaining;e.remAt=Date.now()}
+  if(typeof realLimit==="number")e.lim=realLimit;
+  if(resetTxt)e.resetTxt=resetTxt;
   q[k]=e;await qSave();return e;
 }
-async function qMarkOut(provId,model){
+/* v29: 429 = «محدود مؤقتًا» مش «مستنفد»: بنحسب موعد التجديد من retry-after / RetryInfo، وأي نجاح بيمسح الحالة */
+function retryMs(e){
+  let sec=NaN;
+  if(e&&e.retryAfter!=null&&e.retryAfter!=="")sec=parseFloat(e.retryAfter);
+  if(!isFinite(sec)&&e&&e.quota){const m=String(e.quota).match(/"retryDelay"\s*:\s*"?([0-9.]+)\s*s/);if(m)sec=parseFloat(m[1])}
+  if(!isFinite(sec)&&e&&e.detail){const m=String(e.detail).match(/retry (?:in|after) ([0-9.]+)\s*s/i);if(m)sec=parseFloat(m[1])}
+  return isFinite(sec)?Math.min(Math.max(sec,1)*1000,24*3600e3):null;
+}
+function isDailyLimit(e){return /per\s*day|perday|daily|requests per day|RPD/i.test(((e&&e.detail)||"")+((e&&e.quota)||""))}
+async function qMarkOut(provId,model,err){
   const q=await qGet();const k=provId+":"+model;
   const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
   const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
   const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0}
-  e.out=true;e.at=Date.now();q[k]=e;await qSave();
+  const now=Date.now();
+  e.out=true;e.at=now;e.code=err&&err.status||429;
+  if(err&&(err.status===402||err.status===403)){e.hard=true;e.until=now+3*3600e3}
+  else{
+    const r=retryMs(err);const daily=isDailyLimit(err);
+    e.hard=false;e.daily=!!daily;
+    e.until=now+(r||(daily?3*3600e3:60e3));
+    if(daily&&e.n>0)e.learned=e.n; /* الحد الحقيقي: عدد الطلبات الناجحة وقت أول رفض يومي */
+  }
+  q[k]=e;await qSave();
 }
 async function qState(provId,model){
   const q=await qGet();const k=provId+":"+model;
   const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
   const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
   const e=q[k];if(!e||e.per!==per)return{n:0,out:false};
+  if(e.out){const until=e.until||((e.at||0)+10*60e3);if(until<=Date.now())return Object.assign({},e,{out:false,expired:true});return Object.assign({},e,{untilAt:until})}
   return e;
 }
 /* ---- قراءة المتبقي الحقيقي من هيدرز Groq ---- */
 function groqRealRemaining(h){
   if(!h||!h.get)return null;
   const v=h.get("x-ratelimit-remaining-requests-day")||h.get("x-ratelimit-remaining-requests");
+  if(v===null||v===undefined)return null;
+  const n=parseInt(v,10);return isFinite(n)?n:null;
+}
+function groqRealLimit(h){
+  if(!h||!h.get)return null;
+  const v=h.get("x-ratelimit-limit-requests-day")||h.get("x-ratelimit-limit-requests");
   if(v===null||v===undefined)return null;
   const n=parseInt(v,10);return isFinite(n)?n:null;
 }
@@ -1481,6 +1593,12 @@ async function buildChain(vision,hint){
     else if(hint.longCtx)autoId="gemini-3.8-flash";
     else if(hint.short)autoId="gemini-3.1-flash-lite";
     if(autoId){const fm=findModel(autoId);if(fm)push(fm.prov,fm)}
+  }
+  if(prefs.pin&&!state.oneShot&&sel){
+    /* v29: مزود مثبت — موديلاته بس، من غير احتياط تلقائي */
+    const fm=findModel(sel.model);if(fm)push(fm.prov,fm);
+    for(const m of PROVIDERS[sel.prov].models)push(sel.prov,m);
+    return chain;
   }
   if(sel){const fm=findModel(sel.model);if(fm)push(fm.prov,fm)}
   for(const p of CHAIN_ORDER)for(const m of PROVIDERS[p].models)push(p,m);
@@ -1516,37 +1634,96 @@ function setModelLabel(sel){
 }
 async function selSet(prov,model){
   if(model&&typeof model==="object")model=model.id;
-  state.sel={prov:prov,model:String(model)};prefs.sel=prov+":"+String(model);prefs.selManual=true;await savePrefs()
+  state.sel={prov:prov,model:String(model)};prefs.sel=prov+":"+String(model);prefs.selManual=true;await savePrefs();state.pinHide=null;try{pinWarn()}catch(_){}
+}
+/* ---- v29: حالة كل مزود (محاولات + آخر خطأ) ---- */
+function errCode(e){return e&&e.status?e.status:(e&&e.timeout?(e.firstToken?"بطيء":"مهلة"):(e&&e.net?"شبكة":(e&&e.empty?"فاضي":"خطأ")))}
+function errWhy(e){
+  const c=e&&e.status;
+  if(c===401)return "المفتاح مرفوض (401)";
+  if(c===403)return "ممنوع/حد المفتاح خلص (403)";
+  if(c===402)return "الرصيد خلص (402)";
+  if(c===429)return "محدود مؤقتًا (429)";
+  if(c===400)return "الطلب اترفض (400)";
+  if(c===404)return "النموذج مش متاح على المفتاح ده (404)";
+  if(c&&c>=500)return "عطل عند المزود ("+c+")";
+  if(e&&e.timeout)return e.firstToken?"مردّش في الوقت (بطيء)":"الرد وقف في النص";
+  if(e&&e.empty)return "رجّع رد فاضي";
+  if(e&&e.net)return "مشكلة شبكة";
+  return "خطأ غير معروف";
+}
+async function provNote(prov,model,ok,e){
+  try{
+    const s=(state.provStat=state.provStat||await kvGet("provStatV1")||{});
+    const x=s[prov]=s[prov]||{tries:0,okN:0};
+    const d=localDay();if(x.day!==d){x.day=d;x.tries=0;x.okN=0}
+    x.tries++;
+    if(ok){x.okN++;x.lastOk=Date.now();delete x.err}
+    else x.err={code:errCode(e),why:errWhy(e),text:String((e&&(e.detail||e.message))||"").slice(0,200),ts:Date.now(),model};
+    await kvSet("provStatV1",s);
+  }catch(_){}
+}
+state.noThink=state.noThink||{};
+function thinkFor(prov,model){
+  if(prefs.think===false)return null;
+  if(state.noThink[prov+":"+model])return null;
+  if(prov==="google"&&/^gemini-/.test(model))return true;
+  if(prov==="groq")return true;
+  if(prov==="openrouter"&&model!=="openrouter/free")return true;
+  return null;
+}
+function sysWithModel(sys,cand){
+  if(!sys)return sys;
+  return sys+"\n\n[معلومة من التطبيق — مش من المستخدم] النموذج اللي بيولّد ردك دلوقتي فعليًا: "+cand.id+" (مزود: "+PROVIDERS[cand.prov].name+"). لو اتسألت عن الموديل اللي شغال قول الاسم ده بالظبط. لو الموديل اتغيّر في رد لاحق، الاسم هيتحدّث هنا.";
+}
+async function candBlocked(cand){
+  const st=await qState(cand.prov,cand.id);
+  return st.out?st:null;
 }
 /* ---- المحرك الموحد: يمشي على السلسلة ---- */
 async function aiCall(parts,opts){
   opts=opts||{};
   const vision=hasImgParts(parts);
   const chain=await buildChain(vision,autoHint(parts));
-  if(!chain.length){const e=new Error("nokey");e.nokey=true;throw e}
-  let lastErr=null;
+  if(!chain.length){const e=new Error("nokey");e.nokey=true;e.pin=!!(prefs.pin&&!state.oneShot);throw e}
+  let lastErr=null;const t0=Date.now();let tried=0;const toCnt={},authBad={};
   for(const cand of chain){
-    try{
-      let r;
-      if(cand.prov==="google")r=await geminiCall(cand.id,parts,opts.jsonMode,opts.sig,opts.sys);
-      else if(cand.prov==="cohere")r=await cohereCall(cand.id,parts,opts.jsonMode,opts.sig,opts.sys);
-      else r=await openaiCall(cand.prov,cand.id,parts,opts.jsonMode,opts.sig,opts.sys,null);
-      if(!r.text||!r.text.trim()){const e=new Error("empty");e.empty=true;throw e}
-      state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now()};
-      const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
-      await qBump(cand.prov,cand.id,rem);
-      if(typeof r.promptTokens==="number"){
-        state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
-        const conv=state.convs.find(c=>c.id===state.convId);
-        if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
+    if(tried>0&&Date.now()-t0>CHAIN_BUDGET_MS)break;
+    if(authBad[cand.prov]){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المفتاح مرفوض",skipped:true});continue}
+    if(!(prefs.pin&&!state.oneShot)&&toCnt[cand.prov]>=2){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المزود مردّش مرتين",skipped:true});continue}
+    const blk=await candBlocked(cand);
+    if(blk&&!(prefs.pin&&!state.oneShot)){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
+    tried++;
+    let think=!opts.noThink&&thinkFor(cand.prov,cand.id);
+    for(let pass=0;pass<2;pass++){
+      try{
+        const xo={think:think,ms:opts.ms};
+        const sysC=sysWithModel(opts.sys,cand);
+        let r;
+        if(cand.prov==="google")r=await geminiCall(cand.id,parts,opts.jsonMode,opts.sig,sysC,xo);
+        else if(cand.prov==="cohere")r=await cohereCall(cand.id,parts,opts.jsonMode,opts.sig,sysC);
+        else r=await openaiCall(cand.prov,cand.id,parts,opts.jsonMode,opts.sig,sysC,null,xo);
+        if(!r.text||!r.text.trim()){const e=new Error("empty");e.empty=true;throw e}
+        state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now(),think:!!think};
+        const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
+        await qBump(cand.prov,cand.id,rem,cand.prov==="groq"?groqRealLimit(r.headers):null);
+        await provNote(cand.prov,cand.id,true);
+        if(typeof r.promptTokens==="number"){
+          state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
+          const conv=state.convs.find(c=>c.id===state.convId);
+          if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
+        }
+        bumpUsage(cand.id,vision);
+        return r;
+      }catch(e){
+        if(e.aborted)throw e;
+        if(think&&e.status===400){state.noThink[cand.prov+":"+cand.id]=true;think=false;continue}
+        lastErr=e;if(e.timeout)toCnt[cand.prov]=(toCnt[cand.prov]||0)+1;if(e.status===401)authBad[cand.prov]=true;
+        await provNote(cand.prov,cand.id,false,e);
+        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e)});
+        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);
+        break;
       }
-      bumpUsage(cand.id,vision);
-      return r;
-    }catch(e){
-      if(e.aborted)throw e;
-      lastErr=e;
-      if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id);
-      continue;
     }
   }
   throw lastErr||new Error("all failed");
@@ -1554,63 +1731,78 @@ async function aiCall(parts,opts){
 async function aiStream(parts,sig,onChunk,sys){
   const vision=hasImgParts(parts);
   const chain=await buildChain(vision,autoHint(parts));
-  if(!chain.length){const e=new Error("nokey");e.nokey=true;throw e}
-  let lastErr=null,streamed=0;
+  if(!chain.length){const e=new Error("nokey");e.nokey=true;e.pin=!!(prefs.pin&&!state.oneShot);throw e}
+  const pinned=!!(prefs.pin&&!state.oneShot);
+  let lastErr=null,streamed=0;const t0=Date.now();let tried=0;const toCnt={},authBad={};
   for(const cand of chain){
-    try{
-      let r;
-      const wrapped=t=>{streamed++;onChunk(t)};
-      if(cand.prov==="google"){
-        /* جوجل: استخدم الستريم القديم عبر دالة مخصصة */
-        r=await geminiStreamParts(cand.id,parts,sig,wrapped,sys);
-      }else if(cand.prov==="cohere"){
-        /* Cohere v2: مفيش ستريم هنا — رد كامل وبعدين نبعته كقطعة واحدة */
-        r=await cohereCall(cand.id,parts,false,sig,sys);
-        if(r.text)wrapped(r.text);
-      }else{
-        r=await openaiCall(cand.prov,cand.id,parts,false,sig,sys,wrapped);
+    if(tried>0&&Date.now()-t0>CHAIN_BUDGET_MS)break;
+    if(authBad[cand.prov]){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المفتاح مرفوض",skipped:true});continue}
+    if(!pinned&&toCnt[cand.prov]>=2){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: المزود مردّش مرتين",skipped:true});continue}
+    const blk=await candBlocked(cand);
+    if(blk&&!pinned){(state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:"اتخطّى: محدود مؤقتًا",skipped:true});continue}
+    tried++;
+    let think=thinkFor(cand.prov,cand.id);
+    for(let pass=0;pass<2;pass++){
+      try{
+        let r;
+        const wrapped=t=>{streamed++;onChunk(t)};
+        const xo={think:think,ft:pinned?PIN_FIRST_TOKEN_MS:FIRST_TOKEN_MS};
+        const sysC=sysWithModel(sys,cand);
+        if(cand.prov==="google"){
+          r=await geminiStreamParts(cand.id,parts,sig,wrapped,sysC,xo);
+        }else if(cand.prov==="cohere"){
+          r=await cohereCall(cand.id,parts,false,sig,sysC);
+          if(r.text)wrapped(r.text);
+        }else{
+          r=await openaiCall(cand.prov,cand.id,parts,false,sig,sysC,wrapped,xo);
+        }
+        state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now(),think:!!think,thoughts:r.thoughtTokens};
+        const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
+        await qBump(cand.prov,cand.id,rem,cand.prov==="groq"?groqRealLimit(r.headers):null);
+        await provNote(cand.prov,cand.id,true);
+        if(typeof r.promptTokens==="number"){
+          state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
+          const conv=state.convs.find(c=>c.id===state.convId);
+          if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
+        }
+        bumpUsage(cand.id,vision);
+        return r.finish||"STOP";
+      }catch(e){
+        if(e.aborted)throw e;
+        if(think&&e.status===400&&streamed===0){state.noThink[cand.prov+":"+cand.id]=true;think=false;continue}
+        if(e.nostream&&streamed>0)throw e;
+        if(streamed>0){await provNote(cand.prov,cand.id,false,e);throw e}
+        lastErr=e;if(e.timeout)toCnt[cand.prov]=(toCnt[cand.prov]||0)+1;if(e.status===401)authBad[cand.prov]=true;
+        await provNote(cand.prov,cand.id,false,e);
+        (state.attempts=state.attempts||[]).push({prov:cand.prov,model:cand.id,why:errWhy(e),code:errCode(e)});
+        if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id,e);
+        break;
       }
-      state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now()};
-      const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
-      await qBump(cand.prov,cand.id,rem);
-      if(typeof r.promptTokens==="number"){
-        state.lastCtx={tokens:r.promptTokens,model:cand.id,prov:cand.prov,measured:true,ts:Date.now(),convId:state.convId};
-        const conv=state.convs.find(c=>c.id===state.convId);
-        if(conv){conv.ctxTokens=r.promptTokens;conv.ctxModel=cand.id;conv.ctxProv=cand.prov}
-      }
-      bumpUsage(cand.id,vision);
-      return r.finish||"STOP";
-    }catch(e){
-      if(e.aborted)throw e;
-      if(e.nostream&&streamed>0)throw e;
-      if(streamed>0)throw e;
-      lastErr=e;
-      if(e.status===429||e.status===402||e.status===403)await qMarkOut(cand.prov,cand.id);
-      continue;
     }
   }
   throw lastErr||new Error("all failed");
 }
 /* ستريم جوجل مع إرجاع كائن كامل */
-async function geminiStreamParts(model,parts,sig,onChunk,sys){
+async function geminiStreamParts(model,parts,sig,onChunk,sys,xo){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
   const body={contents:parts,safetySettings:SAFETY,generationConfig:{temperature:state.curTemp!==undefined?state.curTemp:0.9}};
   if(sys)body.systemInstruction={parts:[{text:sys}]};
+  if(xo&&xo.think)body.generationConfig.thinkingConfig={thinkingLevel:"low"};
   let r;
-  const wt=withTimeout(sig,REQ_TIMEOUT);
+  const wt=withTimeout(sig,(xo&&xo.ft)||FIRST_TOKEN_MS,true);
   try{r=await fetch(url,{method:"POST",signal:wt.signal,
     headers:{"Content-Type":"application/json","x-goog-api-key":state.key},
     body:JSON.stringify(body)})}
   catch(fe){wt.cancel();
     if(fe&&fe.name==="AbortError"){
-      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
       const e=new Error("aborted");e.aborted=true;throw e}
     const e=new Error("network");e.net=true;e.detail=(fe&&fe.message)?fe.message:"fetch failed";throw e}
-  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;
+  if(!r.ok){wt.cancel();const e=new Error("HTTP "+r.status);e.status=r.status;e.retryAfter=r.headers.get("retry-after");
     try{const j=await r.json();e.detail=j.error?.message||"";e.quota=JSON.stringify(j.error?.details||[])}catch(_){}
     throw e}
   if(!r.body||!r.body.getReader){wt.cancel();const e=new Error("nostream");e.nostream=true;throw e}
-  const reader=r.body.getReader();const dec=new TextDecoder();let buf="",finish=null,got=0,pt=null;
+  const reader=r.body.getReader();const dec=new TextDecoder();let buf="",finish=null,got=0,pt=null,thoughts=null;
   try{
     while(true){
       const rd=await reader.read();if(rd.done)break;
@@ -1622,21 +1814,22 @@ async function geminiStreamParts(model,parts,sig,onChunk,sys){
         const js=line.slice(5).trim();if(!js||js==="[DONE]")continue;
         try{const d=JSON.parse(js);
           if(d.usageMetadata&&typeof d.usageMetadata.promptTokenCount==="number")pt=d.usageMetadata.promptTokenCount;
+          if(d.usageMetadata&&typeof d.usageMetadata.thoughtsTokenCount==="number")thoughts=d.usageMetadata.thoughtsTokenCount;
           const cand=d.candidates&&d.candidates[0];
           if(cand){if(cand.finishReason)finish=cand.finishReason;
             const t=(cand.content&&cand.content.parts||[]).map(x=>x.text||"").join("");
-            if(t){got++;onChunk(t)}}
+            if(t){got++;wt.gotFirst();onChunk(t)}}
         }catch(_){}
       }
     }
   }catch(re){wt.cancel();
     if(re&&re.name==="AbortError"){
-      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;throw e}
+      if(wt.timedOut){const e=new Error("timeout");e.net=true;e.timeout=true;e.firstToken=!!wt.wasFirst;throw e}
       const e=new Error("aborted");e.aborted=true;throw e}
     if(got===0){const e=new Error("streamfail");e.net=true;throw e}}
   wt.cancel();
   if(got===0&&finish===null){const e=new Error("nostream");e.nostream=true;throw e}
-  return {finish,model,prov:"google",promptTokens:pt};
+  return {finish,model,prov:"google",promptTokens:pt,think:!!(xo&&xo.think),thoughtTokens:thoughts};
 }
 async function gemini(parts,jsonMode,sig,sys){return aiCall(parts,{jsonMode,sig,sys})}
 async function geminiStream(parts,sig,onChunk,sys){return aiStream(parts,sig,onChunk,sys)}
@@ -1654,11 +1847,17 @@ ${tailTxt}`;
   const parts=[{role:"user",parts:[{text:prompt}]}];
   try{
     let r;
-    try{r=await geminiCall("gemini-3.5-flash-lite",parts,false,sig);bumpUsage("gemini-3.5-flash-lite",false)}
-    catch(e){
-      if(e.aborted)throw e;
-      if(e.status===404||e.status===429||e.status===503)r=await gemini(parts,false,sig);
-      else throw e;
+    const _selR=await selGet();
+    if(prefs.pin&&!state.oneShot&&_selR.prov!=="google"){
+      r=await aiCall(parts,{sig:sig,ms:RECALL_TOTAL_MS-3000,noThink:true});
+    }else{
+      try{r=await geminiCall("gemini-3.5-flash-lite",parts,false,sig,undefined,{ms:RECALL_TOTAL_MS-3000});bumpUsage("gemini-3.5-flash-lite",false)}
+      catch(e){
+        if(e.aborted)throw e;
+        if(prefs.pin&&!state.oneShot)throw e;
+        if(e.status===404||e.status===429||e.status===503)r=await aiCall(parts,{sig:sig,ms:RECALL_TOTAL_MS-3000,noThink:true});
+        else throw e;
+      }
     }
     const t=(r.text||"").trim();
     if(!t||t.startsWith("مفيش"))return "";
@@ -1929,6 +2128,12 @@ function openSheet(m){sheetMsg=m;navOpen("sheet");
   $("msEdit").style.display=m.role==="user"?"block":"none";
   const _pc=state.convs.find(c=>c.id===m.convId);
   $("msPin").textContent=(_pc&&_pc.pins&&_pc.pins.includes(m.id))?"📌 إلغاء التثبيت":"📌 تثبيت الرسالة";
+  {const L=["اتبعتت: "+fmtTime(m.ts)];
+   if(m.edited)L.push("اتعدلت: "+fmtTime(m.edited));
+   if(m.role==="model"&&m.byModel)L.push("النموذج: "+m.byModel);
+   if(m.role==="model"&&m.ttft)L.push("أول رد بعد "+(m.ttft/1000).toFixed(1)+" ثانية"+(m.think?" (مع تفكير خفيف مفعّل)":"")+(typeof m.thoughts==="number"?" · توكنز تفكير: "+m.thoughts:""));
+   if(m.fb&&m.fb.length)L.push("اتحوّل تلقائي بعد: "+m.fb.map(x=>x.m+" ("+x.w+")").join("، "));
+   $("msInfo").innerHTML=L.map(esc).join("<br>")}
   $("toast").style.display="none";$("msgSheet").classList.add("open");$("scrim").classList.add("open")}
 function closeSheet(){if($("msgSheet").classList.contains("open"))navClose("sheet");sheetMsg=null;$("msgSheet").classList.remove("open");if(!$("drawer").classList.contains("open"))$("scrim").classList.remove("open")}
 async function copyText(t){
@@ -2291,7 +2496,7 @@ async function send(){
   if(editing){
     const em=editing;
     if(!text){toast("الرسالة فاضية");return}
-    em.text=text;
+    em.text=text;em.edited=Date.now();
     await putItem("msgs",em);
     const cid=em.convId;
     cancelEditMode();
@@ -2304,6 +2509,9 @@ async function send(){
     if(state.convId===cid){
       const row=document.querySelector(`.msg[data-id="${em.id}"] .bubble`);
       if(row)row.textContent=text;
+      const _mm=document.querySelector(`.msg[data-id="${em.id}"] .mmeta`);
+      if(_mm&&!_mm.querySelector(".medit"))_mm.querySelector(".mtime").insertAdjacentHTML("afterend",`<span class="medit">اتعدلت ${fmtTime(em.edited)}</span>`);
+      else if(_mm){_mm.querySelector(".medit").textContent="اتعدلت "+fmtTime(em.edited)}
       for(const d of toDel){const r2=document.querySelector(`.msg[data-id="${d.id}"]`);if(r2)r2.remove()}
     }
     if(conv){conv.updated=Date.now();conv.lastTs=em.ts;conv.lastTxt=text.slice(0,60);await putItem("convs",conv);renderConvList()}
@@ -2788,7 +2996,7 @@ $("input").addEventListener("keydown",e=>{/* Enter intentionally inserts a newli
 $("sendBtn").addEventListener("click",()=>{if(state.busy&&abortCtl){abortCtl.abort()}else send()});
 /* ================= preferences & appearance ================= */
 const DEFAULT_PREFS={theme:"navy",accent:"gold",bubble:"indigo",font:"m",name:"",level:"deep",suggestions:true,
-  persona:{style:"sahib",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
+  persona:{style:"adaptive",warm:2,enth:2,argue:2,fmtH:2,fmtL:2,fmtT:2,emoji:1},instructions:"",
   nsfw:false,lockPin:null,lockBio:false,lockCred:null,recall:true,sumEvery:12,bubbleAI:"auto",bubShape:"round",groups:[],fontFam:"default",bannedWords:"",callbacks:true,autoBackup:false,autoBackupFreq:"day",lastAutoBackup:0,lastCallback:0};
 let prefs=JSON.parse(JSON.stringify(DEFAULT_PREFS));
 async function savePrefs(){await kvSet("prefs",prefs)}
@@ -2806,7 +3014,13 @@ const BUBBLES={indigo:"#46528c",petrol:"#2f6f66",maroon:"#7c4356",slate:"#4a4f5e
 const AIBUBBLES={ash:"#3d4460",olive:"#4a5340",plum:"#54425e",cocoa:"#5c4a3d",steel:"#3d4f5c"};
 const SHAPES={round:{r:"14px",tail:"4px"},sharp:{r:"7px",tail:"2px"},flat:{r:"14px",tail:"14px"}};
 const FONTS={xs:"13.5px",s:"15px",m:"16.5px",l:"18.5px",xl:"20px",xxl:"21.5px",xxxl:"23px",xxxxl:"25px"};
-const FONTFAMS={default:'"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif',naskh:'"Noto Naskh Arabic","Amiri","Segoe UI",serif',kufi:'"Noto Kufi Arabic","Segoe UI",sans-serif',tahoma:'Tahoma,"Segoe UI",sans-serif'};
+const FONTFAMS={default:'"Segoe UI",system-ui,-apple-system,"Noto Kufi Arabic","Noto Sans Arabic",Tahoma,sans-serif',tahoma:'Tahoma,"Segoe UI",sans-serif',
+  cairo:'"AnanCairo","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',tajawal:'"AnanTajawal","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',notosans:'"AnanNotoSans","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',almarai:'"AnanAlmarai","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',
+  naskh:'"AnanNaskh","Noto Naskh Arabic","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',kufi:'"AnanKufi","Noto Kufi Arabic","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',
+  amiri:'"AnanAmiri","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',reem:'"AnanReem","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif',messiri:'"AnanMessiri","Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",Tahoma,sans-serif' };
+/* [id, الاسم, عيّنة, مجموعة] — «show» للعرض والطابع مش للقراية الطويلة */
+const FONT_LIST=[["default","افتراضي (النظام)","read"],["tahoma","تاهوما (النظام)","read"],["cairo","القاهرة · Cairo","read"],["tajawal","تجوّل · Tajawal","read"],["notosans","Noto Sans عربي","read"],["almarai","المراعي · Almarai","read"],["naskh","نسخ · Noto Naskh","read"],["kufi","كوفي · Noto Kufi","read"],["amiri","أميري · Amiri","show"],["reem","ريم كوفي · Reem Kufi","show"],["messiri","المسيري · El Messiri","show"]];
+const FONT_SHOW={amiri:2.05,reem:1.9,messiri:1.9};
 function applyAppearance(){
   const r=document.documentElement.style;
   let t=prefs.theme;if(t==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"navy";
@@ -2820,6 +3034,8 @@ function applyAppearance(){
   r.setProperty("--radius",_sh.r);r.setProperty("--bubtail",_sh.tail);
   r.setProperty("--msgfont",FONTS[prefs.font]||FONTS.m);
   r.setProperty("--fontfam",FONTFAMS[prefs.fontFam]||FONTFAMS.default);
+  {const cf=(prefs.fontChat&&FONTFAMS[prefs.fontChat])?prefs.fontChat:(FONTFAMS[prefs.fontFam]?prefs.fontFam:"default");
+   r.setProperty("--chatfam",FONTFAMS[cf]);r.setProperty("--chatlh",String(FONT_SHOW[cf]||1.7))}
   const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.setAttribute("content",th.bg);
 }
 try{matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{if(prefs.theme==="system")applyAppearance()})}catch(e){}
@@ -2882,6 +3098,7 @@ function personaBlock(conv){
   }
   if(p.style==="roleplay")s+="\n\nوضع لعب الأدوار مفعّل 🎭:\n- بعد ما يتحدد الدور: اتقمّص الشخصية بالكامل — اتكلم بلسانها، بمشاعرها، وبطريقتها، ورد كأنك هي في كل رسالة.\n- استخدم وصف المشهد والحركات بين نجمتين *كتب كده* لما يضيف للأجواء، وخلّي الحوار طبيعي ومناسب للشخصية.\n- فضّل في الدور ومتكسرش الشخصية إلا لو المستخدم طلب صراحة توقف أو خرج من المشهد. ممنوع تتدخل بره الدور من عندك: لا كلام في الهامش، ولا تعليق على الأحداث، ولا ملاحظات مخرج، ولا أرقام رسايل أو أي إشارات مرجعية. الكلام بره الدور بيتم بس لما المستخدم يوقف المشهد بنفسه صراحة.\n- ابني على اللي المستخدم بيقوله وكمّل المشهد بإبداع، من غير ما تقرر أفعال المستخدم نيابة عنه.\n- في حدود قواعد النظام نفسه دايمًا: أي رفض بيصدر من النظام ملزم، من غير محاولة التفاف عليه.";
   const _rpActive=!!_char||p.style==="roleplay";
+  if(conv&&_rpActive&&conv.rpPhase==="live")s+=castPrompt(conv);
   if(conv&&_rpActive){
     if(conv.rpPhase==="paused"){
       const sc=conv.storyClock||{day:1,mins:780,era:""};
@@ -2980,6 +3197,52 @@ $("msgs").addEventListener("scroll",()=>{
   clearTimeout(b._st);b._st=setTimeout(savePlace,450);
 });
 $("jumpBtn").onclick=()=>{const b=$("msgs");b.style.scrollBehavior="auto";b.scrollTop=b.scrollHeight;b.style.scrollBehavior="";$("jumpBtn").style.display="none";nearBottom=true};
+/* ===== v29 بند 14: مؤشر الموضع + أول المحادثة ===== */
+(function(){
+  const box=$("msgs"),th=$("railThumb"),tip=$("railTip"),tb=$("topBtn");
+  let drag=false,idleT=null,raf=0;
+  function loadAll(){
+    const L=state.lazy;if(!L||L.convId!==state.convId||L.shown>=L.total)return;
+    const dist=box.scrollHeight-box.scrollTop-box.clientHeight;
+    renderMsgs(L.ms,0);L.shown=L.total;
+    box.style.scrollBehavior="auto";box.scrollTop=Math.max(0,box.scrollHeight-box.clientHeight-dist);box.style.scrollBehavior="";
+  }
+  function dayAt(){
+    let t="";for(const k of box.querySelectorAll(".daysep")){if(k.offsetTop-box.offsetTop<=box.scrollTop+30)t=k.textContent.trim();else break}
+    return t;
+  }
+  function upd(){
+    raf=0;
+    const r=box.getBoundingClientRect(),max=box.scrollHeight-box.clientHeight;
+    const long=max>box.clientHeight*1.5&&!!state.convId;
+    if(!long){th.style.display="none";tb.style.display="none";tip.style.display="none";return}
+    th.style.display="block";
+    const trackTop=r.top+6,trackH=r.height-12-56;
+    const f=Math.min(1,Math.max(0,box.scrollTop/max));
+    th.style.top=(trackTop+f*trackH)+"px";
+    tb.style.top=(r.top+8)+"px";
+    tb.style.display=box.scrollTop>box.clientHeight*1.2?"block":"none";
+    if(drag){tip.style.display="block";tip.style.top=(trackTop+f*trackH+8)+"px";
+      const d=dayAt();tip.textContent=arNum(Math.round(f*100))+"٪ من المحادثة"+(d?" · "+d:"")}
+  }
+  function sched(){if(!raf)raf=requestAnimationFrame(upd)}
+  function flash(){th.classList.add("act");clearTimeout(idleT);idleT=setTimeout(()=>{if(!drag)th.classList.remove("act")},1400)}
+  box.addEventListener("scroll",()=>{sched();flash()},{passive:true});
+  addEventListener("resize",sched);
+  new MutationObserver(sched).observe(box,{childList:true});
+  function moveTo(y){
+    const r=box.getBoundingClientRect(),max=box.scrollHeight-box.clientHeight;
+    const trackTop=r.top+6,trackH=r.height-12-56;
+    const f=Math.min(1,Math.max(0,(y-28-trackTop)/trackH));
+    box.style.scrollBehavior="auto";box.scrollTop=f*max;box.style.scrollBehavior="";
+  }
+  th.addEventListener("pointerdown",e=>{e.preventDefault();loadAll();drag=true;th.setPointerCapture(e.pointerId);th.classList.add("act");sched()});
+  th.addEventListener("pointermove",e=>{if(!drag)return;moveTo(e.clientY);sched()});
+  const end=e=>{if(!drag)return;drag=false;tip.style.display="none";flash();sched()};
+  th.addEventListener("pointerup",end);th.addEventListener("pointercancel",end);
+  tb.onclick=()=>{loadAll();box.style.scrollBehavior="auto";box.scrollTop=0;box.style.scrollBehavior="";sched()};
+  window.__railUpd=upd;
+})();
 /* ================= unified reply runner (streaming) ================= */
 const QACTS={
   summ:"لخص الرد ده في نقاط مركزة:",
@@ -3016,6 +3279,7 @@ function openConvMenu(btn,c){
         c.savePts.push({id:uid(),label:(label||"").trim().slice(0,40)||("نقطة "+(c.savePts.length+1)),msgCount:ms.length,ts:Date.now()});
         await putItem("convs",c);toast("اتحفظت النقطة 🔖 تلاقيها في قايمة المحادثة")
       }},
+      {t:"🎨 المتحدثين والألوان",fn:()=>openCast(c)},
       {t:"↩ رجوع لنقطة محفوظة",fn:()=>openSavePts(c)}
     ]:[]),
     {t:"📝 ملخص المحادثة",fn:()=>showInfo(c.summary?("ملخص أحداث المحادثة لحد دلوقتي:\n\n"+c.summary):"لسه مفيش ملخص للمحادثة دي. بيتعمل تلقائيًا كل "+(prefs.sumEvery||12)+" رسالة، وتقدر تغيّر العدد من الإعدادات.")},
@@ -3087,6 +3351,36 @@ function openQMenu(btn,m){
   setTimeout(()=>{document.addEventListener("pointerdown",function h(ev){if(qmenuEl&&!qmenuEl.contains(ev.target)){closeQMenu();document.removeEventListener("pointerdown",h)}},{capture:true})},0);
   $("msgs").addEventListener("scroll",closeQMenu,{once:true});
 }
+/* ================= v29: تنضيف العلامات الداخلية + حفظ آمن ================= */
+const QMARK_G=/\[{1,2}\s*q\s*:\s*[0-9٠-٩]+\s*\]{1,2}/gi;
+function stripMarkers(t,streaming){
+  if(!t)return t;
+  t=t.replace(QMARK_G,"");
+  t=t.replace(/\[\[\s*[0-9٠-٩]{1,3}\s*\]\]/g,"");
+  t=t.replace(/\[\[\/?form(?::single)?\]\]/g,"");
+  if(streaming)t=t.replace(/\[{1,2}\s*q?\s*:?\s*[0-9٠-٩]*\s*\]?$/i,"");
+  return t;
+}
+/* الاقتباس [[q:N]] بيتدور عليه في أول سطرين مش أول النص بس */
+function findQuoteN(text){
+  const lines=String(text||"").split("\n");let seen=0;
+  for(const ln of lines){
+    if(ln.trim())seen++;
+    const mm=ln.match(/\[{1,2}\s*q\s*:\s*([0-9٠-٩]+)\s*\]{1,2}/i);
+    if(mm)return parseInt(mm[1].replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),10);
+    if(seen>=2)break;
+  }
+  return null;
+}
+async function safePut(store,obj){
+  try{await putItem(store,obj);return true}
+  catch(e){
+    try{await new Promise(r=>setTimeout(r,300));await putItem(store,obj);return true}
+    catch(e2){toast("⚠ مقدرتش أحفظ الرد على الجهاز — انسخه لو مهم");return false}
+  }
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&state.flushFn)state.flushFn()});
+window.addEventListener("pagehide",()=>{if(state.flushFn)state.flushFn()});
 async function runReply(conv,histMsgs,userText){
   /* لو كل نماذج السلسلة متعلم عليها «مستنفدة» محليًا، بلّغ بوضوح بدل ما نضرب 429 ورا بعض */
   const _ch=await buildChain(false);
@@ -3103,34 +3397,44 @@ async function runReply(conv,histMsgs,userText){
     }
   }
   state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
+  state.attempts=[];
   const am={id:uid(),convId:conv.id,role:"model",text:"",ts:Date.now()};
+  state.streamId=am.id;
   const _t0=Date.now();
-  let bubbleEl=null,lastPaint=0,paintTimer=null,started=false;
+  let bubbleEl=null,lastPaint=0,paintTimer=null,started=false,lastSave=0;
+  const flush=async force=>{
+    if(!am.text||!am.text.trim())return;
+    const now=Date.now();if(!force&&now-lastSave<2500)return;lastSave=now;
+    am.partial=true;try{await putItem("msgs",am)}catch(_){}
+  };
+  state.flushFn=()=>flush(true);
   const paint=force=>{
-    if(!started){started=true;appendMsg(am);bubbleEl=document.querySelector(`.msg[data-id="${am.id}"] .bubble`)}
+    if(state.convId!==conv.id)return;
+    if(!started||!bubbleEl||!bubbleEl.isConnected){
+      bubbleEl=document.querySelector(`.msg[data-id="${am.id}"] .bubble`);
+      if(!bubbleEl){appendMsg(am);bubbleEl=document.querySelector(`.msg[data-id="${am.id}"] .bubble`)}
+      started=true;
+    }
     const now=Date.now();
     if(!force&&now-lastPaint<250){if(!paintTimer)paintTimer=setTimeout(()=>{paintTimer=null;paint(true)},255);return}
     lastPaint=now;
-    if(bubbleEl)bubbleEl.textContent=am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"")
+    if(bubbleEl)bubbleEl.textContent=stripMarkers(am.text.replace(/\[\[form(:single)?\]\][\s\S]*?(\[\[\/form\]\]|$)/g,"")
       .replace(/^\s*\[\s*[0-9٠-٩]{1,3}\s*\]\s+/,"")
       .replace(/^\s*\[+\s*q\s*:?\s*[0-9٠-٩]*\s*\]*\s*/i,"")
-      .replace(/^\s*\[+$/,"");
+      .replace(/^\s*\[+$/,""),true);
     const b=$("msgs");
     if(b.scrollHeight-b.scrollTop-b.clientHeight>140){$("jumpBtn").style.display="block";$("jumpBtn").textContent="⬇ آخر الرسايل";nearBottom=false}
   };
-  const finalRow=()=>{const row=document.querySelector(`.msg[data-id="${am.id}"]`);if(row)row.outerHTML=bubbleHTML(am);else appendMsg(am)};
+  const finalRow=()=>{if(state.convId!==conv.id)return;const row=document.querySelector(`.msg[data-id="${am.id}"]`);if(row)row.outerHTML=bubbleHTML(am);else appendMsg(am)};
   const cleanupPartial=()=>{const row=document.querySelector(`.msg[data-id="${am.id}"]`);if(row)row.remove();delete state.msgIndex[am.id]};
   try{
-    let recallText="";
-    if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)){
+    /* v29: الاسترجاع بيشتغل بالتوازي مع باقي التجهيز، بميزانية 22ث، ومن غير انتظار إجباري */
+    let recallP=null,recallCtl=null;
+    if(prefs.recall!==false&&(histMsgs.length>=6||conv.summary)&&!rpConv(conv)){
+      recallCtl=new AbortController();
+      abortCtl.signal.addEventListener("abort",()=>recallCtl.abort());
+      recallP=recallPass(conv,histMsgs,userText,recallCtl.signal).catch(()=>"");
       setTyping(true,"🧠 بيسترجع اللي فات…");
-      const t0=Date.now();
-      try{recallText=rpConv(conv)?"":await recallPass(conv,histMsgs,userText,abortCtl.signal);if(recallText&&recallText.trim())am.recalled=true}
-      catch(re){if(re&&re.aborted)throw re}
-      const dt=Date.now()-t0;
-      if(dt<RECALL_MIN_MS)await new Promise(r=>setTimeout(r,RECALL_MIN_MS-dt));
-      if(abortCtl.signal.aborted){const ae=new Error("aborted");ae.aborted=true;throw ae}
-      setTyping(true);
     }
     const CREAT_T=[0.2,0.5,0.9,1.2,1.6];
     const _cv=getPV("creativity");
@@ -3151,17 +3455,27 @@ async function runReply(conv,histMsgs,userText){
       setTyping(true);
       prefs.webOn=false;syncWebTgl();
     }
+    let recallText="";
+    if(recallP){
+      setTyping(true,"🧠 بيسترجع اللي فات…");
+      const _got=await Promise.race([recallP,new Promise(r=>setTimeout(()=>r(null),RECALL_TOTAL_MS))]);
+      if(_got===null&&recallCtl)recallCtl.abort();
+      if(_got&&String(_got).trim()){recallText=String(_got);am.recalled=true}
+      if(abortCtl.signal.aborted){const ae=new Error("aborted");ae.aborted=true;throw ae}
+      setTyping(true);
+    }
     const _built=await buildChatParts(conv,histMsgs,userText,recallText);
     const parts=_built.parts;
     let sysText=_built.sys;
     if(_srcText)sysText=(sysText||"")+"\n\nمصادر متاحة للرد (اعتمد عليها في إجابتك واذكر إن المعلومة من مصدر المستخدم أو من النت):\n"+_srcText;
     let finish=null;
     let _retried=false;
+    const _tStream=Date.now();
     while(true){
       try{
         finish=await geminiStream(parts,abortCtl.signal,chunk=>{
-          if(!am.text)setTyping(false);
-          am.text+=chunk;paint(false);
+          if(!am.text){setTyping(false);am.ttft=Date.now()-_tStream}
+          am.text+=chunk;paint(false);flush(false);
         },sysText);
         break;
       }catch(se){
@@ -3185,6 +3499,10 @@ async function runReply(conv,histMsgs,userText){
     }
     am.text=am.text.trim();
     if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0&&state.lastAnswered.model)am.byModel=state.lastAnswered.model;
+    if(state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0){am.think=!!state.lastAnswered.think;if(typeof state.lastAnswered.thoughts==="number")am.thoughts=state.lastAnswered.thoughts}
+    if(!am.ttft)am.ttft=Date.now()-_tStream;
+    am.dur=Date.now()-_tStream;
+    if(state.attempts&&state.attempts.length)am.fb=state.attempts.slice(0,4).map(a=>({m:a.model,w:a.why}));
     if(finish==="MAX_TOKENS")am.incomplete=true;
     am.text=await sanitizeReply(am.text,sysText);
     /* منقّي تقليد السقالة: سطور قالب الحقن الحرفي + تكرارات [N] و[[N]] */
@@ -3196,6 +3514,7 @@ async function runReply(conv,histMsgs,userText){
        if(!_lead)break;
        am.text=am.text.slice(_lead[0].length);
      }}
+    const _qLate=findQuoteN(am.text);
     let _qm=am.text.match(/^\s*\[+\s*q\s*:\s*([0-9٠-٩]+)\s*\]*\s*/i);
     if(!_qm){
       /* اقتباس مشوّه: رقم رسالة بين قوسين واحد بس، زي [٤] — بنفس معنى [[q:N]] */
@@ -3211,6 +3530,9 @@ async function runReply(conv,histMsgs,userText){
       const _orig=((state.ctxUnits||{})[conv.id]||{})[_qn]||null;
       am.text=am.text.slice(_qm[0].length).replace(/^\s+/,"");
       if(_orig&&_orig.id!==am.id){am.rid=_orig.id;am.rquote={r:_orig.role,t:(_orig.text||"").slice(0,90)}}
+    }else if(_qLate){
+      const _orig=((state.ctxUnits||{})[conv.id]||{})[_qLate]||null;
+      if(_orig&&_orig.id!==am.id){am.rid=_orig.id;am.rquote={r:_orig.role,t:(_orig.text||"").slice(0,90)}}
     }
     const _forms=[];
     am.text=am.text.replace(/\[\[form(:single)?\]\]\r?\n?([\s\S]*?)\[\[\/form\]\]/g,(whole,single,body)=>{
@@ -3222,26 +3544,30 @@ async function runReply(conv,histMsgs,userText){
       return "";
     }).replace(/\n{3,}/g,"\n\n").trim();
     if(_forms.length)am.forms=_forms;
-    await putItem("msgs",am);
+    /* شبكة أمان أخيرة: أي علامة داخلية فاضلة (في أي سطر) تتشال، وفورم مش مقفول يفضل نصه */
+    am.text=stripMarkers(am.text,false).replace(/\n{3,}/g,"\n\n").trim();
+    delete am.partial;
+    await safePut("msgs",am);
     finalRow();
     if(conv.rpPhase==="live"&&rpConv(conv)){storyAdvance(conv,20+Math.floor(Math.random()*21));renderStoryBar()}
-    conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
+    conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await safePut("convs",conv);renderConvList();
+    try{pinWarn()}catch(_){}
     return am;
   }catch(e){
     setTyping(false);
-    if(e.timeout&&am.text&&am.text.trim()){
+    if(!e.aborted&&am.text&&am.text.trim()){
       if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0)am.byModel=state.lastAnswered.model;
-      am.text=am.text.trim();am.incomplete=true;
-      await putItem("msgs",am);finalRow();
-      conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
-      toast("الرد وقف في النص — دوس «▶ كمّل الرد» تحته");
+      am.text=stripMarkers(am.text.trim(),false).trim();am.incomplete=true;delete am.partial;
+      await safePut("msgs",am);finalRow();
+      conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await safePut("convs",conv);renderConvList();
+      toast(e.timeout?"الرد وقف في النص — دوس «▶ كمّل الرد» تحته":"الاتصال قطع في النص — اللي وصل اتحفظ، دوس «▶ كمّل الرد»");
       return am;
     }
     if(e.aborted){
       if(am.text&&am.text.trim()){
         if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0)am.byModel=state.lastAnswered.model;
-        am.text=am.text.trim();am.incomplete=true;await putItem("msgs",am);finalRow();
-        conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
+        am.text=stripMarkers(am.text.trim(),false).trim();am.incomplete=true;delete am.partial;await safePut("msgs",am);finalRow();
+        conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await safePut("convs",conv);renderConvList();
       }else cleanupPartial();
       toast("اتوقف الرد");
       return null;
@@ -3255,12 +3581,21 @@ async function runReply(conv,histMsgs,userText){
       msg="وصلت لحد الاستخدام المجاني (في الدقيقة أو اليوم). استنى شوية وجرّب تاني."+(e.detail?(". "+String(e.detail).slice(0,80)):"");
     else if(e.status===404)
       msg="النموذج مش متاح على المفتاح ده حاليًا. جرّب بعد شوية.";
+    const _pinned=!!(prefs.pin&&!state.oneShot);
+    if(_pinned){
+      const _sel=state.sel||{};const _pn=(PROVIDERS[_sel.prov]||{}).name||"المثبت";
+      msg="المزود المثبت ("+_pn+") مردّش: "+errWhy(e)+". التثبيت شغال فمحوّلتش لمزود تاني لوحدي — دوس «حوّل للاحتياط» فوق الكتابة أو غيّر المزود.";
+    }
+    if(state.attempts&&state.attempts.length){
+      msg+="\nاللي اتجرّب: "+state.attempts.filter(a=>!a.skipped).slice(0,5).map(a=>a.model+" ← "+a.why).join("، ");
+    }
     const em={id:uid(),convId:conv.id,role:"model",text:msg,err:true,ts:Date.now()};
-    await putItem("msgs",em);appendMsg(em);
-    conv.updated=Date.now();conv.lastTs=em.ts;conv.lastTxt="⚠ خطأ في الإرسال";await putItem("convs",conv);renderConvList();
+    await safePut("msgs",em);if(state.convId===conv.id)appendMsg(em);
+    conv.updated=Date.now();conv.lastTs=em.ts;conv.lastTxt="⚠ خطأ في الإرسال";await safePut("convs",conv);renderConvList();
+    try{pinWarn(true,e)}catch(_){}
     return null;
   }finally{
-    state.busy=false;showStop(false);
+    state.busy=false;showStop(false);state.flushFn=null;state.streamId=null;state.oneShot=false;
   }
 }
 /* ================= image attach ================= */
@@ -3699,6 +4034,27 @@ $("importFile").addEventListener("change",async e=>{
 });
 /* ================= settings pages wiring ================= */
 function openPage(id){closeQMenu();$(id).classList.add("open");navOpen(id);if(id==="charsPage")renderChars()}
+function buildFontLists(){
+  const mk=(id,cur,isChat,cb)=>{
+    const el=$(id);el.innerHTML="";
+    const add=(v,name,grp)=>{
+      const b=document.createElement("button");b.dataset.v=v;
+      const fam=v==="same"?(FONTFAMS[prefs.fontFam]||FONTFAMS.default):(FONTFAMS[v]||FONTFAMS.default);
+      b.innerHTML='<span class="fn">'+esc(name)+'</span><span class="fs" style="font-family:'+fam.replace(/"/g,"'")+'">أهلاً يا عنان ١٢٣</span>';
+      if(v===cur)b.classList.add("on");
+      b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");cb(v)};
+      el.appendChild(b);
+    };
+    const g=t=>{const d=document.createElement("div");d.className="fgrp";d.textContent=t;el.appendChild(d)};
+    if(isChat)add("same","نفس خط التطبيق");
+    g("للقراية");
+    for(const [v,n,gr] of FONT_LIST)if(gr==="read")add(v,n);
+    g("عرض وطابع (مش للقراية الطويلة — تباعد السطور أكبر)");
+    for(const [v,n,gr] of FONT_LIST)if(gr==="show")add(v,n);
+  };
+  mk("fontList",FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",false,v=>{prefs.fontFam=v;savePrefs();applyAppearance();buildFontLists()});
+  mk("fontChatList",(prefs.fontChat&&FONTFAMS[prefs.fontChat])?prefs.fontChat:"same",true,v=>{prefs.fontChat=v==="same"?"":v;savePrefs();applyAppearance()});
+}
 function buildSeg(id,opts,cur,cb){
   const el=$(id);el.innerHTML="";
   for(const [v,l] of opts){const b=document.createElement("button");b.textContent=l;b.dataset.v=v;
@@ -3725,7 +4081,7 @@ async function fillSettings(){
   buildSeg("segFont",[["xs","أ"],["s","أ"],["m","أ"],["l","أ"],["xl","أ"],["xxl","أ"],["xxxl","أ"],["xxxxl","أ"]],FONTS[prefs.font]?prefs.font:"m",v=>{prefs.font=v;savePrefs();applyAppearance()});
   {const _fg={xs:11,s:13,m:15,l:17,xl:19,xxl:21,xxxl:23,xxxxl:25},_ft={xs:"صغير جدًا",s:"صغير",m:"وسط",l:"كبير",xl:"كبير جدًا",xxl:"ضخم",xxxl:"الأكبر",xxxxl:"الأضخم"};
   $("segFont").querySelectorAll("button").forEach(b=>{b.style.fontSize=_fg[b.dataset.v]+"px";b.title=_ft[b.dataset.v]})}
-  buildSeg("segFontFam",[["default","الافتراضي"],["naskh","نسخ"],["kufi","كوفي"],["tahoma","تاهوما"]],FONTFAMS[prefs.fontFam]?prefs.fontFam:"default",v=>{prefs.fontFam=v;savePrefs();applyAppearance()});
+  buildFontLists();
   const mp=$("modelPick");mp.innerHTML="";
   const _sel=await selGet();
   for(const am of allModels()){const o=document.createElement("option");o.value=am.prov+":"+am.id;o.textContent=am.id;if(_sel.prov===am.prov&&_sel.model===am.id)o.selected=true;mp.appendChild(o)}
@@ -4061,8 +4417,132 @@ function openCharSetup(pr){
   for(const x of (pr.traits||[])){const b=document.createElement("button");b.className="pchip";b.textContent=x;b.onclick=()=>b.classList.toggle("on");t.appendChild(b)}
   $("charSetModal").classList.remove("hidden");navOpen("charset");
 }
-function closeCharSet(){$("charSetModal").classList.add("hidden");navClose("charset");
+function closeCharSet(){$("charSetModal").classList.add("hidden");navClose("charset");state.pendingCast=null;
   if(state._gSnap){prefs.persona=state._gSnap;state._gSnap=null;savePrefs();fillPersona()}}
+/* ================= v29: المتحدثين وألوانهم في لعب الأدوار ================= */
+const CAST_PALETTE=["#f2a7bf","#8fd9cb","#f3c97f","#b3acf0","#92c9f5","#f0a583","#bde08f","#e2a6e8"];
+function lumOf(hex){
+  const m=/^#?([0-9a-f]{6})$/i.exec(hex||"");if(!m)return 0.5;
+  const n=parseInt(m[1],16),c=[(n>>16)&255,(n>>8)&255,n&255].map(v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)});
+  return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
+}
+function contrastOf(a,b){const x=lumOf(a),y=lumOf(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05)}
+function cssHex(v){
+  const raw=(getComputedStyle(document.documentElement).getPropertyValue(v)||"").trim();
+  return /^#[0-9a-f]{6}$/i.test(raw)?raw:"#2d3349";
+}
+/* بيضمن إن اللون مقروء على خلفية الفقاعة: لو التباين قليل بيفتّح/بيغمّق اللون لحد ما يتقري */
+function legible(hex,bg){
+  if(!/^#[0-9a-f]{6}$/i.test(hex||""))return hex;
+  if(contrastOf(hex,bg)>=4.5)return hex;
+  const toward=lumOf(bg)<0.4?255:0;
+  let n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  for(let i=0;i<20&&contrastOf("#"+[r,g,b].map(v=>v.toString(16).padStart(2,"0")).join(""),bg)<4.5;i++){
+    r=Math.round(r+(toward-r)*0.12);g=Math.round(g+(toward-g)*0.12);b=Math.round(b+(toward-b)*0.12);
+  }
+  return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function castChars(conv){return ((conv&&conv.cast)||[]).filter(x=>!x.me&&x.name)}
+function castMe(conv){return ((conv&&conv.cast)||[]).find(x=>x.me)||null}
+function castOn(conv){return !!(conv&&rpConv(conv)&&castChars(conv).length)}
+function castRender(text,conv){
+  const chars=castChars(conv);
+  const bg=cssHex("--bubble-ai");
+  const idx=chars.map(c=>({n:normAr(c.name),c}));
+  const blocks=[];let cur=null;
+  for(const ln of String(text||"").split("\n")){
+    const mm=ln.match(/^\s*[*_]{0,2}\s*([^:：\n*_]{1,24}?)\s*[*_]{0,2}\s*[:：]\s*(.*)$/);
+    let hit=null;
+    if(mm){const nn=normAr(mm[1]);hit=idx.find(x=>x.n===nn)||null}
+    if(hit){cur={c:hit.c,lines:[mm[2]]};blocks.push(cur)}
+    else if(cur)cur.lines.push(ln);
+    else{cur={c:null,lines:[ln]};blocks.push(cur)}
+  }
+  return blocks.map(b=>{
+    const body=b.lines.join("\n").replace(/^\n+|\n+$/g,"");
+    if(!b.c)return mdRender(body);
+    const col=legible(b.c.color,bg);
+    return '<div class="spkblk" style="color:'+col+'">'+mdRender("**"+b.c.name+":** "+body)+'</div>';
+  }).join("");
+}
+function castUserStyle(conv){
+  const me=castMe(conv);if(!me||!rpConv(conv))return "";
+  return ' style="color:'+legible(me.color,cssHex("--bubble-me"))+'"';
+}
+function castPrompt(conv){
+  const chars=castChars(conv);if(!chars.length)return "";
+  const me=castMe(conv);
+  let s="\n\nالمتحدثين في المشهد (المستخدم حددهم بنفسه وبيلوّن كل واحد): "+chars.map(c=>c.name).join("، ")+".";
+  if(me)s+=" والمستخدم نفسه اسمه «"+me.name+"» — ممنوع تتكلم بلسانه أو تكتب سطور باسمه أبدًا.";
+  s+="\nصيغة الرد إلزامية في المشهد: كل متحدث في سطر أو سطور منفصلة، وكل سطر بيبدأ باسم المتحدث بالظبط زي المكتوب فوق متبوعًا بنقطتين، بالشكل «الاسم: كلامه». الحركات والوصف بين نجمتين *كده* بعد اسم المتحدث في نفس السطر. ممنوع تستخدم اسم متحدث مش في القايمة. لو شخصية واحدة بس بتتكلم اكتب اسمها برضه قبل كلامها.";
+  return s;
+}
+let castCtx=null;
+function openCast(conv){
+  let rows;
+  if(conv){rows=JSON.parse(JSON.stringify(conv.cast||[]))}
+  else rows=JSON.parse(JSON.stringify(state.pendingCast||[]));
+  if(!rows.length){
+    const setup=conv?((conv.persona||{}).charSetup||{}):(state.pendingCastBase||{});
+    const base=(setup.name||"").trim()||(conv?(conv.title||"").replace(/\s*—.*$/,"").replace(/[^\u0600-\u06FFa-zA-Z ]/g,"").trim():"")||"الشخصية";
+    rows=[{id:uid(),name:base,color:CAST_PALETTE[0]},{id:uid(),name:(prefs.name||"أنا"),color:CAST_PALETTE[4],me:true}];
+  }
+  if(!rows.some(r=>r.me))rows.push({id:uid(),name:(prefs.name||"أنا"),color:CAST_PALETTE[4],me:true});
+  castCtx={conv:conv,rows:rows};
+  drawCastRows();
+  $("castModal").classList.remove("hidden");navOpen("cast");
+}
+function closeCast(){$("castModal").classList.add("hidden");navClose("cast");castCtx=null}
+function drawCastRows(){
+  const box=$("castRows");box.innerHTML="";
+  const bg=cssHex("--bubble-ai");
+  castCtx.rows.forEach((r,i)=>{
+    const d=document.createElement("div");d.className="castrow";
+    d.innerHTML='<div class="castnm"><input class="fld" maxlength="24" value="'+esc(r.name)+'" placeholder="'+(r.me?"اسمك":"اسم الشخصية")+'">'
+      +'<span class="castwho">'+(r.me?"أنت":"شخصية")+'</span>'+(r.me?"":'<button class="castdel" aria-label="شيل">✕</button>')+'</div>'
+      +'<div class="castsw"></div>'
+      +'<div class="castprev" style="color:'+legible(r.color,bg)+'">'+esc(r.name||"…")+': أهلًا، ده شكل كلامي</div>';
+    const sw=d.querySelector(".castsw");
+    for(const c of CAST_PALETTE){
+      const b=document.createElement("button");b.className="swb"+(r.color.toLowerCase()===c?" on":"");b.style.background=c;b.setAttribute("aria-label","لون");
+      b.onclick=()=>{r.color=c;drawCastRows()};sw.appendChild(b);
+    }
+    const ci=document.createElement("input");ci.type="color";ci.value=/^#[0-9a-f]{6}$/i.test(r.color)?r.color:"#ffffff";ci.className="swcustom";ci.title="لون تاني";
+    ci.oninput=()=>{r.color=ci.value;d.querySelector(".castprev").style.color=legible(r.color,bg)};
+    ci.onchange=()=>{r.color=ci.value;drawCastRows()};sw.appendChild(ci);
+    d.querySelector("input.fld").oninput=e=>{r.name=e.target.value;d.querySelector(".castprev").textContent=(r.name||"…")+": أهلًا، ده شكل كلامي"};
+    const del=d.querySelector(".castdel");if(del)del.onclick=()=>{castCtx.rows.splice(i,1);drawCastRows()};
+    box.appendChild(d);
+  });
+  const nch=castCtx.rows.filter(r=>!r.me).length;
+  $("castAdd").style.display=nch>=4?"none":"block";
+}
+$("castAdd").onclick=()=>{
+  const used=new Set(castCtx.rows.map(r=>r.color.toLowerCase()));
+  const col=CAST_PALETTE.find(c=>!used.has(c))||CAST_PALETTE[castCtx.rows.length%CAST_PALETTE.length];
+  const meIdx=castCtx.rows.findIndex(r=>r.me);
+  castCtx.rows.splice(meIdx<0?castCtx.rows.length:meIdx,0,{id:uid(),name:"شخصية "+(castCtx.rows.filter(r=>!r.me).length+1),color:col});
+  drawCastRows();
+};
+$("castCancel").onclick=()=>closeCast();
+$("castSave").onclick=async()=>{
+  const rows=castCtx.rows.map(r=>({id:r.id,name:(r.name||"").trim(),color:r.color,me:!!r.me}));
+  const chars=rows.filter(r=>!r.me);
+  if(chars.some(r=>!r.name)){toast("كل شخصية لازم يبقى ليها اسم");return}
+  const names=rows.map(r=>normAr(r.name)).filter(Boolean);
+  if(new Set(names).size!==names.length){toast("فيه اسمين متشابهين — خلّي كل واحد باسم مختلف");return}
+  const conv=castCtx.conv;
+  if(conv){
+    conv.cast=rows;await putItem("convs",conv);
+    closeCast();
+    if(state.convId===conv.id)renderMsgs(await msgsOf(conv.id),null);
+    toast("اتحفظت الألوان ✦ — بتتطبق على المحادثة كلها");
+  }else{
+    state.pendingCast=rows;closeCast();toast("الألوان هتتطبق أول ما تبدأ المشهد ✦");
+  }
+};
+$("storyCast").onclick=ev=>{ev.stopPropagation();const c=state.convs.find(x=>x.id===state.convId);if(c)openCast(c)};
+$("csCast").onclick=()=>{state.pendingCastBase={name:$("csName").value.trim()||((charSetFor&&charSetFor.name)||"").replace(/[^\u0600-\u06FFa-zA-Z ]/g,"").trim()};openCast(null)};
 /* بعد اختيار شخصية من المركز: ادخل على طول في محادثة جاهزة بالشخصية دي، من غير رجوع لأي شاشة وسيطة */
 async function enterCharConv(pr,setup){
   let conv=state.convs.find(c=>c.id===state.convId);
@@ -4072,6 +4552,7 @@ async function enterCharConv(pr,setup){
   for(const k of Object.keys(pr.vals||{}))conv.persona[k]=pr.vals[k];
   conv.persona.char=pr.id;
   if(setup)conv.persona.charSetup=setup;
+  if(state.pendingCast&&state.pendingCast.length){conv.cast=state.pendingCast;state.pendingCast=null}
   const _setupName=setup&&setup.name?String(setup.name).trim():"";
   conv.title=pr.name+(_setupName?" — "+_setupName:"");
   conv.titled=true;
@@ -4112,7 +4593,9 @@ $("csSave").onclick=async()=>{
   const setup={for:pr.id,name:$("csName").value.trim(),age:$("csAge").value.trim(),
     traits:[...document.querySelectorAll("#csTraits .pchip.on")].map(b=>b.textContent),
     desc:$("csDesc").value.trim(),rel:($("csRel")._full||"").trim(),era:$("csEra").value.trim()};
+  const _pc=state.pendingCast;
   closeCharSet();if(pr.hub)closePage("charsPage");
+  state.pendingCast=_pc;
   await enterCharConv(pr,setup);
   toast("اتحفظت تفاصيل "+pr.name+" ✦ يلا جربها")
 };
@@ -4324,6 +4807,8 @@ function hideLayer(id){
   else if(id==="cmp")$("cmpModal").classList.add("hidden");
   else if(id==="cmpres")$("cmpResultModal").classList.add("hidden");
   else if(id==="loops")$("loopsModal").classList.add("hidden");
+  else if(id==="cast"){$("castModal").classList.add("hidden");castCtx=null}
+  else if(id==="settab")selectSetTab("home",true);
   else if($(id))$(id).classList.remove("open");
 }
 window.addEventListener("popstate",()=>{
@@ -4332,7 +4817,17 @@ window.addEventListener("popstate",()=>{
   if(!top)return;
   hideLayer(top);
 });
-function closePage(id){$(id).classList.remove("open");navClose(id)}
+function closePage(id){
+  $(id).classList.remove("open");
+  if(id==="settingsPage"&&navStack.includes("settab")){
+    /* v29: خطوة التاب جوه الإعدادات لسه في الهيستوري — شيلها هي والصفحة مع بعض */
+    const a=navStack.lastIndexOf("settab"),b=navStack.lastIndexOf("settingsPage");
+    navStack.splice(Math.max(a,b),1);navStack.splice(Math.min(a,b),1);
+    navSuppress=true;try{history.go(-2)}catch(e){navSuppress=false}
+    return;
+  }
+  navClose(id)
+}
 /* ================= drawer / settings ================= */
 let drawerMode="all";
 function renderChips(){
@@ -4421,6 +4916,8 @@ function initSetTabs(){
   panes.models.innerHTML=
     '<div class="sect">النموذج 🤖</div><div class="pgroup" id="modelsPickGroup">'
     +'<div class="prow"><span>عنان يختار النموذج حسب السياق<br><span class="small" style="color:var(--muted);font-weight:400">(Gemini بس، واختيارك اليدوي بيغلّب دايمًا)</span></span><button class="tgl" id="tglAutoPick"></button></div>'
+    +'<div class="prow"><span>ثبّت المزود المختار ✋<br><span class="small" style="color:var(--muted);font-weight:400">من غير احتياط تلقائي: بيفضل على المزود ده (بموديلاته) لحد ما تغيّره بنفسك، وبيحذّرك قبل ما يخلص ومبيبدّلش لوحده</span></span><button class="tgl" id="tglPin"></button></div>'
+    +'<div class="prow"><span>تفكير خفيف قبل الرد 💭<br><span class="small" style="color:var(--muted);font-weight:400">بيطلب من الموديل تفكير قليل فعلًا (Gemini وGroq وOpenRouter المدعوم). المزودين التانيين مفيهمش الخيار ده</span></span><button class="tgl" id="tglThink"></button></div>'
     +'</div>'
     +'<div class="sect">مفاتيح المزودين الاحتياطيين 🔑</div>'
     +'<div class="pgroup" id="provKeysGroup" style="padding:6px 0"></div>'
@@ -4458,7 +4955,10 @@ function initSetTabs(){
   }
   fillModelsTab();
 }
-function selectSetTab(id){
+function selectSetTab(id,fromPop){
+  /* v29: دخول تاب جوه الإعدادات بيتسجل في الهيستوري، فزرار الرجوع بتاع الموبايل يرجّعك للقايمة مش بيقفل الإعدادات كلها */
+  if(id!=="home"&&!navStack.includes("settab"))navOpen("settab");
+  else if(id==="home"&&!fromPop&&navStack.includes("settab"))navClose("settab");
   setCur=id;
   document.querySelectorAll("#settingsPage .tabpane").forEach(p=>p.classList.toggle("on",p.id==="pane-"+id));
   const row=SET_ROWS.find(r=>r[0]===id);
@@ -4481,7 +4981,8 @@ async function fillModelsTab(){
     row.querySelector("button").onclick=async ev=>{
       const v=row.querySelector("input").value.trim();if(!v){toast("الصق المفتاح الأول");return}
       await kvSet(P.keyName,v);state.provKeys[p]=v;row.querySelector("input").value="";
-      toast("اتحفظ مفتاح "+P.name+" ✦");fillModelsTab();
+      toast("اتحفظ مفتاح "+P.name+" ✦ — بيتأكد إنه شغال…");fillModelsTab();
+      validateProvKey(p,v);
     };
     g.appendChild(row);
   }
@@ -4507,6 +5008,13 @@ async function fillModelsTab(){
     state.proxyUrl=v;await kvSet("proxyUrlV1",v);toast(v?"اتحفظ رابط البروكسي ✦":"اتمسح رابط البروكسي");fillModelsTab();
   };
   sg.appendChild(prow);
+  const tp=$("tglPin");
+  if(tp){tp.classList.toggle("on",!!prefs.pin);
+    tp.onclick=async()=>{prefs.pin=!prefs.pin;await savePrefs();tp.classList.toggle("on",!!prefs.pin);state.pinHide=null;
+      const sel=await selGet();toast(prefs.pin?("اتثبّت على "+PROVIDERS[sel.prov].name+" — مفيش تبديل تلقائي"):"التثبيت اتقفل — الاحتياط التلقائي شغال");pinWarn()}}
+  const tk=$("tglThink");
+  if(tk){tk.classList.toggle("on",prefs.think!==false);
+    tk.onclick=async()=>{prefs.think=prefs.think===false?true:false;await savePrefs();tk.classList.toggle("on",prefs.think!==false);toast(prefs.think!==false?"التفكير الخفيف شغال 💭":"التفكير الخفيف اتقفل")}}
   const tgl=$("tglAutoPick");
   if(tgl){tgl.classList.toggle("on",!!prefs.autoPick);
     tgl.onclick=async()=>{prefs.autoPick=!prefs.autoPick;if(prefs.autoPick)prefs.selManual=false;await savePrefs();tgl.classList.toggle("on",prefs.autoPick);toast(prefs.autoPick?"الاختيار التلقائي شغال 🤖":"الاختيار التلقائي اتقفل")}}
@@ -4535,6 +5043,46 @@ async function setSearchUsed(tool,n,period){
   else{const k=localDay();u.days[k]=u.days[k]||{};u.days[k][tool]=n}
   await kvSet("searchUsageV1",u);
 }
+/* v29: شاشة الاستهلاك أوتوماتيك بالكامل — أرقام المزود الحقيقية بس، ومفيش تصحيح يدوي ولا تخمين */
+function nextResetTxt(provId,monthly){
+  try{
+    const fmt=d=>d.toLocaleTimeString("ar-EG",{hour:"numeric",minute:"2-digit",timeZone:"Africa/Cairo"});
+    if(monthly)return "بيتجدد أول كل شهر";
+    if(provId==="google"){
+      const key=t=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(t));
+      const k0=key(Date.now());let t=Date.now();
+      for(let i=0;i<1500;i++){t+=60e3;if(key(t)!==k0)break}
+      return "بيتجدد حوالي "+fmt(new Date(t))+" بتوقيت القاهرة";
+    }
+    const P=PROVIDERS[provId];
+    if(P&&P.reset==="utc"){const n=new Date();return "بيتجدد حوالي "+fmt(new Date(Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)))+" بتوقيت القاهرة"}
+    return "موعد التجديد غير معلن من المزود";
+  }catch(_){return ""}
+}
+async function refreshOrKey(){
+  const key=state.provKeys.openrouter;if(!key)return null;
+  try{
+    const r=await fetch("https://openrouter.ai/api/v1/key",{headers:{"Authorization":"Bearer "+key},signal:AbortSignal.timeout(8000)});
+    if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;try{e.detail=(await r.json()).error?.message||""}catch(_){}await provNote("openrouter","key-check",false,e);state.orInfo={err:r.status,ts:Date.now()};return state.orInfo}
+    const j=(await r.json()).data||{};
+    const f=j.free_model_daily_requests;
+    state.orInfo={ts:Date.now(),used:f&&f.used,limit:f&&f.limit,remaining:f&&f.remaining,credit:j.limit_remaining};
+    await provNote("openrouter","key-check",true);
+    return state.orInfo;
+  }catch(e){state.orInfo={err:"net",ts:Date.now()};return state.orInfo}
+}
+async function refreshTavily(){
+  const key=(state.searchKeys||{}).tavily;if(!key)return null;
+  try{
+    const r=await fetch("https://api.tavily.com/usage",{headers:{"Authorization":"Bearer "+key},signal:AbortSignal.timeout(8000)});
+    if(!r.ok)return {err:r.status};
+    const j=await r.json();
+    const used=(j.key&&typeof j.key.usage==="number")?j.key.usage:(j.account&&typeof j.account.plan_usage==="number"?j.account.plan_usage:null);
+    const lim=(j.key&&typeof j.key.limit==="number")?j.key.limit:(j.account&&typeof j.account.plan_limit==="number"?j.account.plan_limit:null);
+    if(used===null)return {err:"shape"};
+    return {used,limit:lim};
+  }catch(e){return {err:"net"}}
+}
 function u2card(o){
   const nameStyle=o.rtl?' style="direction:rtl;text-align:right"':'';
   return '<div class="u2card">'
@@ -4544,81 +5092,126 @@ function u2card(o){
     +'<div class="u2left"'+(o.pct===null||o.pct===undefined?' style="margin-top:7px"':'')+'>'+o.left+'</div>'
     +'<div class="u2reset">'+o.reset+'</div>'
     +(o.keyLine?'<div class="u2key '+o.keyLine[0]+'">'+o.keyLine[1]+'</div>':'')
-    +(o.fix?'<div class="u2fix"><button class="u2fixbtn" data-k="'+esc(o.fix.k)+'" data-kind="'+o.fix.kind+'">تصحيح العداد يدويًا</button></div>':'')
     +'</div>';
 }
 async function renderUsageTab(){
   const el=$("usageTabBody");if(!el)return;
-  const q=await qGet();
   state.searchKeys=state.searchKeys||await kvGet("searchKeysV1")||{};
+  el.innerHTML='<div class="small" style="padding:18px 16px;color:var(--muted)">بيجيب الأرقام الحقيقية من المزودين…</div>';
+  /* نداء واحد عند فتح الشاشة: أرقام OpenRouter و Tavily الحقيقية */
+  const [orI,tvI]=await Promise.all([refreshOrKey(),refreshTavily()]);
+  state.provStat=state.provStat||await kvGet("provStatV1")||{};
+  const q=await qGet();
   const su=await searchUsage();
-  let html='<div class="small" style="padding:14px 16px 4px;color:var(--muted)">العدّ بيحسب الطلبات اللي اتعملت من جوّه عنان بس. «مقاس» يعني الرقم جاي من المزود نفسه، و«محسوب» يعني متتبع محلي على الحد الموثق. جوجل مش بترجّع رصيد متبقي في الـ API، فإحنا بنعدّ طلبات عنان من الجهاز ده بس: أي استخدام لنفس المفتاح برّه عنان مش هيظهر، وعشان كده فيه تصحيح يدوي.</div>';
+  let html='<div class="small" style="padding:14px 16px 4px;color:var(--muted)">الشاشة دي أوتوماتيك بالكامل. «مقاس» = رقم جاي من المزود نفسه (بيشمل أي استخدام للمفتاح برّه عنان). لو المزود مش بيدّي رقم، بنعرض عدد طلبات عنان بس من غير ما نخمّن حد، ولما المزود يرفض لأول مرة النهارده بنتعلّم الحد الحقيقي منه.</div>';
   let any=false;
   for(const p of CHAIN_ORDER){
     const P=PROVIDERS[p];
     const hasKey=p==="google"?!!state.key:!!state.provKeys[p];
     if(!hasKey)continue;
     any=true;
+    const ps=state.provStat[p]||{};
     html+='<div class="sect">'+esc(P.name)+'</div>';
+    html+='<div class="small" style="padding:0 16px 8px;color:var(--muted)">محاولات النهارده: <b>'+arNum(ps.tries||0)+'</b> · نجح <b>'+arNum(ps.okN||0)+'</b>'
+      +(ps.err?(' · <span style="color:var(--danger)">آخر رفض: '+esc(String(ps.err.code))+' — '+esc(ps.err.why)+(ps.err.text?(' («'+esc(ps.err.text.slice(0,90))+'»)'):'')+' · '+fmtTime(ps.err.ts)+(ps.err.model&&ps.err.model!=="key-check"?(' · '+esc(ps.err.model)):'')+'</span>'):' · مفيش أخطاء')+'</div>';
+    const errRefusing=!!(ps.err&&Date.now()-ps.err.ts<6*3600e3&&[400,401,402,403,404].includes(ps.err.code));
     for(const m of P.models){
       const k=p+":"+m.id;const raw=q[k]||{};
       const perKey=(m.monthly?quotaMonthKey():quotaDayKey(p));
       const inPer=raw.per===perKey;
       const used=inPer?(raw.n||0):0;
-      const lim=m.monthly||m.rpd||null;
-      const reset=p==="google"?"بيتصفّر الساعة 10 الصبح":(m.monthly?"بيتصفّر أول كل شهر":(P.reset==="utc"?"بيتصفّر الساعة 2 بالليل":"موعد التصفير غير معلن"));
-      const measured=inPer&&(typeof raw.rem==="number");
-      const outNow=inPer&&!!raw.out;
-      const rem=measured?raw.rem:(lim?Math.max(0,lim-used):null);
+      const stq=await qState(p,m.id);
+      let lim=null,rem=null,src=null;
+      if(p==="openrouter"&&orI&&typeof orI.limit==="number"&&m.rpd){lim=orI.limit;rem=orI.remaining;src="m"}
+      else if(inPer&&typeof raw.rem==="number"&&typeof raw.lim==="number"){lim=raw.lim;rem=raw.rem;src="m"}
+      else if(inPer&&typeof raw.rem==="number"){rem=raw.rem;src="m"}
+      else if(inPer&&typeof raw.learned==="number"){lim=raw.learned;rem=Math.max(0,raw.learned-used);src="l"}
+      const refusedHere=errRefusing&&(ps.err.model===m.id||ps.err.model==="key-check"||(ps.err.code===401));
+      let st;
+      if(stq.out&&stq.hard)st=["u2full","المزود رافض"];
+      else if(stq.out)st=["u2warn","محدود مؤقتًا"];
+      else if(refusedHere)st=["u2full","المزود رافض"];
+      else st=["u2ok","شغال"];
       const remPct=(lim&&rem!==null)?Math.max(0,Math.min(100,Math.round(rem/Math.max(1,lim)*100))):null;
-      const usedPct=(lim&&!measured)?Math.min(100,Math.round(used/Math.max(1,lim)*100)):null;
-      const st=(rem===0)?["u2full","مستنفد"]:(outNow?["u2full","واصل لحد المزود"]:(usedPct!==null&&usedPct>=85?["u2warn","قارب يخلص"]:["u2ok","شغال"]));
-      const barCls=(rem===0)?"fullb":((remPct!==null&&remPct<=15)?"warnb":"");
-      const left=measured?('الباقي <b>'+arNum(rem)+'</b> طلب (رقم من المزود)'):(lim?('الباقي <b>'+arNum(rem)+'</b> من ~'+arNum(lim)+' طلب'+(outNow?' — المزود رفض آخر طلب':'')):('استخدمت <b>'+arNum(used)+'</b> طلب النهارده'));
-      html+=u2card({name:m.id,tag:measured?"مقاس":"محسوب",stCls:st[0],stTxt:st[1],pct:remPct,barCls:barCls,left:left,reset:reset,fix:{k:k,kind:"model"}});
+      const barCls=(remPct!==null&&remPct<=0)?"fullb":((remPct!==null&&remPct<=15)?"warnb":"");
+      let left;
+      if(stq.out&&stq.hard)left='الرفض: '+esc(String(stq.code||""))+' — الرصيد أو حد المفتاح خلص عند المزود';
+      else if(stq.out)left='المزود وقّف الطلبات مؤقتًا'+(stq.untilAt?(' — بيتجدد حوالي <b>'+fmtTime(stq.untilAt)+'</b>'):'');
+      else if(refusedHere)left='آخر محاولة اترفضت ('+esc(String(ps.err.code))+'): '+esc(ps.err.why)+' — من غير رقم لأن المزود مش بيرجّع حصة';
+      else if(rem!==null&&lim)left='الباقي <b>'+arNum(rem)+'</b> من '+arNum(lim)+' طلب'+(src==="l"?' (الحد اتعلّم من رفض المزود)':' (رقم من المزود)');
+      else if(rem!==null)left='الباقي <b>'+arNum(rem)+'</b> طلب (رقم من المزود)';
+      else left='استخدمت <b>'+arNum(used)+'</b> طلب النهارده من عنان'+(m.monthly?' (الشهر ده)':'')+' — المزود مش بيرجّع رقم الباقي';
+      html+=u2card({name:m.id,tag:src==="m"?"مقاس":(src==="l"?"متعلّم":"عدّ عنان"),stCls:st[0],stTxt:st[1],pct:remPct,barCls:barCls,left:left,reset:nextResetTxt(p,!!m.monthly)});
     }
   }
   if(!any)html+='<div class="small" style="padding:14px 16px;color:var(--muted)">لسه مفيش استخدام. أول ما تبعت رسالة هتظهر الحصص هنا.</div>';
   /* ---- قسم البحث ---- */
-  html+='<div class="sect">البحث</div><div class="small" style="padding:0 16px 10px;color:var(--muted)">البحث بيتعد محليًا من جوّه عنان. مزودي البحث مش بيرجّعوا رصيد متبقي، فكل الأرقام هنا «محسوب» — لو استخدمت نفس المفتاح برّه عنان الرقم يبقى متفائل.</div>';
-  const tUsed=su.month.tavily||0,tLeft=Math.max(0,SEARCH_TAVILY_LIMIT-tUsed);
-  const tPct=Math.max(0,Math.min(100,Math.round(tLeft/Math.max(1,SEARCH_TAVILY_LIMIT)*100)));
-  const tSt=tLeft===0?["u2full","مستنفد"]:(tPct<=15?["u2warn","قارب يخلص"]:["u2ok","شغال"]);
-  html+=u2card({name:"Tavily",tag:"محسوب",stCls:tSt[0],stTxt:tSt[1],pct:tPct,
-    barCls:tLeft===0?"fullb":(tPct<=15?"warnb":""),
-    left:'الباقي <b>'+arNum(tLeft)+'</b> من '+arNum(SEARCH_TAVILY_LIMIT)+' طلب',
-    reset:"بيتصفّر أول كل شهر",
-    keyLine:state.searchKeys.tavily?["on","المفتاح متسجل ✓"]:["off","مفيش مفتاح — ضيفه من الإعدادات ← النماذج"],
-    fix:{k:"tavily",kind:"search-month"}});
+  html+='<div class="sect">البحث</div><div class="small" style="padding:0 16px 10px;color:var(--muted)">Tavily بيجيب رقمه الحقيقي من حسابه لو المفتاح متسجل. الباقي مفيهوش رصيد متاح من المزود، فبنعرض عدد طلبات عنان بس من غير تخمين.</div>';
+  if(tvI&&typeof tvI.used==="number"){
+    const lim=typeof tvI.limit==="number"?tvI.limit:null;
+    const left=lim?Math.max(0,lim-tvI.used):null;
+    const pct=lim?Math.max(0,Math.min(100,Math.round(left/Math.max(1,lim)*100))):null;
+    html+=u2card({name:"Tavily",tag:"مقاس",stCls:(left===0?"u2full":"u2ok"),stTxt:(left===0?"مستنفد":"شغال"),pct:pct,barCls:left===0?"fullb":(pct!==null&&pct<=15?"warnb":""),
+      left:lim?('الباقي <b>'+arNum(left)+'</b> من '+arNum(lim)+' (رقم من حساب Tavily)'):('استخدمت <b>'+arNum(tvI.used)+'</b> (رقم من حساب Tavily)'),
+      reset:"بيتجدد حسب خطة الحساب",keyLine:["on","المفتاح متسجل ✓"]});
+  }else{
+    const tU=su.month.tavily||0;
+    const refused=tvI&&(tvI.err===401||tvI.err===403);
+    html+=u2card({name:"Tavily",tag:"عدّ عنان",stCls:refused?"u2full":"u2ok",stTxt:refused?"المفتاح مرفوض":"شغال",pct:null,
+      left:'استخدمت <b>'+arNum(tU)+'</b> طلب الشهر ده من عنان'+(tvI?'':' — مفيش مفتاح متسجل')+(tvI&&!refused?' — الحساب مردّش برقم الباقي':''),
+      reset:"بيتجدد أول كل شهر",
+      keyLine:state.searchKeys.tavily?["on","المفتاح متسجل ✓"]:["off","مفيش مفتاح — ضيفه من الإعدادات ← النماذج"]});
+  }
   const jD=su.day.jina||0,jM=su.month.jina||0;
-  html+=u2card({name:"Jina Search",tag:"محسوب",stCls:"u2ok",stTxt:"شغال",pct:null,
+  html+=u2card({name:"Jina Search",tag:"عدّ عنان",stCls:"u2ok",stTxt:"شغال",pct:null,
     left:'استخدمت <b>'+arNum(jD)+'</b> طلب النهارده'+(jM?' · '+arNum(jM)+' الشهر ده':''),
     reset:"منحة 10 مليون توكن — مش بعدّاد طلبات",
-    keyLine:state.searchKeys.jina?["on","المفتاح متسجل ✓"]:["off","مفيش مفتاح — ضيفه من الإعدادات ← النماذج"],
-    fix:{k:"jina",kind:"search-day"}});
+    keyLine:state.searchKeys.jina?["on","المفتاح متسجل ✓"]:["off","مفيش مفتاح — ضيفه من الإعدادات ← النماذج"]});
   const rD=su.day.read||0;
-  html+=u2card({name:"قراية اللينكات (Jina Reader)",rtl:true,tag:"محسوب",stCls:"u2ok",stTxt:"شغال",pct:null,
+  html+=u2card({name:"قراية اللينكات (Jina Reader)",rtl:true,tag:"عدّ عنان",stCls:"u2ok",stTxt:"شغال",pct:null,
     left:'مفيش حد رسمي معلن — استخدمت <b>'+arNum(rD)+'</b> لينك النهارده',
     reset:"حد السرعة بيتجدد كل دقيقة · ببلاش من غير مفتاح",
-    keyLine:["on","بلا مفتاح — شغال دايمًا"],
-    fix:{k:"read",kind:"search-day"}});
+    keyLine:["on","بلا مفتاح — شغال دايمًا"]});
   html+='<div class="u2card"><div class="u2row"><span class="u2name" style="direction:rtl;text-align:right">لصق نص كمصدر</span><span class="u2tag">بلا عدّاد</span></div><div class="u2stat"><span class="u2dot u2okd"></span><span class="u2ok">شغال</span></div><div class="u2left" style="margin-top:7px">بلا حدود — مش بيستهلك أي حصة</div><div class="u2reset">بيتبعت مع رسالتك زي ما هو</div></div>';
   el.innerHTML=html;
-  el.querySelectorAll(".u2fixbtn").forEach(b=>b.onclick=async()=>{
-    const k=b.dataset.k,kind=b.dataset.kind;
-    let cur=0,label=k;
-    if(kind==="model"){const qi=await qGet();cur=(qi[k]||{}).n||0}
-    else if(kind==="search-month"){const s2=await searchUsage();cur=s2.month[k]||0;label=k+" (الشهر ده)"}
-    else{const s2=await searchUsage();cur=s2.day[k]||0;label=k+" (النهارده)"}
-    const v=prompt("صحّح عدد الطلبات المستخدمة لـ "+label+":",String(cur));
-    if(v===null)return;
-    const n=parseInt(v,10);if(!isFinite(n)||n<0){toast("رقم غير صحيح");return}
-    if(kind==="model"){const qi=await qGet();const e=qi[k]||{};e.n=n;e.manual=true;qi[k]=e;state.quota=qi;await qSave()}
-    else if(kind==="search-month")await setSearchUsed(k,n,"month");
-    else await setSearchUsed(k,n,"day");
-    renderUsageTab();toast("اتصحح العداد ✦");
-  });
 }
+/* ================= v29: تحقق المفتاح + تحذير المزود المثبت ================= */
+async function validateProvKey(p,v){
+  const P=PROVIDERS[p];
+  try{
+    let r=null;
+    if(p==="openrouter")r=await fetch("https://openrouter.ai/api/v1/key",{headers:{"Authorization":"Bearer "+v},signal:AbortSignal.timeout(9000)});
+    else if(p==="groq")r=await fetch("https://api.groq.com/openai/v1/models",{headers:{"Authorization":"Bearer "+v},signal:AbortSignal.timeout(9000)});
+    else {return}
+    if(r.ok){await provNote(p,"key-check",true);toast("مفتاح "+P.name+" شغال ✓")}
+    else{const e=new Error("HTTP "+r.status);e.status=r.status;try{e.detail=(await r.json()).error?.message||""}catch(_){}
+      await provNote(p,"key-check",false,e);toast("مفتاح "+P.name+" اترفض ("+r.status+") — اتأكد إنك نسخته كامل");if(p==="openrouter")refreshOrKey()}
+  }catch(e){toast("معرفتش أتأكد من مفتاح "+P.name+" دلوقتي (الشبكة)")}
+}
+async function pinWarn(force,err){
+  const el=$("pinWarn");if(!el)return;
+  if(!prefs.pin||state.oneShot){el.style.display="none";return}
+  const sel=await selGet();const P=PROVIDERS[sel.prov];
+  const q=await qGet();let msg=null;
+  const st=await qState(sel.prov,sel.model);
+  if(sel.prov==="openrouter"&&(!state.orInfo||Date.now()-state.orInfo.ts>60e3))await refreshOrKey();
+  if(st.out){msg="المزود المثبت ("+P.name+") "+(st.hard?"رفض ("+(st.code||"")+")":"محدود مؤقتًا")+(st.untilAt?(" — بيتجدد حوالي "+fmtTime(st.untilAt)):"")+"."}
+  else if(force&&err){msg="المزود المثبت ("+P.name+") فشل: "+errWhy(err)+"."}
+  else{
+    const e=q[sel.prov+":"+sel.model]||{};
+    let lim=typeof e.lim==="number"?e.lim:(typeof e.learned==="number"?e.learned:null);
+    let rem=typeof e.rem==="number"?e.rem:(lim!==null?lim-(e.n||0):null);
+    if(sel.prov==="openrouter"&&state.orInfo&&typeof state.orInfo.remaining==="number"){rem=state.orInfo.remaining;lim=state.orInfo.limit}
+    if(rem!==null&&lim&&(rem<=3||rem<=lim*0.1))msg="المزود المثبت ("+P.name+") قرب يخلص: فاضل حوالي "+rem+" طلب.";
+  }
+  const key=msg||"";
+  if(!msg||state.pinHide===key){el.style.display="none";return}
+  $("pwTxt").textContent=msg+" مفيش تبديل لوحده — الاختيار ليك.";
+  el.style.display="flex";el.dataset.key=key;
+}
+$("pwFb").onclick=()=>{state.oneShot=true;$("pinWarn").style.display="none";toast("الرد الجاي هيروح على الاحتياط مرة واحدة بس، والتثبيت يرجع بعده")};
+$("pwPick").onclick=()=>{$("pinWarn").style.display="none";$("settingsBtn").click();setTimeout(()=>selectSetTab("models"),60)};
+$("pwHide").onclick=()=>{state.pinHide=$("pinWarn").dataset.key||null;$("pinWarn").style.display="none"};
 /* ================= v26: بحث وقراية مصادر (item 2) ================= */
 let pendingSource=null;
 function syncWebTgl(){const on=!!prefs.webOn;$("webTgl").classList.toggle("on",on);$("webTgl").setAttribute("aria-checked",on?"true":"false")}
@@ -4802,6 +5395,8 @@ $("saveKeyBtn").onclick=async()=>{
   state.facts=await allStore("facts");
   prefs=Object.assign({},DEFAULT_PREFS,(await kvGet("prefs"))||{});
   prefs.persona=Object.assign({},DEFAULT_PREFS.persona,prefs.persona||{});
+  /* v29: قرار أحمد — الأسلوب «متكيف» هو اختياره والافتراضي. مرة واحدة بس، والسلايدرز ماتتلمسش */
+  if(!prefs.styleMig29){prefs.styleMig29=true;if(prefs.persona.style!=="adaptive"&&prefs.persona.style!=="roleplay"){prefs.persona.style="adaptive"}try{await savePrefs()}catch(_){}}
   /* heal: roleplay chars/setup never belong on global or workspace persona - no role without an explicit command */
   let _healed=false;
   const _isRpChar=c=>{if(!c)return false;if(c==="custom")return true;const x=CHAR_PERSONAS.find(y=>y.id===c);return !!(x&&x.interview)};
@@ -4848,6 +5443,7 @@ $("saveKeyBtn").onclick=async()=>{
   setInterval(checkAutoBackup,30*60*1000);
   if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
+setTimeout(()=>{try{pinWarn()}catch(_){}},2500);
 </script>
 </body>
 </html>

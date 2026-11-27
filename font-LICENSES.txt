@@ -1,0 +1,4 @@
+الخطوط المضمومة في عنان كلها برخصة SIL Open Font License 1.1 (مجانية للاستخدام والتضمين وإعادة التوزيع):
+Cairo, Tajawal, Noto Sans Arabic, Almarai, Noto Naskh Arabic, Noto Kufi Arabic, Amiri, Reem Kufi, El Messiri.
+المصدر: Google Fonts (fonts.google.com). الملفات هنا مجموعة الحروف العربية بس (subset arabic)؛ الحروف اللاتينية بتاخد خط النظام.
+https://openfontlicense.org

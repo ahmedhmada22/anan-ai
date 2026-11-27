@@ -413,7 +413,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 #srcBar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg2);border-top:1px solid var(--border)}
 #offBadge{flex:none;font-size:11px;color:#e0a44e;border:1px solid #e0a44e;border-radius:10px;padding:1px 8px;white-space:nowrap}
 .pendmark{font-size:11px;opacity:.8}
-.bymodel{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:10.5px;opacity:.75;margin:3px 2px 0;direction:ltr;justify-content:flex-start}
+.bymodel{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px;opacity:.9;margin:3px 2px 0;direction:ltr;justify-content:flex-start}
 .bymodel::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8;flex:none}
 #storyBar{display:none;justify-content:center;align-items:center;padding:2px 10px;background:var(--bg2);border-bottom:1px solid var(--border);flex:none;cursor:pointer}
 #storyTxt{color:var(--accent2);font-size:11.5px}
@@ -467,7 +467,7 @@ mark.srch-hit.cur{background:var(--accent2);box-shadow:0 0 0 2px var(--accent2)}
 .u2warn{color:#e5a13d}.u2warnd{background:#e5a13d}
 .u2full{color:var(--danger)}.u2fulld{background:var(--danger)}
 .u2bar{height:8px;border-radius:99px;background:var(--card2);margin:9px 0 7px;overflow:hidden}
-.u2bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.u2bar i{display:block;height:100%;border-radius:99px;background:#8fd6a8}
 .u2bar i.warnb{background:#e5a13d}
 .u2bar i.fullb{background:var(--danger)}
 .u2left{font-size:14.5px}
@@ -1442,7 +1442,7 @@ async function qBump(provId,model,realRemaining){
   const isMonthly=!!(PROVIDERS[provId].models.find(m=>m.id===model)||{}).monthly;
   const per=isMonthly?quotaMonthKey():quotaDayKey(provId);
   const e=q[k]||{};if(e.per!==per){e.per=per;e.n=0;e.out=false}
-  e.n=(e.n||0)+1;e.at=Date.now();
+  e.n=(e.n||0)+1;e.at=Date.now();e.out=false;delete e.outAt;
   if(typeof realRemaining==="number"){e.rem=realRemaining;e.remAt=Date.now()}
   q[k]=e;await qSave();return e;
 }
@@ -1495,13 +1495,29 @@ function autoHint(parts){
   }catch(_){return null}
 }
 async function selGet(){
-  if(state.sel)return state.sel;
+  if(state.sel&&typeof state.sel.model==="string"&&findModel(state.sel.model))return state.sel;
   const raw=(prefs&&prefs.sel)||("google:"+(prefs.model||MODEL_MAIN));
   const [prov,model]=raw.includes(":")?[raw.slice(0,raw.indexOf(":")),raw.slice(raw.indexOf(":")+1)]:["google",raw];
-  state.sel={prov:findModel(model)?prov:"google",model:findModel(model)?model:MODEL_MAIN};
+  const fm=findModel(model);
+  state.sel={prov:fm?prov:"google",model:fm?model:MODEL_MAIN};
+  /* إصلاح ذاتي: أي قيمة قديمة تالفة (زي «[object Object]») تتصحح وتتحفظ */
+  if(!fm||raw!==(state.sel.prov+":"+state.sel.model)){
+    prefs.sel=state.sel.prov+":"+state.sel.model;
+    try{await savePrefs()}catch(_){}
+  }
   return state.sel;
 }
-async function selSet(prov,model){state.sel={prov,model};prefs.sel=prov+":"+model;prefs.selManual=true;await savePrefs()}
+function setModelLabel(sel){
+  const el=$("modelCur");if(!el)return;
+  const m=sel&&sel.model;const fm=findModel(m);
+  const prov=fm?fm.prov:((sel&&sel.prov)||"google");
+  const pn=(PROVIDERS[prov]||PROVIDERS.google).name.split(" ")[0];
+  el.textContent=pn+" · "+String(m||"")+" ‹";
+}
+async function selSet(prov,model){
+  if(model&&typeof model==="object")model=model.id;
+  state.sel={prov:prov,model:String(model)};prefs.sel=prov+":"+String(model);prefs.selManual=true;await savePrefs()
+}
 /* ---- المحرك الموحد: يمشي على السلسلة ---- */
 async function aiCall(parts,opts){
   opts=opts||{};
@@ -1516,7 +1532,7 @@ async function aiCall(parts,opts){
       else if(cand.prov==="cohere")r=await cohereCall(cand.id,parts,opts.jsonMode,opts.sig,opts.sys);
       else r=await openaiCall(cand.prov,cand.id,parts,opts.jsonMode,opts.sig,opts.sys,null);
       if(!r.text||!r.text.trim()){const e=new Error("empty");e.empty=true;throw e}
-      state.lastAnswered={prov:cand.prov,model:cand.id};
+      state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now()};
       const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
       await qBump(cand.prov,cand.id,rem);
       if(typeof r.promptTokens==="number"){
@@ -1554,7 +1570,7 @@ async function aiStream(parts,sig,onChunk,sys){
       }else{
         r=await openaiCall(cand.prov,cand.id,parts,false,sig,sys,wrapped);
       }
-      state.lastAnswered={prov:cand.prov,model:cand.id};
+      state.lastAnswered={prov:cand.prov,model:cand.id,ts:Date.now()};
       const rem=cand.prov==="groq"?groqRealRemaining(r.headers):null;
       await qBump(cand.prov,cand.id,rem);
       if(typeof r.promptTokens==="number"){
@@ -3088,7 +3104,7 @@ async function runReply(conv,histMsgs,userText){
   }
   state.busy=true;showStop(true);abortCtl=new AbortController();setTyping(true);
   const am={id:uid(),convId:conv.id,role:"model",text:"",ts:Date.now()};
-  const _prevAns=state.lastAnswered;
+  const _t0=Date.now();
   let bubbleEl=null,lastPaint=0,paintTimer=null,started=false;
   const paint=force=>{
     if(!started){started=true;appendMsg(am);bubbleEl=document.querySelector(`.msg[data-id="${am.id}"] .bubble`)}
@@ -3168,7 +3184,7 @@ async function runReply(conv,histMsgs,userText){
       am.text=finish==="SAFETY"?"الرد اتمنع من فلاتر جوجل على مستوى النظام (ده بيحصل أحيانًا حتى مع الإعدادات المفتوحة). جرّب تعيد صياغة السؤال.":"مفيش رد وصل من النموذج. جرّب تاني.";
     }
     am.text=am.text.trim();
-    if(state.lastAnswered&&state.lastAnswered!==_prevAns&&state.lastAnswered.model)am.byModel=state.lastAnswered.model;
+    if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0&&state.lastAnswered.model)am.byModel=state.lastAnswered.model;
     if(finish==="MAX_TOKENS")am.incomplete=true;
     am.text=await sanitizeReply(am.text,sysText);
     /* منقّي تقليد السقالة: سطور قالب الحقن الحرفي + تكرارات [N] و[[N]] */
@@ -3214,6 +3230,7 @@ async function runReply(conv,histMsgs,userText){
   }catch(e){
     setTyping(false);
     if(e.timeout&&am.text&&am.text.trim()){
+      if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0)am.byModel=state.lastAnswered.model;
       am.text=am.text.trim();am.incomplete=true;
       await putItem("msgs",am);finalRow();
       conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
@@ -3222,6 +3239,7 @@ async function runReply(conv,histMsgs,userText){
     }
     if(e.aborted){
       if(am.text&&am.text.trim()){
+        if(!am.byModel&&state.lastAnswered&&(state.lastAnswered.ts||0)>=_t0)am.byModel=state.lastAnswered.model;
         am.text=am.text.trim();am.incomplete=true;await putItem("msgs",am);finalRow();
         conv.updated=Date.now();conv.lastTs=am.ts;conv.lastTxt=am.text.slice(0,60);await putItem("convs",conv);renderConvList();
       }else cleanupPartial();
@@ -3711,9 +3729,9 @@ async function fillSettings(){
   const mp=$("modelPick");mp.innerHTML="";
   const _sel=await selGet();
   for(const am of allModels()){const o=document.createElement("option");o.value=am.prov+":"+am.id;o.textContent=am.id;if(_sel.prov===am.prov&&_sel.model===am.id)o.selected=true;mp.appendChild(o)}
-  mp.onchange=async()=>{const v=mp.value;const p=v.slice(0,v.indexOf(":")),m=v.slice(v.indexOf(":")+1);await selSet(p,m);state.model=activeModel();refreshSettings();toast("النموذج اتحوّل ✦")};
+  mp.onchange=async()=>{const v=mp.value;const p=v.slice(0,v.indexOf(":")),m=v.slice(v.indexOf(":")+1);await selSet(p,m);state.model=activeModel();refreshSettings();setModelLabel(await selGet());toast("النموذج اتحوّل ✦")};
   const _curM=findModel(_sel.model);
-  $("modelCur").textContent=(PROVIDERS[_sel.prov].name.split(" ")[0]+" · "+_sel.model)+" ‹";
+  setModelLabel(_sel);
   $("openModel").onclick=async()=>{
     const list=$("modelList");list.innerHTML="";
     const cur=await selGet();
@@ -3730,7 +3748,7 @@ async function fillSettings(){
         b.onclick=async()=>{
           if(!hasKey){toast("ضيف مفتاح "+P.name+" الأول من الإعدادات ← النماذج");return}
           $("modelModal").classList.add("hidden");
-          await selSet(p,m);state.model=activeModel();refreshSettings();toast("النموذج اتحوّل لـ "+m.id+" ✦");
+          await selSet(p,m.id);state.model=activeModel();refreshSettings();setModelLabel(await selGet());toast("النموذج اتحوّل لـ "+m.id+" ✦");
         };
         list.appendChild(b);
       }
@@ -4534,7 +4552,7 @@ async function renderUsageTab(){
   const q=await qGet();
   state.searchKeys=state.searchKeys||await kvGet("searchKeysV1")||{};
   const su=await searchUsage();
-  let html='<div class="small" style="padding:14px 16px 4px;color:var(--muted)">العدّ بيحسب الطلبات اللي اتعملت من جوّه عنان بس. «مقاس» يعني الرقم جاي من المزود نفسه، و«محسوب» يعني متتبع محلي على الحد الموثق. لو استخدمت نفس المفتاح برّه عنان الرقم يبقى متفائل.</div>';
+  let html='<div class="small" style="padding:14px 16px 4px;color:var(--muted)">العدّ بيحسب الطلبات اللي اتعملت من جوّه عنان بس. «مقاس» يعني الرقم جاي من المزود نفسه، و«محسوب» يعني متتبع محلي على الحد الموثق. جوجل مش بترجّع رصيد متبقي في الـ API، فإحنا بنعدّ طلبات عنان من الجهاز ده بس: أي استخدام لنفس المفتاح برّه عنان مش هيظهر، وعشان كده فيه تصحيح يدوي.</div>';
   let any=false;
   for(const p of CHAIN_ORDER){
     const P=PROVIDERS[p];
@@ -4543,26 +4561,31 @@ async function renderUsageTab(){
     any=true;
     html+='<div class="sect">'+esc(P.name)+'</div>';
     for(const m of P.models){
-      const k=p+":"+m.id;const e=q[k]||{};
-      const used=e.per&&((e.per===quotaDayKey(p))||(m.monthly&&e.per===quotaMonthKey()))?(e.n||0):0;
+      const k=p+":"+m.id;const raw=q[k]||{};
+      const perKey=(m.monthly?quotaMonthKey():quotaDayKey(p));
+      const inPer=raw.per===perKey;
+      const used=inPer?(raw.n||0):0;
       const lim=m.monthly||m.rpd||null;
       const reset=p==="google"?"بيتصفّر الساعة 10 الصبح":(m.monthly?"بيتصفّر أول كل شهر":(P.reset==="utc"?"بيتصفّر الساعة 2 بالليل":"موعد التصفير غير معلن"));
-      const measured=(typeof e.rem==="number");
-      const pct=lim?Math.min(100,Math.round(used/Math.max(1,lim)*100)):null;
-      const st=e.out?["u2full","مستنفد"]:(pct!==null&&pct>=85?["u2warn","قارب يخلص"]:["u2ok","شغال"]);
-      const barCls=e.out?"fullb":(pct!==null&&pct>=85?"warnb":"");
-      const left=measured?('الباقي <b>'+arNum(e.rem)+'</b> طلب (رقم من المزود)'):(lim?('الباقي <b>'+arNum(Math.max(0,lim-used))+'</b> من ~'+arNum(lim)+' طلب'):('استخدمت <b>'+arNum(used)+'</b> طلب النهارده'));
-      html+=u2card({name:m.id,tag:measured?"مقاس":"محسوب",stCls:st[0],stTxt:st[1],pct:pct,barCls:barCls,left:left,reset:reset,fix:{k:k,kind:"model"}});
+      const measured=inPer&&(typeof raw.rem==="number");
+      const outNow=inPer&&!!raw.out;
+      const rem=measured?raw.rem:(lim?Math.max(0,lim-used):null);
+      const remPct=(lim&&rem!==null)?Math.max(0,Math.min(100,Math.round(rem/Math.max(1,lim)*100))):null;
+      const usedPct=(lim&&!measured)?Math.min(100,Math.round(used/Math.max(1,lim)*100)):null;
+      const st=(rem===0)?["u2full","مستنفد"]:(outNow?["u2full","واصل لحد المزود"]:(usedPct!==null&&usedPct>=85?["u2warn","قارب يخلص"]:["u2ok","شغال"]));
+      const barCls=(rem===0)?"fullb":((remPct!==null&&remPct<=15)?"warnb":"");
+      const left=measured?('الباقي <b>'+arNum(rem)+'</b> طلب (رقم من المزود)'):(lim?('الباقي <b>'+arNum(rem)+'</b> من ~'+arNum(lim)+' طلب'+(outNow?' — المزود رفض آخر طلب':'')):('استخدمت <b>'+arNum(used)+'</b> طلب النهارده'));
+      html+=u2card({name:m.id,tag:measured?"مقاس":"محسوب",stCls:st[0],stTxt:st[1],pct:remPct,barCls:barCls,left:left,reset:reset,fix:{k:k,kind:"model"}});
     }
   }
   if(!any)html+='<div class="small" style="padding:14px 16px;color:var(--muted)">لسه مفيش استخدام. أول ما تبعت رسالة هتظهر الحصص هنا.</div>';
   /* ---- قسم البحث ---- */
   html+='<div class="sect">البحث</div><div class="small" style="padding:0 16px 10px;color:var(--muted)">البحث بيتعد محليًا من جوّه عنان. مزودي البحث مش بيرجّعوا رصيد متبقي، فكل الأرقام هنا «محسوب» — لو استخدمت نفس المفتاح برّه عنان الرقم يبقى متفائل.</div>';
   const tUsed=su.month.tavily||0,tLeft=Math.max(0,SEARCH_TAVILY_LIMIT-tUsed);
-  const tPct=Math.min(100,Math.round(tUsed/SEARCH_TAVILY_LIMIT*100));
-  const tSt=tPct>=100?["u2full","مستنفد"]:(tPct>=85?["u2warn","قارب يخلص"]:["u2ok","شغال"]);
+  const tPct=Math.max(0,Math.min(100,Math.round(tLeft/Math.max(1,SEARCH_TAVILY_LIMIT)*100)));
+  const tSt=tLeft===0?["u2full","مستنفد"]:(tPct<=15?["u2warn","قارب يخلص"]:["u2ok","شغال"]);
   html+=u2card({name:"Tavily",tag:"محسوب",stCls:tSt[0],stTxt:tSt[1],pct:tPct,
-    barCls:tPct>=100?"fullb":(tPct>=85?"warnb":""),
+    barCls:tLeft===0?"fullb":(tPct<=15?"warnb":""),
     left:'الباقي <b>'+arNum(tLeft)+'</b> من '+arNum(SEARCH_TAVILY_LIMIT)+' طلب',
     reset:"بيتصفّر أول كل شهر",
     keyLine:state.searchKeys.tavily?["on","المفتاح متسجل ✓"]:["off","مفيش مفتاح — ضيفه من الإعدادات ← النماذج"],

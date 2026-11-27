@@ -1,6 +1,6 @@
 {
-  "name": "Anan AI",
-  "short_name": "Anan AI",
+  "name": "عنان",
+  "short_name": "عنان",
   "description": "مساعدك الشخصي بالعامية المصرية",
   "start_url": "./index.html",
   "display": "standalone",
